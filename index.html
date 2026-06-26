@@ -1,1311 +1,2396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>From llm-d to Red Hat AI Inference Server</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-:root {
-  --purple: #9b4d9b;
-  --purple-light: #f3e8f3;
-  --purple-bg: #faf5fa;
-  --purple-border: #d4a5d4;
-  --red: #ee0000;
-  --red-light: #fde8e8;
-  --red-bg: #fef5f5;
-  --red-border: #f5a3a3;
-  --bg: #ffffff;
-  --bg-alt: #f9fafb;
-  --text: #1a1a2e;
-  --text-secondary: #555566;
-  --text-muted: #888899;
-  --border: #e5e7eb;
-  --shadow: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.10);
-  --radius: 12px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Red Hat Text', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Red Hat Display', sans-serif;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-/* ── Header ── */
-.site-header {
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  padding: 20px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-  background: rgba(255,255,255,0.92);
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-left img {
-  height: 40px;
-  width: auto;
-}
-
-.header-center {
-  text-align: center;
-  flex: 1;
-}
-
-.header-center h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-
-.header-center .subtitle {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  font-weight: 400;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right svg {
-  height: 40px;
-  width: auto;
-}
-
-/* ── Stats Bar ── */
-.stats-bar {
-  background: var(--bg-alt);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 0;
-}
-
-.stats-inner {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-number {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--purple), var(--red));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-/* ── View Toggle ── */
-.toggle-section {
-  padding: 32px 0 16px;
-  text-align: center;
-}
-
-.view-toggle {
-  display: inline-flex;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.toggle-btn {
-  font-family: 'Red Hat Text', sans-serif;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 100px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: var(--transition);
-  background: transparent;
-  color: var(--text-secondary);
-}
-
-.toggle-btn.active {
-  background: var(--text);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.toggle-btn:hover:not(.active) {
-  color: var(--text);
-  background: rgba(0,0,0,0.04);
-}
-
-/* ── Section Heading ── */
-.section-heading {
-  text-align: center;
-  padding: 40px 0 8px;
-}
-
-.section-heading h2 {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.section-heading p {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.gradient-divider {
-  height: 3px;
-  background: linear-gradient(90deg, var(--purple), transparent 30%, transparent 70%, var(--red));
-  border-radius: 3px;
-  margin: 16px auto 0;
-  max-width: 600px;
-}
-
-/* ── Architecture Map ── */
-.architecture-map {
-  padding: 32px 0 48px;
-  position: relative;
-}
-
-.map-columns {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 0;
-  align-items: start;
-}
-
-.column-header {
-  text-align: center;
-  padding: 16px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  font-family: 'Red Hat Display', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.02em;
-  margin-bottom: 16px;
-}
-
-.column-header.upstream {
-  background: var(--purple-light);
-  color: var(--purple);
-  border: 2px solid var(--purple-border);
-  border-bottom: none;
-}
-
-.column-header.enterprise {
-  background: var(--red-light);
-  color: var(--red);
-  border: 2px solid var(--red-border);
-  border-bottom: none;
-}
-
-.column-left, .column-right {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.svg-lines {
-  width: 120px;
-  min-width: 120px;
-  position: relative;
-}
-
-/* ── Component Cards ── */
-.component-card {
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.component-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.component-card.upstream-card {
-  background: var(--purple-bg);
-  border: 2px solid var(--purple-border);
-  box-shadow: var(--shadow);
-}
-
-.component-card.upstream-card:hover {
-  border-color: var(--purple);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-}
-
-.component-card.enterprise-card {
-  background: var(--red-bg);
-  border: 2px solid var(--red-border);
-  box-shadow: var(--shadow);
-}
-
-.component-card.enterprise-card:hover {
-  border-color: var(--red);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-}
-
-.component-card.visible:hover {
-  transform: translateY(-2px);
-}
-
-.component-card.highlighted.upstream-card {
-  border-color: var(--purple);
-  box-shadow: 0 0 0 3px rgba(155, 77, 155, 0.2), var(--shadow-hover);
-}
-
-.component-card.highlighted.enterprise-card {
-  border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(238, 0, 0, 0.2), var(--shadow-hover);
-}
-
-.card-icon {
-  font-size: 1.4rem;
-  margin-bottom: 6px;
-  display: block;
-}
-
-.card-title {
-  font-family: 'Red Hat Display', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 4px;
-}
-
-.upstream-card .card-title { color: var(--purple); }
-.enterprise-card .card-title { color: var(--red); }
-
-.card-subtitle {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-}
-
-.card-arrow-hint {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  opacity: 0.5;
-  transition: var(--transition);
-}
-
-.component-card:hover .card-arrow-hint {
-  opacity: 1;
-}
-
-/* ── Detail Panel ── */
-.detail-panel {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-  opacity: 0;
-}
-
-.detail-panel.open {
-  max-height: 800px;
-  opacity: 1;
-}
-
-.detail-content {
-  padding: 16px 20px 20px;
-  border-top: 1px dashed var(--border);
-  margin-top: 12px;
-}
-
-.detail-categories {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.detail-cat {
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid var(--border);
-}
-
-.detail-cat-title {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
-}
-
-.upstream-card .detail-cat-title { color: var(--purple); }
-.enterprise-card .detail-cat-title { color: var(--red); }
-
-.detail-cat-text {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  line-height: 1.45;
-}
-
-/* View-specific content */
-.view-dev { display: none; }
-.view-dm { display: none; }
-
-body.developer-view .view-dev { display: block; }
-body.developer-view .view-dm { display: none; }
-body.decision-maker-view .view-dev { display: none; }
-body.decision-maker-view .view-dm { display: block; }
-
-.view-note {
-  font-size: 0.82rem;
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.view-note.dev-note {
-  background: #f0f4ff;
-  border: 1px solid #c7d6ff;
-  color: #334;
-}
-
-.view-note.dm-note {
-  background: #fff8f0;
-  border: 1px solid #ffd6a5;
-  color: #433;
-}
-
-.view-note code {
-  background: rgba(0,0,0,0.06);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.78rem;
-}
-
-/* ── SVG Lines ── */
-.connector-line {
-  stroke: var(--border);
-  stroke-width: 2;
-  fill: none;
-  transition: stroke 0.3s ease, stroke-width 0.3s ease;
-}
-
-.connector-line.active {
-  stroke: url(#lineGradient);
-  stroke-width: 3;
-  stroke-dasharray: 8 4;
-  animation: dashFlow 0.8s linear infinite;
-}
-
-@keyframes dashFlow {
-  to { stroke-dashoffset: -12; }
-}
-
-/* ── Timeline ── */
-.timeline-section {
-  padding: 48px 0;
-  background: var(--bg-alt);
-  border-top: 1px solid var(--border);
-}
-
-.timeline-track {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
-  padding: 40px 0 0;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.timeline-track::before {
-  content: '';
-  position: absolute;
-  top: 54px;
-  left: 8%;
-  right: 8%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--purple), #c060c0, #d03030, var(--red));
-  border-radius: 4px;
-}
-
-.timeline-step {
-  flex: 1;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.timeline-step.visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.timeline-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin: 0 auto 12px;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px var(--border);
-}
-
-.timeline-step:nth-child(1) .timeline-dot { background: var(--purple); }
-.timeline-step:nth-child(2) .timeline-dot { background: #b060b0; }
-.timeline-step:nth-child(3) .timeline-dot { background: #d04040; }
-.timeline-step:nth-child(4) .timeline-dot { background: var(--red); }
-
-.timeline-label {
-  font-family: 'Red Hat Display', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.timeline-desc {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  max-width: 160px;
-  margin: 0 auto;
-  line-height: 1.4;
-}
-
-/* ── Footer ── */
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 32px 0;
-  text-align: center;
-}
-
-.footer-attribution {
-  font-family: 'Red Hat Display', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.footer-links a {
-  font-size: 0.9rem;
-  color: var(--red);
-  text-decoration: none;
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-.footer-links a:hover {
-  color: var(--purple);
-  text-decoration: underline;
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .header-inner {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
-
-  .header-left img, .header-right svg {
-    height: 32px;
-  }
-
-  .header-center h1 { font-size: 1.2rem; }
-
-  .stats-inner { gap: 24px; }
-
-  .map-columns {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .svg-lines {
-    width: 100%;
-    min-width: unset;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .svg-lines svg { display: none; }
-
-  .svg-lines::after {
-    content: '↓';
-    font-size: 1.5rem;
-    color: var(--text-muted);
-  }
-
-  .column-left, .column-right {
-    gap: 12px;
-  }
-
-  .detail-categories {
-    grid-template-columns: 1fr;
-  }
-
-  .timeline-track {
-    flex-direction: column;
-    gap: 24px;
-    padding: 0;
-  }
-
-  .timeline-track::before {
-    width: 4px;
-    height: calc(100% - 20px);
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    right: unset;
-  }
-
-  .footer-links {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container { padding: 0 16px; }
-  .component-card { padding: 14px 16px; }
-  .stat-number { font-size: 1.4rem; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>llm-d to Red Hat AI Inference Server | Content Hub #20</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #141821;
+            --bg-elevated: #1a1f2e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #9b4d9b;
+            --accent-red: #ee0000;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --border: #27272a;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --partial: #eab308;
+        }
+
+        body {
+            font-family: 'Red Hat Text', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Red Hat Display', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-elevated);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .header-logos {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-logos img {
+            height: 48px;
+        }
+
+        .arrow-separator {
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+
+        .redhat-logo {
+            width: 120px;
+            height: 48px;
+        }
+
+        .header-title {
+            flex: 1;
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .author {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            position: sticky;
+            top: 82px;
+            z-index: 99;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-blue);
+            background: var(--bg-elevated);
+        }
+
+        /* Section */
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        section .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Journey Map */
+        .journey-map {
+            position: relative;
+            padding: 3rem 0;
+        }
+
+        .journey-stages {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin: 3rem 0;
+        }
+
+        .journey-path {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue), var(--accent-red));
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .journey-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: journey-flow 8s linear infinite;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+        }
+
+        @keyframes journey-flow {
+            0% { left: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .journey-particle:nth-child(2) { animation-delay: 2s; }
+        .journey-particle:nth-child(3) { animation-delay: 4s; }
+        .journey-particle:nth-child(4) { animation-delay: 6s; }
+
+        .journey-stage {
+            position: relative;
+            z-index: 2;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 22%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .journey-stage:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            border-color: var(--accent-blue);
+        }
+
+        .journey-stage.active {
+            background: var(--bg-elevated);
+            border-color: var(--accent-blue);
+        }
+
+        .stage-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .stage-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .stage-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 1rem;
+        }
+
+        .journey-stage.active .stage-details {
+            max-height: 500px;
+        }
+
+        .stage-details ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .stage-details li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .stage-details li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+        }
+
+        /* Feature Parity Tracker */
+        .feature-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .category-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .feature-table {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .feature-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .feature-table th {
+            background: var(--bg-elevated);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .feature-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .feature-table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .feature-table tbody tr:hover {
+            background: var(--bg-elevated);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-badge.complete {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.partial {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--partial);
+        }
+
+        .status-badge.planned {
+            background: rgba(161, 161, 170, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .status-badge:before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison Tool */
+        .comparison-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .comparison-tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .comparison-tab:hover {
+            color: var(--accent-blue);
+        }
+
+        .comparison-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .comparison-content {
+            display: none;
+        }
+
+        .comparison-content.active {
+            display: block;
+        }
+
+        .split-screen {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-side {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid var(--border);
+        }
+
+        .comparison-side.llm-d {
+            border-color: var(--accent-purple);
+        }
+
+        .comparison-side.redhat {
+            border-color: var(--accent-red);
+        }
+
+        .comparison-side h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .comparison-side.llm-d h3 {
+            color: var(--accent-purple);
+        }
+
+        .comparison-side.redhat h3 {
+            color: var(--accent-red);
+        }
+
+        .comparison-list {
+            list-style: none;
+        }
+
+        .comparison-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-list li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .comparison-list.cons li:before {
+            content: "✗";
+            color: var(--accent-red);
+        }
+
+        /* Deployment Comparison */
+        .deployment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .deployment-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--bg-elevated);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 2px solid var(--border);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .code-block {
+            background: #000;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .code-lang {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .code-content {
+            line-height: 1.8;
+        }
+
+        .code-line {
+            display: block;
+        }
+
+        .code-annotation {
+            display: none;
+            background: var(--bg-elevated);
+            border-left: 3px solid var(--accent-red);
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            font-family: 'Red Hat Text', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .code-annotation.visible {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .number { color: #bd93f9; }
+        .comment { color: #6272a4; }
+        .property { color: #8be9fd; }
+
+        .enterprise-only {
+            display: none;
+        }
+
+        .support-matrix {
+            margin-top: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .support-matrix h4 {
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .support-item {
+            background: var(--bg-elevated);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .support-item strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .support-item span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Certification Matrix */
+        .cert-matrix {
+            overflow-x: auto;
+        }
+
+        .cert-table {
+            min-width: 100%;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cert-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cert-table th {
+            background: var(--bg-elevated);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .cert-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .cert-table th:first-child,
+        .cert-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background: var(--bg-elevated);
+        }
+
+        .cert-indicator {
+            display: inline-block;
+            font-size: 1.25rem;
+        }
+
+        .cert-check { color: var(--success); }
+        .cert-cross { color: var(--accent-red); }
+        .cert-partial { color: var(--partial); }
+
+        .cert-legend {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Migration Wizard */
+        .wizard-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .wizard-option {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wizard-option:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-4px);
+        }
+
+        .wizard-option.selected {
+            border-color: var(--accent-blue);
+            background: var(--bg-elevated);
+        }
+
+        .wizard-option h4 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-blue);
+        }
+
+        .wizard-content {
+            display: none;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .wizard-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .wizard-steps {
+            counter-reset: step;
+        }
+
+        .wizard-step {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .wizard-step:last-child {
+            border-left: none;
+        }
+
+        .wizard-step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: -1.25rem;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .wizard-step h4 {
+            margin-bottom: 0.75rem;
+            color: var(--accent-blue);
+        }
+
+        .wizard-step p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .wizard-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .wizard-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .effort-badge, .risk-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .effort-low, .risk-low {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .effort-medium, .risk-medium {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--partial);
+        }
+
+        .effort-high, .risk-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        /* Timeline */
+        .timeline-container {
+            position: relative;
+            padding: 3rem 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            transform: translateY(-50%);
+        }
+
+        .timeline-items {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .timeline-item {
+            width: 23%;
+            position: relative;
+        }
+
+        .timeline-point {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-blue);
+            border: 4px solid var(--bg-dark);
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        }
+
+        .timeline-content {
+            margin-top: 2rem;
+        }
+
+        .timeline-upstream {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-downstream {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-red);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .timeline-version {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-upstream .timeline-version {
+            color: var(--accent-purple);
+        }
+
+        .timeline-downstream .timeline-version {
+            color: var(--accent-red);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline-connector {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 60px;
+            background: var(--accent-blue);
+            transform: translate(-50%, 20px);
+        }
+
+        /* Support Tiers */
+        .tier-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tier-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tier-card:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-blue);
+        }
+
+        .tier-card.tier-standard:before {
+            background: var(--partial);
+        }
+
+        .tier-card.tier-premium:before {
+            background: var(--accent-red);
+        }
+
+        .tier-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .tier-card.tier-premium {
+            border-color: var(--accent-red);
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(238, 0, 0, 0.05) 100%);
+        }
+
+        .tier-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .tier-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-price {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        .tier-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .tier-features li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tier-features li:last-child {
+            border-bottom: none;
+        }
+
+        .tier-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .tier-highlight {
+            background: var(--bg-elevated);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        /* ROI Calculator */
+        .calculator {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-elevated);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        .input-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .calculator-results {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid var(--accent-blue);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-family: 'Red Hat Display', sans-serif;
+        }
+
+        .result-value.positive {
+            color: var(--success);
+        }
+
+        .result-value.animated {
+            display: inline-block;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-elevated);
+            border-top: 2px solid var(--accent-blue);
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        .footer-credit {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .journey-stages {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .journey-stage {
+                width: 100%;
+            }
+
+            .journey-path {
+                display: none;
+            }
+
+            .split-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-items {
+                flex-direction: column;
+                gap: 3rem;
+            }
+
+            .timeline-item {
+                width: 100%;
+            }
+
+            .timeline-line {
+                display: none;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Number counter animation */
+        @keyframes countUp {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
-<body class="developer-view">
-
-<!-- ── Header ── -->
-<header class="site-header">
-  <div class="container header-inner">
-    <div class="header-left">
-      <img src="https://llm-d.ai/img/llm-d-icon.png" alt="llm-d icon" />
-    </div>
-    <div class="header-center">
-      <h1>From llm-d to Red Hat AI Inference Server</h1>
-      <p class="subtitle">Tracing the open source to enterprise journey</p>
-    </div>
-    <div class="header-right">
-      <!-- Red Hat fedora hat SVG -->
-      <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-label="Red Hat logo">
-        <path d="M70.5 32.7c3.9 0 7.4.4 9.8 1.1 2.8-6.8 4.2-14 4.2-14s-6.5-3.4-18.1-3.4c-11.6 0-19.4 4.2-24.2 8.5-4.8 4.3-8.4 10.2-13.6 10.2-3.2 0-5.6-1.8-5.6-5.1 0-5.4 6.5-10 15.6-10 4 0 7.2.7 7.2.7l2.2-6.8s-4.2-1.2-10.4-1.2C22.8 12.7 12 20.5 12 30.6c0 7.4 5.2 12.2 13.2 12.2 8.4 0 13-5.2 18.2-9.8 3.6-3.2 8-6.7 14.8-6.7 4.6 0 8.2 1.2 10 2.8-1.2 2.8-2.8 5.2-4.6 7-2-.6-4.6-1-7.6-1-8.6 0-14.2 3.8-14.2 8.6 0 4.4 4.6 7.4 12.6 7.4 12.4 0 19.2-5 22.8-11.8 1.4.8 2.2 2 2.2 3.6 0 4-5.2 7.6-15 7.6-5.2 0-9.6-.8-12.8-2.2l-2.2 6.4c3.8 1.6 8.8 2.6 14.8 2.6 15.2 0 22.4-6.8 22.4-14.8 0-4.4-2.8-7.6-7.6-9.2.6-1.2 1-2.4 1.4-3.6zM55.4 45.5c-3.6 0-5.8-1.4-5.8-3.4 0-2.6 3.2-4.6 8-4.6 2.2 0 4.2.3 5.8.8-2 4.4-4.8 7.2-8 7.2z" fill="#ee0000"/>
-      </svg>
-    </div>
-  </div>
-</header>
-
-<!-- ── Stats Bar ── -->
-<section class="stats-bar">
-  <div class="container stats-inner">
-    <div class="stat-item">
-      <div class="stat-number" data-target="7">0</div>
-      <div class="stat-label">Component Mappings</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number" data-target="5">0</div>
-      <div class="stat-label">Value-Add Categories</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number" data-target="4">0</div>
-      <div class="stat-label">Journey Stages</div>
-    </div>
-  </div>
-</section>
-
-<!-- ── View Toggle ── -->
-<section class="toggle-section">
-  <div class="view-toggle">
-    <button class="toggle-btn active" data-view="developer">Developer View</button>
-    <button class="toggle-btn" data-view="decision-maker">Decision Maker View</button>
-  </div>
-</section>
-
-<!-- ── Architecture Map Section ── -->
-<section class="architecture-map">
-  <div class="container">
-    <div class="section-heading">
-      <h2>Architecture Mapping</h2>
-      <p>Click any component to see what Red Hat adds. Hover to trace the connection.</p>
-      <div class="gradient-divider"></div>
-    </div>
-
-    <div class="map-columns" style="margin-top: 32px;">
-      <!-- Left Column: Upstream -->
-      <div class="column-left">
-        <div class="column-header upstream">Upstream (llm-d)</div>
-
-        <!-- 1. EPP -->
-        <div class="component-card upstream-card" data-pair="1">
-          <span class="card-icon">&#9881;</span>
-          <div class="card-title">llm-d EPP</div>
-          <div class="card-subtitle">Endpoint Picker &amp; routing logic for inference workloads</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same gRPC Ext-Proc interface. The EPP filter chain and scoring plugins carry over directly to the enterprise routing engine.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">Identical Ext-Proc gRPC contract; same <code>PickEndpoint</code> RPC</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Plugins</div><div class="detail-cat-text">Scoring &amp; filtering plugins compatible upstream and downstream</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Config</div><div class="detail-cat-text">Same YAML-based configuration for routing policies</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Observability</div><div class="detail-cat-text">Prometheus metrics surface identical label sets</div></div>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-logos">
+                    <img src="https://llm-d.ai/img/llm-d-icon.png" alt="llm-d">
+                    <span class="arrow-separator">→</span>
+                    <svg class="redhat-logo" viewBox="0 0 256 145" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M127.047 58.746L102.092 0h-9.033l-33.01 83.754c-.936 2.316-1.875 4.167-1.875 6.02 0 4.167 3.281 6.48 7.917 6.48h7.917c5.156 0 7.917-2.313 9.792-6.94l6.25-14.583h32.995l6.25 14.583c1.875 4.627 4.635 6.94 9.792 6.94h7.917c4.636 0 7.917-2.313 7.917-6.48 0-1.853-.938-3.704-1.875-6.02zm-30.16 18.75l13.125-30.729 13.125 30.729h-26.25zm96.875-18.75L168.808 0h-9.034l-33.01 83.754c-.936 2.316-1.874 4.167-1.874 6.02 0 4.167 3.281 6.48 7.917 6.48h7.916c5.157 0 7.917-2.313 9.792-6.94l6.25-14.583h32.995l6.25 14.583c1.875 4.627 4.635 6.94 9.792 6.94h7.917c4.636 0 7.916-2.313 7.916-6.48 0-1.853-.937-3.704-1.874-6.02zm-30.16 18.75l13.124-30.729 13.125 30.729h-26.25z" fill="#ee0000"/>
+                    </svg>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">The routing engine is the brain of inference traffic. Red Hat hardens it with FIPS compliance, 24/7 support, and certified multi-platform builds.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">FIPS 140-2 compliance, CVE patching within defined SLAs, container image signing</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">24/7 enterprise support with defined SLAs and escalation paths</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Validated on x86, ARM, POWER; tested with NVIDIA, AMD, Intel GPUs</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Predictable release cadence, long-term support, backwards compatibility</div></div>
+                <div class="header-title">
+                    <h1>llm-d to Red Hat AI Inference Server</h1>
+                    <p class="header-subtitle">Content Hub #20 • Understanding the Upstream to Enterprise Journey</p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. vLLM -->
-        <div class="component-card upstream-card" data-pair="2">
-          <span class="card-icon">&#9889;</span>
-          <div class="card-title">vLLM</div>
-          <div class="card-subtitle">High-throughput LLM inference engine with PagedAttention</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same vLLM API surface. <code>/v1/completions</code> and <code>/v1/chat/completions</code> endpoints are identical. Same model loading, same CUDA kernels.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">OpenAI-compatible REST API — identical endpoint signatures</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Runtime</div><div class="detail-cat-text">Same PagedAttention, continuous batching, speculative decoding</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Models</div><div class="detail-cat-text">Same model format support (safetensors, GGUF, etc.)</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Metrics</div><div class="detail-cat-text">Identical Prometheus metric names and label conventions</div></div>
+                <div class="author">
+                    <strong>Markell Rawls</strong><br>
+                    AI Evangelist
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Red Hat builds, tests, and certifies vLLM across GPU vendors and platforms — so you get the same engine, enterprise-hardened.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Signed container images, FIPS-validated crypto libraries, CVE response SLA</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat backed support for production vLLM deployments</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">GPU vendor certification matrix — NVIDIA A100/H100, AMD MI300, Intel Gaudi</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Pre-integrated with OpenShift AI model serving, registry, and pipelines</div></div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <div class="nav-links">
+                <a href="#journey">Journey Map</a>
+                <a href="#features">Feature Parity</a>
+                <a href="#comparison">What You Get</a>
+                <a href="#deployment">Deployment</a>
+                <a href="#certification">Certification</a>
+                <a href="#migration">Migration</a>
+                <a href="#timeline">Timeline</a>
+                <a href="#support">Support Tiers</a>
+                <a href="#roi">ROI Calculator</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="journey" class="animate-on-scroll">
+        <div class="container">
+            <h2>Upstream to Enterprise Journey</h2>
+            <p class="subtitle">How llm-d innovations flow from open source to Red Hat AI Inference Server</p>
+
+            <div class="journey-map">
+                <div class="journey-stages">
+                    <div class="journey-path">
+                        <div class="journey-particle"></div>
+                        <div class="journey-particle"></div>
+                        <div class="journey-particle"></div>
+                        <div class="journey-particle"></div>
+                    </div>
+
+                    <div class="journey-stage" data-stage="1">
+                        <div class="stage-number">1</div>
+                        <div class="stage-title">llm-d GitHub</div>
+                        <div class="stage-desc">Open source innovation</div>
+                        <div class="stage-details">
+                            <ul>
+                                <li>Community-driven development</li>
+                                <li>Rapid feature iteration</li>
+                                <li>Public roadmap and issues</li>
+                                <li>Apache 2.0 license</li>
+                                <li>Weekly releases</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="journey-stage" data-stage="2">
+                        <div class="stage-number">2</div>
+                        <div class="stage-title">Testing & Certification</div>
+                        <div class="stage-desc">Enterprise validation</div>
+                        <div class="stage-details">
+                            <ul>
+                                <li>GPU compatibility testing</li>
+                                <li>Performance benchmarking</li>
+                                <li>Security scanning (CVE, FIPS)</li>
+                                <li>Integration testing</li>
+                                <li>Documentation review</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="journey-stage" data-stage="3">
+                        <div class="stage-number">3</div>
+                        <div class="stage-title">Red Hat AI</div>
+                        <div class="stage-desc">Hardened release</div>
+                        <div class="stage-details">
+                            <ul>
+                                <li>Signed container images</li>
+                                <li>Backported security patches</li>
+                                <li>Multi-architecture builds</li>
+                                <li>Operator packaging</li>
+                                <li>Support lifecycle begins</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="journey-stage" data-stage="4">
+                        <div class="stage-number">4</div>
+                        <div class="stage-title">Customer Deployment</div>
+                        <div class="stage-desc">Production ready</div>
+                        <div class="stage-details">
+                            <ul>
+                                <li>SLA-backed support</li>
+                                <li>Production monitoring</li>
+                                <li>Compliance certification</li>
+                                <li>Upgrade planning</li>
+                                <li>Technical account management</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- 3. Gateway API -->
-        <div class="component-card upstream-card" data-pair="3">
-          <span class="card-icon">&#128268;</span>
-          <div class="card-title">Gateway API</div>
-          <div class="card-subtitle">Kubernetes-native API gateway for inference traffic</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Standard K8s Gateway API resources (<code>Gateway</code>, <code>HTTPRoute</code>, <code>InferencePool</code>) map directly to OpenShift Service Mesh config.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">Same Gateway API CRDs — <code>HTTPRoute</code>, <code>GRPCRoute</code></div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">TLS</div><div class="detail-cat-text">Same cert-manager integration patterns</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Routing</div><div class="detail-cat-text">Same header-based, path-based routing rules</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Backends</div><div class="detail-cat-text">InferencePool/InferenceModel CRDs supported natively</div></div>
+    <section id="features" class="animate-on-scroll">
+        <div class="container">
+            <h2>Feature Parity Tracker</h2>
+            <p class="subtitle">Track llm-d features across Red Hat AI Inference Server versions</p>
+
+            <div class="feature-controls">
+                <input type="text" id="feature-search" class="search-input" placeholder="Search features...">
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="all">All</button>
+                    <button class="category-btn" data-category="routing">Routing</button>
+                    <button class="category-btn" data-category="inference">Inference</button>
+                    <button class="category-btn" data-category="deployment">Deployment</button>
+                    <button class="category-btn" data-category="monitoring">Monitoring</button>
+                    <button class="category-btn" data-category="security">Security</button>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">OpenShift Service Mesh provides mTLS, traffic management, and observability out of the box — no assembly required.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Automatic mTLS between services, policy-driven access control</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat-supported Istio-based service mesh with upgrade paths</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Validated with OpenShift networking stack across platforms</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Native OpenShift Routes, integrated with cluster monitoring</div></div>
+            </div>
+
+            <div class="feature-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Category</th>
+                            <th>Red Hat AI 3.0</th>
+                            <th>Red Hat AI 3.3</th>
+                            <th>Red Hat AI 3.4</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feature-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="comparison" class="animate-on-scroll">
+        <div class="container">
+            <h2>What You Get: Upstream vs Enterprise</h2>
+            <p class="subtitle">Compare llm-d open source with Red Hat AI Inference Server across key dimensions</p>
+
+            <div class="comparison-tabs">
+                <button class="comparison-tab active" data-tab="support">Support</button>
+                <button class="comparison-tab" data-tab="certification">Certification</button>
+                <button class="comparison-tab" data-tab="security">Security</button>
+                <button class="comparison-tab" data-tab="integration">Integration</button>
+                <button class="comparison-tab" data-tab="documentation">Documentation</button>
+                <button class="comparison-tab" data-tab="training">Training</button>
+            </div>
+
+            <div id="comparison-content-container">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section id="deployment" class="animate-on-scroll">
+        <div class="container">
+            <h2>Deployment Comparison</h2>
+            <p class="subtitle">Deploy Granite 3.3 8B on upstream llm-d vs Red Hat AI Inference Server</p>
+
+            <div class="deployment-header">
+                <h3>Granite 3.3 8B Deployment</h3>
+                <div class="deployment-toggle">
+                    <span>Show Enterprise Features</span>
+                    <div class="toggle-switch" id="enterprise-toggle">
+                        <div class="toggle-slider"></div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- 4. Prometheus metrics -->
-        <div class="component-card upstream-card" data-pair="4">
-          <span class="card-icon">&#128200;</span>
-          <div class="card-title">Prometheus Metrics</div>
-          <div class="card-subtitle">Standard metrics for request latency, throughput, and queue depth</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same Prometheus endpoint format, same metric names. <code>vllm:request_latency_seconds</code>, <code>vllm:num_requests_running</code> — all carry over.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Endpoints</div><div class="detail-cat-text">Same <code>/metrics</code> endpoint, same scrape config patterns</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Labels</div><div class="detail-cat-text">Identical label taxonomy for model, endpoint, status</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Dashboards</div><div class="detail-cat-text">Community Grafana dashboards work with both</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Alerts</div><div class="detail-cat-text">Same PromQL alert expressions, same recording rules</div></div>
+            <div class="split-screen">
+                <div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">llm-d (Upstream)</span>
+                            <span class="code-lang">YAML</span>
+                        </div>
+                        <div class="code-content">
+<span class="code-line"><span class="property">apiVersion</span>: <span class="string">llm-d.ai/v1</span></span>
+<span class="code-line"><span class="property">kind</span>: <span class="string">Model</span></span>
+<span class="code-line"><span class="property">metadata</span>:</span>
+<span class="code-line">  <span class="property">name</span>: <span class="string">granite-8b</span></span>
+<span class="code-line"><span class="property">spec</span>:</span>
+<span class="code-line">  <span class="property">model</span>: <span class="string">ibm/granite-3.3-8b-instruct</span></span>
+<span class="code-line">  <span class="property">replicas</span>: <span class="number">2</span></span>
+<span class="code-line">  <span class="property">resources</span>:</span>
+<span class="code-line">    <span class="property">gpu</span>: <span class="number">1</span></span>
+<span class="code-line">  <span class="property">routing</span>:</span>
+<span class="code-line">    <span class="property">strategy</span>: <span class="string">kv-cache-aware</span></span>
+<span class="code-line">  <span class="property">inference</span>:</span>
+<span class="code-line">    <span class="property">maxBatchSize</span>: <span class="number">128</span></span>
+<span class="code-line">    <span class="property">tensorParallel</span>: <span class="number">1</span></span>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">OpenShift Monitoring gives you production-grade Prometheus with persistent storage, HA, and user workload isolation built in.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">RBAC-controlled metric access, audit logging for queries</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat maintains the full monitoring stack — Prometheus, Alertmanager, Grafana</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Managed upgrades, persistent storage, HA out of the box</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">User Workload Monitoring auto-discovers ServiceMonitors</div></div>
+
+                <div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Red Hat AI Inference Server</span>
+                            <span class="code-lang">YAML</span>
+                        </div>
+                        <div class="code-content">
+<span class="code-line"><span class="property">apiVersion</span>: <span class="string">ai.redhat.com/v1</span></span>
+<span class="code-line"><span class="property">kind</span>: <span class="string">LLMInferenceService</span></span>
+<span class="code-line"><span class="property">metadata</span>:</span>
+<span class="code-line">  <span class="property">name</span>: <span class="string">granite-8b</span></span>
+<div class="code-annotation enterprise-feature">
+    <strong>Enterprise CRD:</strong> Custom Resource Definition managed by Red Hat AI Operator
+</div>
+<span class="code-line"><span class="property">spec</span>:</span>
+<span class="code-line">  <span class="property">model</span>: <span class="string">ibm/granite-3.3-8b-instruct</span></span>
+<span class="code-line">  <span class="property">replicas</span>: <span class="number">2</span></span>
+<span class="code-line">  <span class="property">resources</span>:</span>
+<span class="code-line">    <span class="property">gpu</span>: <span class="number">1</span></span>
+<span class="code-line">  <span class="property">routing</span>:</span>
+<span class="code-line">    <span class="property">strategy</span>: <span class="string">kv-cache-aware</span></span>
+<span class="code-line">  <span class="property">inference</span>:</span>
+<span class="code-line">    <span class="property">maxBatchSize</span>: <span class="number">128</span></span>
+<span class="code-line">    <span class="property">tensorParallel</span>: <span class="number">1</span></span>
+<span class="code-line enterprise-only">  <span class="property">security</span>:</span>
+<div class="code-annotation enterprise-feature">
+    <strong>mTLS & RBAC:</strong> Mutual TLS encryption and role-based access control
+</div>
+<span class="code-line enterprise-only">    <span class="property">mtls</span>: <span class="string">enabled</span></span>
+<span class="code-line enterprise-only">    <span class="property">rbac</span>: <span class="string">enabled</span></span>
+<span class="code-line enterprise-only">  <span class="property">monitoring</span>:</span>
+<div class="code-annotation enterprise-feature">
+    <strong>Audit Logging:</strong> Full request/response audit trail for compliance
+</div>
+<span class="code-line enterprise-only">    <span class="property">auditLogging</span>: <span class="string">enabled</span></span>
+<span class="code-line enterprise-only">  <span class="property">image</span>:</span>
+<div class="code-annotation enterprise-feature">
+    <strong>Signed Images:</strong> Cryptographically signed and CVE-scanned container images
+</div>
+<span class="code-line enterprise-only">    <span class="property">registry</span>: <span class="string">registry.redhat.io</span></span>
+<span class="code-line enterprise-only">    <span class="property">signed</span>: <span class="keyword">true</span></span>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- 5. Helm charts -->
-        <div class="component-card upstream-card" data-pair="5">
-          <span class="card-icon">&#128230;</span>
-          <div class="card-title">Helm Charts</div>
-          <div class="card-subtitle">Community packaging for deploying llm-d on Kubernetes</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Helm values map conceptually to <code>LLMInferenceService</code> CR fields. The Operator automates Day 2 operations that Helm leaves manual.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Config</div><div class="detail-cat-text">Helm values translate to CR spec fields — similar structure</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Operator handles upgrades, rollbacks, and health reconciliation</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">CRD</div><div class="detail-cat-text"><code>LLMInferenceService</code> CR encapsulates full stack config</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Day 2</div><div class="detail-cat-text">Auto-scaling, canary rollouts, resource quotas managed by Operator</div></div>
+            <div class="support-matrix">
+                <h4>What Happens When Something Goes Wrong?</h4>
+                <div class="support-grid">
+                    <div class="support-item">
+                        <strong>llm-d (Upstream)</strong>
+                        <span>GitHub issues, community forums, self-troubleshooting, no SLA</span>
+                    </div>
+                    <div class="support-item">
+                        <strong>Red Hat AI Standard</strong>
+                        <span>Business hours support, 4hr Sev-1 response, knowledge base, dedicated TAM</span>
+                    </div>
+                    <div class="support-item">
+                        <strong>Red Hat AI Premium</strong>
+                        <span>24/7 support, 1hr Sev-1 response, proactive monitoring, architecture reviews</span>
+                    </div>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">The Operator replaces manual Helm workflows with declarative, self-healing infrastructure. One CR deploys the entire inference stack.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Operator-managed RBAC, secrets rotation, network policies</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat-supported Operator with certified OLM lifecycle</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Operator SDK-based testing, e2e on multiple OpenShift versions</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">OperatorHub discovery, OLM-managed upgrades, OpenShift console UI</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="certification" class="animate-on-scroll">
+        <div class="container">
+            <h2>Certification Matrix</h2>
+            <p class="subtitle">Red Hat-certified GPU + Model + Feature combinations</p>
+
+            <div class="cert-matrix">
+                <div class="cert-table">
+                    <table id="cert-matrix-table">
+                        <!-- Populated by JavaScript -->
+                    </table>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- 6. Community support -->
-        <div class="component-card upstream-card" data-pair="6">
-          <span class="card-icon">&#128101;</span>
-          <div class="card-title">Community Support</div>
-          <div class="card-subtitle">GitHub issues, Slack channels, community forums</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Community channels remain active. Red Hat engineers contribute upstream and triage issues in both community and enterprise contexts.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Upstream</div><div class="detail-cat-text">GitHub issues, PRs, and discussions remain the source of truth</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Triage</div><div class="detail-cat-text">Red Hat engineers participate in upstream issue triage</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Docs</div><div class="detail-cat-text">Community docs + Red Hat product docs, both maintained</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Contrib</div><div class="detail-cat-text">Upstream-first development model — fixes go upstream then downstream</div></div>
+            <div class="cert-legend">
+                <div class="legend-item">
+                    <span class="cert-indicator cert-check">✓</span>
+                    <span>Fully Certified</span>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Enterprise support means SLA-backed response times, dedicated TAMs, and a clear escalation path — not waiting on a GitHub issue.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">24/7 enterprise support, Sev-1 response within 1 hour, dedicated TAM available</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Proactive CVE notification, embargo access for critical fixes</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Defined upgrade paths, backport policies, deprecation notices</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Training</div><div class="detail-cat-text">Red Hat Training courses, certification paths, partner enablement</div></div>
+                <div class="legend-item">
+                    <span class="cert-indicator cert-partial">◐</span>
+                    <span>Partial Support</span>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 7. CNCF governance -->
-        <div class="component-card upstream-card" data-pair="7">
-          <span class="card-icon">&#127963;</span>
-          <div class="card-title">CNCF Governance</div>
-          <div class="card-subtitle">Open governance, vendor-neutral project stewardship</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">CNCF Sandbox project with open governance. Red Hat participates as a contributor and maintains downstream conformance with upstream APIs.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Governance</div><div class="detail-cat-text">Open design docs, public roadmap, community-driven prioritization</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Conformance</div><div class="detail-cat-text">Enterprise product tracks upstream API compatibility</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Contrib</div><div class="detail-cat-text">Red Hat engineers on maintainer/reviewer teams</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">License</div><div class="detail-cat-text">Apache 2.0 — same license upstream and in the enterprise product</div></div>
+                <div class="legend-item">
+                    <span class="cert-indicator cert-cross">✗</span>
+                    <span>Not Supported</span>
                 </div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Red Hat adds product lifecycle guarantees on top of open governance — RHEL certification, FIPS, CVE patching, and predictable releases.</div>
-                <div class="detail-categories">
-                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Predictable GA cadence, extended update support, clear EOL policy</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">FIPS 140-2 compliance, RHEL certification, container image signing</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Multi-platform CI (x86_64, aarch64, ppc64le, s390x)</div></div>
-                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Part of Red Hat AI portfolio — model registry, pipelines, notebooks, monitoring</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="migration" class="animate-on-scroll">
+        <div class="container">
+            <h2>Migration Wizard</h2>
+            <p class="subtitle">I'm currently using...</p>
+
+            <div class="wizard-selector">
+                <div class="wizard-option" data-wizard="vllm">
+                    <h4>vLLM</h4>
+                    <p>Open source inference</p>
                 </div>
-              </div>
+                <div class="wizard-option" data-wizard="tensorrt">
+                    <h4>TensorRT-LLM</h4>
+                    <p>NVIDIA optimized</p>
+                </div>
+                <div class="wizard-option" data-wizard="triton">
+                    <h4>Triton</h4>
+                    <p>Multi-framework server</p>
+                </div>
+                <div class="wizard-option" data-wizard="custom">
+                    <h4>Custom Solution</h4>
+                    <p>Home-grown stack</p>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- SVG Connector Lines -->
-      <div class="svg-lines" id="svgContainer">
-        <svg id="connectorSvg" width="120" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#9b4d9b"/>
-              <stop offset="100%" stop-color="#ee0000"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-
-      <!-- Right Column: Enterprise -->
-      <div class="column-right">
-        <div class="column-header enterprise">Enterprise (Red Hat AI Inference Server)</div>
-
-        <!-- 1. Routing Engine -->
-        <div class="component-card enterprise-card" data-pair="1">
-          <span class="card-icon">&#9881;</span>
-          <div class="card-title">RHAIS Routing Engine</div>
-          <div class="card-subtitle">Enterprise-hardened endpoint picker with FIPS-validated builds</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same Ext-Proc gRPC interface. Drop-in compatible with upstream EPP configurations. Added: certified multi-arch builds.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Enterprise routing with guaranteed uptime, certified security, and Red Hat subscription support backing every deployment.</div>
-              </div>
+            <div id="wizard-content-container">
+                <!-- Populated by JavaScript -->
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- 2. RHAIS (vLLM-based) -->
-        <div class="component-card enterprise-card" data-pair="2">
-          <span class="card-icon">&#9889;</span>
-          <div class="card-title">RHAIS (vLLM-based)</div>
-          <div class="card-subtitle">Certified vLLM runtime with multi-GPU vendor support</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same vLLM core. <code>/v1/completions</code> just works. Added: certified GPU drivers, multi-arch images, RHEL UBI base.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Production-grade inference engine backed by Red Hat support, GPU vendor partnerships, and enterprise security certifications.</div>
-              </div>
+    <section id="timeline" class="animate-on-scroll">
+        <div class="container">
+            <h2>Release Timeline</h2>
+            <p class="subtitle">Upstream llm-d releases flow downstream to Red Hat AI Inference Server</p>
+
+            <div class="timeline-container">
+                <div class="timeline">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-items">
+                        <div class="timeline-item">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-upstream">
+                                    <div class="timeline-version">llm-d 0.1.0</div>
+                                    <div class="timeline-date">January 2025</div>
+                                </div>
+                                <div class="timeline-downstream">
+                                    <div class="timeline-version">Red Hat AI 3.0</div>
+                                    <div class="timeline-date">February 2025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-upstream">
+                                    <div class="timeline-version">llm-d 0.2.0</div>
+                                    <div class="timeline-date">March 2025</div>
+                                </div>
+                                <div class="timeline-downstream">
+                                    <div class="timeline-version">Red Hat AI 3.3</div>
+                                    <div class="timeline-date">April 2025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-upstream">
+                                    <div class="timeline-version">llm-d 0.3.0</div>
+                                    <div class="timeline-date">May 2025</div>
+                                </div>
+                                <div class="timeline-downstream">
+                                    <div class="timeline-version">Red Hat AI 3.4</div>
+                                    <div class="timeline-date">June 2025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-upstream">
+                                    <div class="timeline-version">llm-d 0.4.0</div>
+                                    <div class="timeline-date">August 2025</div>
+                                </div>
+                                <div class="timeline-downstream">
+                                    <div class="timeline-version">Red Hat AI 3.5</div>
+                                    <div class="timeline-date">Planned</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- 3. OpenShift Service Mesh -->
-        <div class="component-card enterprise-card" data-pair="3">
-          <span class="card-icon">&#128268;</span>
-          <div class="card-title">OpenShift Service Mesh / Routes</div>
-          <div class="card-subtitle">Managed Istio-based mesh with native OpenShift routing</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same Gateway API CRDs plus OpenShift-native Routes. Automatic mTLS, traffic policies, and Kiali dashboard included.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Zero-config mutual TLS, traffic management, and observability — integrated into the OpenShift platform you already run.</div>
-              </div>
+    <section id="support" class="animate-on-scroll">
+        <div class="container">
+            <h2>Support Tier Visualization</h2>
+            <p class="subtitle">Choose the support level that matches your production requirements</p>
+
+            <div class="tier-cards">
+                <div class="tier-card tier-self">
+                    <div class="tier-header">
+                        <div class="tier-name">Self-Support</div>
+                        <div class="tier-price">Free</div>
+                    </div>
+                    <ul class="tier-features">
+                        <li>Community forums</li>
+                        <li>GitHub issues</li>
+                        <li>No SLA</li>
+                        <li>Self-troubleshooting</li>
+                    </ul>
+                    <div class="tier-highlight">
+                        Great for: Development, experimentation, non-production workloads
+                    </div>
+                </div>
+
+                <div class="tier-card tier-standard">
+                    <div class="tier-header">
+                        <div class="tier-name">Standard</div>
+                        <div class="tier-price">Contact Sales</div>
+                    </div>
+                    <ul class="tier-features">
+                        <li>Business hours support</li>
+                        <li>4hr Sev-1 response</li>
+                        <li>Knowledge base access</li>
+                        <li>1 Technical Account Manager</li>
+                        <li>Quarterly reviews</li>
+                    </ul>
+                    <div class="tier-highlight">
+                        Great for: Production workloads, predictable business hours operations
+                    </div>
+                </div>
+
+                <div class="tier-card tier-premium">
+                    <div class="tier-header">
+                        <div class="tier-name">Premium</div>
+                        <div class="tier-price">Contact Sales</div>
+                    </div>
+                    <ul class="tier-features">
+                        <li>24/7 support</li>
+                        <li>1hr Sev-1 response</li>
+                        <li>Dedicated TAM</li>
+                        <li>Proactive monitoring</li>
+                        <li>Architecture reviews</li>
+                        <li>Direct engineering escalation</li>
+                    </ul>
+                    <div class="tier-highlight">
+                        Great for: Mission-critical AI infrastructure, global operations, compliance requirements
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- 4. OpenShift Monitoring -->
-        <div class="component-card enterprise-card" data-pair="4">
-          <span class="card-icon">&#128200;</span>
-          <div class="card-title">OpenShift Monitoring</div>
-          <div class="card-subtitle">User Workload Monitoring with persistent storage and HA</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same Prometheus metrics, auto-discovered via <code>ServiceMonitor</code> CRDs. Pre-built dashboards and alerts for inference workloads.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Fully managed monitoring stack — persistent storage, high availability, RBAC-controlled access, and platform-integrated alerting.</div>
-              </div>
+    <section id="roi" class="animate-on-scroll">
+        <div class="container">
+            <h2>ROI Calculator</h2>
+            <p class="subtitle">Calculate the value of Red Hat AI support for your infrastructure</p>
+
+            <div class="calculator">
+                <div class="calculator-inputs">
+                    <div class="input-group">
+                        <label>Number of GPU Nodes</label>
+                        <input type="range" id="gpu-nodes" min="1" max="100" value="10">
+                        <div class="input-value">
+                            <span>GPU Nodes:</span>
+                            <span id="gpu-nodes-value">10</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Average Engineer Salary</label>
+                        <input type="range" id="salary" min="100000" max="250000" step="10000" value="150000">
+                        <div class="input-value">
+                            <span>Salary:</span>
+                            <span id="salary-value">$150,000</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Incidents per Month</label>
+                        <input type="range" id="incidents" min="0" max="10" value="3">
+                        <div class="input-value">
+                            <span>Incidents:</span>
+                            <span id="incidents-value">3</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Hours per Incident</label>
+                        <input type="range" id="hours-per-incident" min="2" max="40" value="12">
+                        <div class="input-value">
+                            <span>Hours:</span>
+                            <span id="hours-value">12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-results">
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-label">Annual Self-Managed Cost</div>
+                            <div class="result-value" id="self-managed-cost">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Annual with Red Hat Support</div>
+                            <div class="result-value" id="redhat-cost">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Net Annual Savings</div>
+                            <div class="result-value positive" id="net-savings">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Time-to-Resolution Improvement</div>
+                            <div class="result-value positive" id="time-improvement">0%</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- 5. Operator / CR -->
-        <div class="component-card enterprise-card" data-pair="5">
-          <span class="card-icon">&#128230;</span>
-          <div class="card-title">Operator / LLMInferenceService CR</div>
-          <div class="card-subtitle">Declarative, self-healing inference stack management</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">One CR replaces multiple Helm releases. The Operator handles scaling, upgrades, and health reconciliation automatically.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Deploy, scale, and upgrade your entire inference stack with a single declarative resource — the Operator handles the rest.</div>
-              </div>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="blog/">Companion Blog Post</a>
+                    <a href="https://markellr-redhat.github.io/llm-d-content-hub/">llm-d Content Hub</a>
+                    <a href="https://llm-d.ai">llm-d.ai</a>
+                    <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai">Red Hat OpenShift AI</a>
+                </div>
+                <div class="footer-credit">
+                    Created by Markell Rawls • Content Hub #20 • June 2026
+                </div>
             </div>
-          </div>
         </div>
+    </footer>
 
-        <!-- 6. Red Hat subscription support -->
-        <div class="component-card enterprise-card" data-pair="6">
-          <span class="card-icon">&#128101;</span>
-          <div class="card-title">Red Hat Subscription Support</div>
-          <div class="card-subtitle">24/7 SLA-backed support with dedicated TAMs</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Access to Red Hat support portal, knowledge base, and engineering escalation for production inference issues.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">SLA-backed response times (Sev-1 in 1hr), dedicated Technical Account Managers, and proactive security advisories.</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <script>
+        // Journey Map Interactivity
+        document.querySelectorAll('.journey-stage').forEach(stage => {
+            stage.addEventListener('click', function() {
+                document.querySelectorAll('.journey-stage').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
-        <!-- 7. Product lifecycle -->
-        <div class="component-card enterprise-card" data-pair="7">
-          <span class="card-icon">&#127963;</span>
-          <div class="card-title">Red Hat Product Lifecycle</div>
-          <div class="card-subtitle">RHEL certification, FIPS, CVE patching, predictable releases</div>
-          <span class="card-arrow-hint">click to expand</span>
-          <div class="detail-panel">
-            <div class="detail-content">
-              <div class="view-dev">
-                <div class="view-note dev-note">Same Apache 2.0 code, plus RHEL-certified builds, FIPS-validated crypto, and multi-platform CI across 4 architectures.</div>
-              </div>
-              <div class="view-dm">
-                <div class="view-note dm-note">Predictable release cadence, long-term support, backwards compatibility guarantees, and integration into the full Red Hat AI portfolio.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        // Feature Parity Data
+        const features = [
+            { name: 'KV-cache aware routing', category: 'routing', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'PagedAttention', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Speculative decoding', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete' },
+            { name: 'Prefix caching', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete' },
+            { name: 'Multi-model serving', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'LoRA adapter hot-swap', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete' },
+            { name: 'Tensor parallelism', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Pipeline parallelism', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete' },
+            { name: 'Automatic scaling', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Prometheus metrics', category: 'monitoring', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Distributed KV-cache', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete' },
+            { name: 'FIPS 140-2 compliance', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Signed container images', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'CVE SLA patching', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Multi-arch builds (x86/ARM/POWER)', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete' },
+            { name: 'GPU certification matrix', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete' },
+            { name: 'mTLS enforcement', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Audit logging', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'RBAC integration', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'LLMInferenceService CR', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Operator lifecycle management', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
+            { name: 'Canary deployments', category: 'deployment', v30: 'planned', v33: 'partial', v34: 'complete' },
+            { name: 'Blue-green rollouts', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete' },
+        ];
 
-<!-- ── Timeline ── -->
-<section class="timeline-section">
-  <div class="container">
-    <div class="section-heading">
-      <h2>The Journey: Community to Enterprise</h2>
-      <p>How open-source innovation becomes production-ready infrastructure</p>
-      <div class="gradient-divider"></div>
-    </div>
+        function renderFeatureTable(filteredFeatures = features) {
+            const tbody = document.getElementById('feature-table-body');
+            tbody.innerHTML = '';
 
-    <div class="timeline-track">
-      <div class="timeline-step" data-observe>
-        <div class="timeline-dot"></div>
-        <div class="timeline-label">Community Contribution</div>
-        <div class="timeline-desc">Open-source development on GitHub with community-driven features and fixes</div>
-      </div>
-      <div class="timeline-step" data-observe>
-        <div class="timeline-dot"></div>
-        <div class="timeline-label">CNCF Sandbox</div>
-        <div class="timeline-desc">Vendor-neutral governance, growing ecosystem adoption, conformance testing</div>
-      </div>
-      <div class="timeline-step" data-observe>
-        <div class="timeline-dot"></div>
-        <div class="timeline-label">Red Hat Integration</div>
-        <div class="timeline-desc">Hardening, multi-platform testing, OpenShift AI integration, FIPS certification</div>
-      </div>
-      <div class="timeline-step" data-observe>
-        <div class="timeline-dot"></div>
-        <div class="timeline-label">Enterprise GA</div>
-        <div class="timeline-desc">Red Hat AI 3 with RHAIS — production-ready, supported, certified</div>
-      </div>
-    </div>
-  </div>
-</section>
+            filteredFeatures.forEach(feature => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${feature.name}</strong></td>
+                    <td><span class="category-tag">${feature.category}</span></td>
+                    <td><span class="status-badge ${feature.v30}">${getStatusText(feature.v30)}</span></td>
+                    <td><span class="status-badge ${feature.v33}">${getStatusText(feature.v33)}</span></td>
+                    <td><span class="status-badge ${feature.v34}">${getStatusText(feature.v34)}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
-<!-- ── Footer ── -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-attribution">Markell Rawls &middot; Developer Advocate &middot; Red Hat</div>
-    <div class="footer-links">
-      <a href="blog/">Read the companion blog post &rarr;</a>
-      <a href="https://markellr-redhat.github.io/llm-d-content-hub/" target="_blank" rel="noopener">llm-d Content Hub</a>
-    </div>
-  </div>
-</footer>
+        function getStatusText(status) {
+            const map = { complete: 'Complete', partial: 'Partial', planned: 'Planned' };
+            return map[status] || status;
+        }
 
-<script>
-(function() {
-  'use strict';
+        // Feature search
+        document.getElementById('feature-search').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const activeCategory = document.querySelector('.category-btn.active').dataset.category;
 
-  // ── View Toggle ──
-  const toggleBtns = document.querySelectorAll('.toggle-btn');
-  toggleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      toggleBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const view = btn.dataset.view;
-      document.body.className = view + '-view';
-      // Close all open panels when switching views
-      document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
-    });
-  });
+            let filtered = features.filter(f =>
+                f.name.toLowerCase().includes(query) &&
+                (activeCategory === 'all' || f.category === activeCategory)
+            );
 
-  // ── Click to Expand Detail Panels ──
-  document.querySelectorAll('.component-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      const panel = card.querySelector('.detail-panel');
-      if (!panel) return;
-      const isOpen = panel.classList.contains('open');
+            renderFeatureTable(filtered);
+        });
 
-      // Close all panels first
-      document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+        // Category filters
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
 
-      if (!isOpen) {
-        panel.classList.add('open');
-      }
+                const category = this.dataset.category;
+                const searchQuery = document.getElementById('feature-search').value.toLowerCase();
 
-      // Recalculate SVG lines after panel open/close animation
-      setTimeout(drawConnectors, 350);
-    });
-  });
+                let filtered = features.filter(f =>
+                    (category === 'all' || f.category === category) &&
+                    f.name.toLowerCase().includes(searchQuery)
+                );
 
-  // ── Hover Highlight ──
-  document.querySelectorAll('.component-card').forEach(card => {
-    const pairId = card.dataset.pair;
-    if (!pairId) return;
+                renderFeatureTable(filtered);
+            });
+        });
 
-    card.addEventListener('mouseenter', () => {
-      // Highlight paired cards
-      document.querySelectorAll(`.component-card[data-pair="${pairId}"]`).forEach(c => {
-        c.classList.add('highlighted');
-      });
-      // Activate connector line
-      const line = document.getElementById('line-' + pairId);
-      if (line) line.classList.add('active');
-    });
+        // Initial render
+        renderFeatureTable();
 
-    card.addEventListener('mouseleave', () => {
-      document.querySelectorAll(`.component-card[data-pair="${pairId}"]`).forEach(c => {
-        c.classList.remove('highlighted');
-      });
-      const line = document.getElementById('line-' + pairId);
-      if (line) line.classList.remove('active');
-    });
-  });
-
-  // ── Draw SVG Connector Lines ──
-  function drawConnectors() {
-    const svg = document.getElementById('connectorSvg');
-    const svgContainer = document.getElementById('svgContainer');
-    if (!svg || !svgContainer) return;
-
-    // Only draw on non-mobile
-    if (window.innerWidth <= 768) return;
-
-    // Clear existing lines (preserve defs)
-    const defs = svg.querySelector('defs');
-    svg.innerHTML = '';
-    svg.appendChild(defs);
-
-    const containerRect = svgContainer.getBoundingClientRect();
-    const svgWidth = containerRect.width;
-
-    // Set SVG height to match container
-    const mapColumns = document.querySelector('.map-columns');
-    if (mapColumns) {
-      const mapRect = mapColumns.getBoundingClientRect();
-      svg.setAttribute('height', mapRect.height);
-      svg.setAttribute('width', svgWidth);
-    }
-
-    for (let i = 1; i <= 7; i++) {
-      const leftCards = document.querySelectorAll(`.column-left .component-card[data-pair="${i}"]`);
-      const rightCards = document.querySelectorAll(`.column-right .component-card[data-pair="${i}"]`);
-
-      if (leftCards.length === 0 || rightCards.length === 0) continue;
-
-      const leftCard = leftCards[0];
-      const rightCard = rightCards[0];
-
-      const leftRect = leftCard.getBoundingClientRect();
-      const rightRect = rightCard.getBoundingClientRect();
-
-      // Calculate Y positions relative to SVG container
-      const y1 = leftRect.top + leftRect.height / 2 - containerRect.top;
-      const y2 = rightRect.top + rightRect.height / 2 - containerRect.top;
-
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      const x1 = 0;
-      const x2 = svgWidth;
-      const cx1 = svgWidth * 0.4;
-      const cx2 = svgWidth * 0.6;
-
-      path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`);
-      path.setAttribute('class', 'connector-line');
-      path.setAttribute('id', 'line-' + i);
-      svg.appendChild(path);
-    }
-  }
-
-  // Debounced resize handler
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(drawConnectors, 150);
-  });
-
-  // ── Scroll Animations ──
-  const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -40px 0px'
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-      if (entry.isIntersecting) {
-        // Stagger animations
-        const delay = Array.from(entry.target.parentElement.children).indexOf(entry.target) * 80;
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, delay);
-        observer.unobserve(entry.target);
-
-        // Redraw connectors after cards animate in
-        setTimeout(drawConnectors, delay + 400);
-      }
-    });
-  }, observerOptions);
-
-  document.querySelectorAll('.component-card').forEach(card => {
-    observer.observe(card);
-  });
-
-  // Timeline step observer
-  const timelineObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const steps = document.querySelectorAll('.timeline-step');
-        const idx = Array.from(steps).indexOf(entry.target);
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, idx * 200);
-        timelineObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-
-  document.querySelectorAll('.timeline-step').forEach(step => {
-    timelineObserver.observe(step);
-  });
-
-  // ── Stat Counter Animation ──
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const target = parseInt(el.dataset.target, 10);
-        let current = 0;
-        const increment = () => {
-          if (current < target) {
-            current++;
-            el.textContent = current;
-            setTimeout(increment, 120);
-          }
+        // Comparison Tool
+        const comparisonData = {
+            support: {
+                llmd: [
+                    'Community forums and GitHub issues',
+                    'No SLA or response time guarantees',
+                    'Self-service troubleshooting',
+                    'Community-contributed documentation',
+                    'Best-effort bug fixes'
+                ],
+                redhat: [
+                    '24/7 enterprise support with SLA',
+                    '1-4 hour Sev-1 response times',
+                    'Dedicated Technical Account Manager',
+                    'Direct escalation to engineering',
+                    'Proactive monitoring and alerts'
+                ]
+            },
+            certification: {
+                llmd: [
+                    'Community-tested GPU support',
+                    'No formal certification process',
+                    'YMMV with hardware compatibility',
+                    'Limited validation of edge cases',
+                    'No guaranteed upgrade paths'
+                ],
+                redhat: [
+                    'Red Hat certified GPU matrix',
+                    'Formal hardware certification program',
+                    'Tested on NVIDIA, AMD, Intel GPUs',
+                    'Comprehensive integration testing',
+                    'Validated upgrade and migration paths'
+                ]
+            },
+            security: {
+                llmd: [
+                    'Community security patches',
+                    'No CVE SLA',
+                    'Unsigned container images',
+                    'FIPS support varies',
+                    'No security audit trail'
+                ],
+                redhat: [
+                    'CVE patching within 24-48 hours',
+                    'FIPS 140-2 certified builds',
+                    'Cryptographically signed images',
+                    'Full audit logging',
+                    'Compliance certifications (SOC2, ISO)'
+                ]
+            },
+            integration: {
+                llmd: [
+                    'Manual OpenShift integration',
+                    'DIY monitoring setup',
+                    'Custom RBAC implementation',
+                    'Self-managed upgrades',
+                    'Limited operator support'
+                ],
+                redhat: [
+                    'Native OpenShift integration',
+                    'Built-in Prometheus/Grafana',
+                    'OpenShift RBAC integration',
+                    'Operator-managed lifecycle',
+                    'Automated rolling updates'
+                ]
+            },
+            documentation: {
+                llmd: [
+                    'Community-maintained docs',
+                    'README and wiki-style guides',
+                    'Examples vary in quality',
+                    'No dedicated tech writers',
+                    'Limited architecture guides'
+                ],
+                redhat: [
+                    'Professional technical documentation',
+                    'Comprehensive deployment guides',
+                    'Reference architectures',
+                    'Migration playbooks',
+                    'Video training content'
+                ]
+            },
+            training: {
+                llmd: [
+                    'Self-paced learning',
+                    'Community meetups',
+                    'YouTube tutorials',
+                    'No certification program',
+                    'No formal training paths'
+                ],
+                redhat: [
+                    'Instructor-led training courses',
+                    'Hands-on labs and workshops',
+                    'Red Hat certification program',
+                    'Custom onboarding for teams',
+                    'Quarterly webinars and updates'
+                ]
+            }
         };
-        increment();
-        statObserver.unobserve(el);
-      }
-    });
-  }, { threshold: 0.5 });
 
-  document.querySelectorAll('.stat-number[data-target]').forEach(el => {
-    statObserver.observe(el);
-  });
+        function renderComparisonContent() {
+            const container = document.getElementById('comparison-content-container');
+            Object.keys(comparisonData).forEach(tab => {
+                const content = document.createElement('div');
+                content.className = 'comparison-content';
+                content.id = `tab-${tab}`;
+                if (tab === 'support') content.classList.add('active');
 
-  // ── Initial draw after page load ──
-  window.addEventListener('load', () => {
-    setTimeout(drawConnectors, 600);
-  });
+                content.innerHTML = `
+                    <div class="split-screen">
+                        <div class="comparison-side llm-d">
+                            <h3>
+                                <span>llm-d (Upstream)</span>
+                            </h3>
+                            <ul class="comparison-list cons">
+                                ${comparisonData[tab].llmd.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="comparison-side redhat">
+                            <h3>
+                                <span>Red Hat AI</span>
+                            </h3>
+                            <ul class="comparison-list">
+                                ${comparisonData[tab].redhat.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
 
-  // Also draw after a short delay for any layout shifts
-  setTimeout(drawConnectors, 1000);
-})();
-</script>
+                container.appendChild(content);
+            });
+        }
+
+        renderComparisonContent();
+
+        // Tab switching
+        document.querySelectorAll('.comparison-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.comparison-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.comparison-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`tab-${tabName}`).classList.add('active');
+            });
+        });
+
+        // Deployment Toggle
+        const toggle = document.getElementById('enterprise-toggle');
+        toggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const isActive = this.classList.contains('active');
+
+            document.querySelectorAll('.enterprise-only').forEach(el => {
+                el.style.display = isActive ? 'block' : 'none';
+            });
+
+            document.querySelectorAll('.enterprise-feature').forEach(el => {
+                el.classList.toggle('visible', isActive);
+            });
+        });
+
+        // Certification Matrix
+        const gpus = ['NVIDIA A100', 'NVIDIA H100', 'NVIDIA H200', 'AMD MI300X', 'Intel Gaudi 3'];
+        const models = ['Llama 3.1 70B', 'Llama 3.1 405B', 'Granite 3.3 8B', 'Granite 3.3 2B', 'Mistral 7B', 'DeepSeek-R1'];
+        const certFeatures = ['FP16', 'BF16', 'FP8', 'INT8', 'Tensor Parallel', 'Speculative Decoding'];
+
+        function generateCertMatrix() {
+            const table = document.getElementById('cert-matrix-table');
+            let html = '<thead><tr><th>GPU / Model</th>';
+
+            models.forEach(model => {
+                html += `<th>${model}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            gpus.forEach(gpu => {
+                html += `<tr><td>${gpu}</td>`;
+                models.forEach((model, idx) => {
+                    // Simulate certification data
+                    let status;
+                    if (gpu.includes('NVIDIA') && !model.includes('DeepSeek')) {
+                        status = '<span class="cert-indicator cert-check">✓</span>';
+                    } else if (gpu.includes('AMD') || gpu.includes('Intel')) {
+                        status = idx < 4 ? '<span class="cert-indicator cert-check">✓</span>' : '<span class="cert-indicator cert-partial">◐</span>';
+                    } else {
+                        status = '<span class="cert-indicator cert-cross">✗</span>';
+                    }
+                    html += `<td>${status}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        generateCertMatrix();
+
+        // Migration Wizard
+        const wizardData = {
+            vllm: {
+                steps: [
+                    {
+                        title: 'Review Current vLLM Configuration',
+                        description: 'Audit your existing vLLM deployment configuration, noting model paths, serving parameters, and resource allocations.'
+                    },
+                    {
+                        title: 'Install Red Hat AI Operator',
+                        description: 'Deploy the Red Hat AI Operator to your OpenShift cluster via OperatorHub. Configure namespaces and RBAC.'
+                    },
+                    {
+                        title: 'Convert to LLMInferenceService CRs',
+                        description: 'Translate vLLM configs to Red Hat AI Custom Resources. Most parameters have 1:1 mappings.'
+                    },
+                    {
+                        title: 'Deploy and Validate',
+                        description: 'Deploy models via operator, run smoke tests, validate inference quality and performance.'
+                    },
+                    {
+                        title: 'Configure Enterprise Features',
+                        description: 'Enable mTLS, RBAC, audit logging, and monitoring integrations.'
+                    }
+                ],
+                effort: 'low',
+                risk: 'low'
+            },
+            tensorrt: {
+                steps: [
+                    {
+                        title: 'Export TensorRT Engine Configs',
+                        description: 'Document your current TensorRT-LLM engine build parameters, quantization settings, and optimization profiles.'
+                    },
+                    {
+                        title: 'Evaluate Feature Parity',
+                        description: 'Identify TensorRT-specific optimizations and determine equivalents in Red Hat AI (e.g., PagedAttention, FP8).'
+                    },
+                    {
+                        title: 'Rebuild Models for Red Hat AI',
+                        description: 'Convert model formats if needed. Red Hat AI supports multiple backends including TensorRT via plugins.'
+                    },
+                    {
+                        title: 'Performance Benchmark',
+                        description: 'Run side-by-side benchmarks to ensure throughput and latency requirements are met.'
+                    },
+                    {
+                        title: 'Migrate Production Traffic',
+                        description: 'Use canary or blue-green deployment strategies to gradually shift traffic to Red Hat AI.'
+                    }
+                ],
+                effort: 'medium',
+                risk: 'medium'
+            },
+            triton: {
+                steps: [
+                    {
+                        title: 'Inventory Triton Model Repository',
+                        description: 'Catalog all models, backends, and ensemble configurations currently served by Triton.'
+                    },
+                    {
+                        title: 'Map Backends to Red Hat AI',
+                        description: 'Determine migration path for each backend (PyTorch, ONNX, TensorRT). Red Hat AI supports most via plugins.'
+                    },
+                    {
+                        title: 'Recreate Model Configs',
+                        description: 'Translate Triton model configs to Red Hat AI LLMInferenceService specs.'
+                    },
+                    {
+                        title: 'Validate Dynamic Batching',
+                        description: 'Ensure Red Hat AI batching strategies match Triton performance characteristics.'
+                    },
+                    {
+                        title: 'Deploy and Monitor',
+                        description: 'Roll out to production with comprehensive monitoring and rollback plan.'
+                    }
+                ],
+                effort: 'medium',
+                risk: 'medium'
+            },
+            custom: {
+                steps: [
+                    {
+                        title: 'Document Custom Solution Architecture',
+                        description: 'Map out your current stack: model serving framework, load balancing, monitoring, scaling logic.'
+                    },
+                    {
+                        title: 'Identify Feature Gaps',
+                        description: 'List features your custom solution provides and ensure Red Hat AI covers them (or provides better alternatives).'
+                    },
+                    {
+                        title: 'Proof of Concept Deployment',
+                        description: 'Stand up a parallel Red Hat AI deployment with a subset of production workload.'
+                    },
+                    {
+                        title: 'Data Migration and Integration',
+                        description: 'Integrate with existing logging, monitoring, and data pipelines. Configure authentication and authorization.'
+                    },
+                    {
+                        title: 'Gradual Cutover',
+                        description: 'Migrate one service at a time, validating each before proceeding. Plan for rollback at each stage.'
+                    },
+                    {
+                        title: 'Decommission Legacy Infrastructure',
+                        description: 'After successful migration, retire custom components and reallocate engineering resources.'
+                    }
+                ],
+                effort: 'high',
+                risk: 'high'
+            }
+        };
+
+        function renderWizardContent() {
+            const container = document.getElementById('wizard-content-container');
+
+            Object.keys(wizardData).forEach(wizard => {
+                const content = document.createElement('div');
+                content.className = 'wizard-content';
+                content.id = `wizard-${wizard}`;
+
+                const data = wizardData[wizard];
+                let stepsHtml = '<div class="wizard-steps">';
+
+                data.steps.forEach(step => {
+                    stepsHtml += `
+                        <div class="wizard-step">
+                            <h4>${step.title}</h4>
+                            <p>${step.description}</p>
+                        </div>
+                    `;
+                });
+
+                stepsHtml += '</div>';
+                stepsHtml += `
+                    <div class="wizard-meta">
+                        <div class="wizard-meta-item">
+                            <strong>Estimated Effort:</strong>
+                            <span class="effort-badge effort-${data.effort}">${data.effort.toUpperCase()}</span>
+                        </div>
+                        <div class="wizard-meta-item">
+                            <strong>Risk Level:</strong>
+                            <span class="risk-badge risk-${data.risk}">${data.risk.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+
+                content.innerHTML = stepsHtml;
+                container.appendChild(content);
+            });
+        }
+
+        renderWizardContent();
+
+        // Wizard selector
+        document.querySelectorAll('.wizard-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.wizard-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+
+                const wizard = this.dataset.wizard;
+                document.querySelectorAll('.wizard-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`wizard-${wizard}`).classList.add('active');
+            });
+        });
+
+        // ROI Calculator
+        const inputs = {
+            gpuNodes: document.getElementById('gpu-nodes'),
+            salary: document.getElementById('salary'),
+            incidents: document.getElementById('incidents'),
+            hoursPerIncident: document.getElementById('hours-per-incident')
+        };
+
+        const outputs = {
+            selfManaged: document.getElementById('self-managed-cost'),
+            redhat: document.getElementById('redhat-cost'),
+            netSavings: document.getElementById('net-savings'),
+            timeImprovement: document.getElementById('time-improvement')
+        };
+
+        function updateROI() {
+            const gpuNodes = parseInt(inputs.gpuNodes.value);
+            const salary = parseInt(inputs.salary.value);
+            const incidents = parseInt(inputs.incidents.value);
+            const hoursPerIncident = parseInt(inputs.hoursPerIncident.value);
+
+            // Update display values
+            document.getElementById('gpu-nodes-value').textContent = gpuNodes;
+            document.getElementById('salary-value').textContent = `$${salary.toLocaleString()}`;
+            document.getElementById('incidents-value').textContent = incidents;
+            document.getElementById('hours-value').textContent = hoursPerIncident;
+
+            // Calculate costs
+            const hourlyRate = salary / 2080; // Annual hours
+            const annualIncidentHours = incidents * hoursPerIncident * 12;
+            const incidentCost = annualIncidentHours * hourlyRate;
+
+            // Self-managed: full incident cost + opportunity cost of managing infrastructure
+            const infrastructureOverhead = gpuNodes * 20 * hourlyRate; // 20 hrs/node/year
+            const selfManagedCost = incidentCost + infrastructureOverhead;
+
+            // Red Hat: support subscription + reduced incident time
+            const supportCostPerNode = 15000; // Approximate
+            const supportSubscription = gpuNodes * supportCostPerNode;
+            const reducedIncidentTime = annualIncidentHours * 0.3; // 70% reduction
+            const reducedIncidentCost = reducedIncidentTime * hourlyRate;
+            const redhatCost = supportSubscription + reducedIncidentCost;
+
+            const netSavings = selfManagedCost - redhatCost;
+            const timeImprovement = 70; // 70% faster resolution
+
+            // Animate values
+            animateValue(outputs.selfManaged, 0, selfManagedCost, 1000, true);
+            animateValue(outputs.redhat, 0, redhatCost, 1000, true);
+            animateValue(outputs.netSavings, 0, netSavings, 1000, true);
+            animateValue(outputs.timeImprovement, 0, timeImprovement, 1000, false, '%');
+        }
+
+        function animateValue(element, start, end, duration, isCurrency = false, suffix = '') {
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const current = start + (end - start) * progress;
+
+                if (isCurrency) {
+                    element.textContent = `$${Math.round(current).toLocaleString()}`;
+                } else {
+                    element.textContent = Math.round(current) + suffix;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Attach event listeners
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateROI);
+        });
+
+        // Initial calculation
+        updateROI();
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+
+                if (target) {
+                    const offsetTop = target.offsetTop - 160; // Account for sticky header
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
