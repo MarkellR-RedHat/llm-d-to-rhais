@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>llm-d to Red Hat AI Inference Server | Content Hub #20</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230a0e17'/><text x='50' y='56' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif' font-weight='900' font-size='28' fill='%233b82f6'>llm-d</text></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -32,7 +29,7 @@
         }
 
         body {
-            font-family: 'Red Hat Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
@@ -40,7 +37,7 @@
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-weight: 700;
         }
 
@@ -340,7 +337,7 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
-            font-family: 'Red Hat Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 1rem;
         }
 
@@ -363,7 +360,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Red Hat Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.9rem;
             font-weight: 500;
         }
@@ -458,6 +455,134 @@
             color: var(--text-secondary);
         }
 
+        /* Feature Parity Enhancements */
+        .feature-enhancements {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .version-diff-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .version-diff-toggle:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .version-diff-toggle.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .feature-progress-bars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .progress-item-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: capitalize;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+            background: var(--accent-blue);
+        }
+
+        .progress-pct {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .status-badge.changed {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+            animation: highlightPulse 1.5s ease infinite;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { outline-color: var(--accent-blue); }
+            50% { outline-color: transparent; }
+        }
+
+        .enterprise-extra-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(238, 0, 0, 0.1);
+            color: var(--accent-red);
+            border: 1px solid rgba(238, 0, 0, 0.3);
+        }
+
+        .feature-tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .feature-tooltip .tooltip-text {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-blue);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            width: 280px;
+            z-index: 50;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-tooltip:hover .tooltip-text {
+            display: block;
+        }
+
         /* Comparison Tool */
         .comparison-tabs {
             display: flex;
@@ -474,7 +599,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Red Hat Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 1rem;
             font-weight: 600;
             border-bottom: 3px solid transparent;
@@ -663,7 +788,7 @@
             border-left: 3px solid var(--accent-red);
             padding: 0.5rem 1rem;
             margin: 0.5rem 0;
-            font-family: 'Red Hat Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
@@ -743,7 +868,7 @@
         }
 
         .cert-doc-title {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 1rem;
             font-weight: 700;
             color: var(--text-primary);
@@ -874,7 +999,7 @@
             background: var(--bg-elevated);
             color: var(--text-primary);
             cursor: pointer;
-            font-family: 'Red Hat Text', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s;
@@ -895,6 +1020,236 @@
             background: #2563eb;
             border-color: #2563eb;
             color: white;
+        }
+
+        /* Migration Readiness Assessment */
+        .assessment-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .assessment-progress {
+            margin-bottom: 2rem;
+        }
+
+        .assessment-progress-bar {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .assessment-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .assessment-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .assessment-category {
+            display: none;
+        }
+
+        .assessment-category.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .assessment-category-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .assessment-category-title .cat-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.9rem;
+        }
+
+        .assessment-question {
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .assessment-question-text {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .assessment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .assessment-option {
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .assessment-option:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .assessment-option.selected {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .assessment-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .assessment-results {
+            display: none;
+        }
+
+        .assessment-results.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .assessment-score-display {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--accent-blue);
+        }
+
+        .assessment-score-big {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent-blue);
+        }
+
+        .assessment-score-max {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .assessment-radar-container {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .assessment-radar-chart {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .assessment-radar-chart canvas {
+            max-width: 100%;
+        }
+
+        .assessment-category-scores {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .assessment-cat-score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .assessment-cat-score-bar {
+            width: 120px;
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .assessment-cat-score-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .assessment-rec-box {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .assessment-gaps {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .assessment-gaps h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        .gap-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .gap-item:last-child {
+            border-bottom: none;
+        }
+
+        .gap-icon {
+            color: var(--warning);
+            font-weight: 700;
+            min-width: 20px;
+        }
+
+        .gap-action {
+            color: var(--text-secondary);
         }
 
         /* Migration Wizard */
@@ -1069,7 +1424,7 @@
             margin-left: auto;
         }
 
-        /* Timeline */
+        /* Timeline (Enhanced Interactive) */
         .timeline-container {
             position: relative;
             padding: 3rem 0;
@@ -1090,6 +1445,38 @@
             transform: translateY(-50%);
         }
 
+        .timeline-particles-layer {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transform: translateY(-50%);
+            overflow: hidden;
+        }
+
+        .tl-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            top: -1px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            animation: tl-flow 6s linear infinite;
+        }
+
+        .tl-particle:nth-child(2) { animation-delay: 1.5s; }
+        .tl-particle:nth-child(3) { animation-delay: 3s; }
+        .tl-particle:nth-child(4) { animation-delay: 4.5s; }
+
+        @keyframes tl-flow {
+            0% { left: -10px; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
         .timeline-items {
             display: flex;
             justify-content: space-between;
@@ -1098,8 +1485,23 @@
         }
 
         .timeline-item {
-            width: 23%;
+            width: 18%;
             position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .timeline-item.future-item {
+            opacity: 0.5;
+        }
+
+        .timeline-item.future-item .timeline-upstream,
+        .timeline-item.future-item .timeline-downstream {
+            border-style: dashed;
         }
 
         .timeline-point {
@@ -1118,6 +1520,33 @@
             50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
         }
 
+        .timeline-your-marker {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-blue);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            display: none;
+            z-index: 10;
+        }
+
+        .timeline-your-marker:after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid var(--accent-blue);
+        }
+
         .timeline-content {
             margin-top: 2rem;
         }
@@ -1128,6 +1557,7 @@
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
+            transition: all 0.3s;
         }
 
         .timeline-downstream {
@@ -1135,6 +1565,13 @@
             border: 2px solid var(--accent-red);
             border-radius: 8px;
             padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .timeline-item.expanded .timeline-upstream,
+        .timeline-item.expanded .timeline-downstream {
+            border-width: 3px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
         }
 
         .timeline-version {
@@ -1155,6 +1592,51 @@
             color: var(--text-secondary);
         }
 
+        .timeline-detail-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0.5rem;
+        }
+
+        .timeline-item.expanded .timeline-detail-panel {
+            max-height: 600px;
+        }
+
+        .timeline-detail-panel-inner {
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .timeline-detail-panel-inner h5 {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-detail-panel-inner ul {
+            list-style: none;
+            margin-bottom: 0.75rem;
+        }
+
+        .timeline-detail-panel-inner li {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 0.2rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .timeline-detail-panel-inner li:before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
         .timeline-connector {
             position: absolute;
             top: 50%;
@@ -1163,6 +1645,58 @@
             height: 60px;
             background: var(--accent-blue);
             transform: translate(-50%, 20px);
+        }
+
+        .timeline-position-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .timeline-position-controls label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .timeline-position-controls input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-elevated);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .timeline-position-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .timeline-position-controls input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        .timeline-position-label {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            min-width: 100px;
         }
 
         /* Support Tiers */
@@ -1348,7 +1882,7 @@
         .decision-score {
             font-size: 3rem;
             font-weight: 900;
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: var(--accent-blue);
         }
 
@@ -1455,6 +1989,22 @@
             border: none;
         }
 
+        .input-group select {
+            padding: 0.6rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
         .input-value {
             display: flex;
             justify-content: space-between;
@@ -1494,7 +2044,7 @@
             font-size: 1.75rem;
             font-weight: 700;
             color: var(--accent-blue);
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .result-value.positive {
@@ -1505,7 +2055,7 @@
             color: var(--accent-red);
         }
 
-        /* 3-Year Projection Table */
+        /* Projection Table */
         .projection-table {
             width: 100%;
             margin-top: 2rem;
@@ -1635,6 +2185,183 @@
             border-radius: 3px;
         }
 
+        /* Financial Model Builder */
+        .financial-model {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .financial-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .financial-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .financial-tab:hover {
+            color: var(--accent-blue);
+        }
+
+        .financial-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .financial-panel {
+            display: none;
+        }
+
+        .financial-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .financial-input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .financial-outputs {
+            margin-top: 2rem;
+        }
+
+        .financial-comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .financial-comparison-table th {
+            background: var(--bg-dark);
+            padding: 1rem;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .financial-comparison-table th:first-child {
+            text-align: left;
+        }
+
+        .financial-comparison-table td {
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .financial-comparison-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .financial-comparison-table .highlight-row td {
+            background: rgba(59, 130, 246, 0.05);
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .breakeven-chart-container {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .breakeven-chart-container h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        .breakeven-chart-container canvas {
+            width: 100%;
+            max-height: 300px;
+        }
+
+        .sensitivity-controls {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sensitivity-controls h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        .sensitivity-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .sensitivity-slider-row label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            min-width: 220px;
+        }
+
+        .sensitivity-slider-row input[type="range"] {
+            flex: 1;
+            min-width: 200px;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-dark);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .sensitivity-slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .sensitivity-slider-row input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        .npv-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border: 2px solid var(--accent-blue);
+            margin-bottom: 2rem;
+        }
+
         /* Assumptions */
         .assumptions-toggle {
             margin-top: 1.5rem;
@@ -1732,6 +2459,10 @@
             .bar {
                 width: 35px;
             }
+
+            .assessment-options {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1788,6 +2519,10 @@
                 display: none;
             }
 
+            .timeline-particles-layer {
+                display: none;
+            }
+
             section h2 {
                 font-size: 1.75rem;
             }
@@ -1825,6 +2560,19 @@
             .deployment-header {
                 flex-direction: column;
                 gap: 1rem;
+            }
+
+            .assessment-radar-container {
+                flex-direction: column;
+            }
+
+            .sensitivity-slider-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .financial-input-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1893,11 +2641,13 @@
                 <a href="#comparison">What You Get</a>
                 <a href="#deployment">Deployment</a>
                 <a href="#certification">Certification</a>
+                <a href="#readiness">Readiness</a>
                 <a href="#migration">Migration</a>
                 <a href="#timeline">Timeline</a>
                 <a href="#support">Support Tiers</a>
                 <a href="#decision">Decision Matrix</a>
                 <a href="#roi">ROI Calculator</a>
+                <a href="#financial">Financial Model</a>
             </div>
         </div>
     </nav>
@@ -2001,6 +2751,15 @@
                 </div>
             </div>
 
+            <div class="feature-enhancements">
+                <div class="version-diff-toggle" id="version-diff-toggle">
+                    <span>Show Version Changes</span>
+                </div>
+            </div>
+
+            <div class="feature-progress-bars" id="feature-progress-bars">
+            </div>
+
             <div class="feature-table">
                 <table>
                     <thead>
@@ -2010,6 +2769,7 @@
                             <th>Red Hat AI 3.0</th>
                             <th>Red Hat AI 3.3</th>
                             <th>Red Hat AI 3.4</th>
+                            <th>Enterprise Extras</th>
                         </tr>
                     </thead>
                     <tbody id="feature-table-body">
@@ -2189,6 +2949,62 @@
         </div>
     </section>
 
+    <section id="readiness" class="animate-on-scroll">
+        <div class="container">
+            <h2>Migration Readiness Assessment</h2>
+            <p class="subtitle">Answer 20 questions to gauge your organization's readiness for migrating to Red Hat AI Inference Server</p>
+
+            <div class="assessment-container" id="assessment-container">
+                <div class="assessment-progress">
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" id="assessment-progress-fill"></div>
+                    </div>
+                    <div class="assessment-progress-text">
+                        <span id="assessment-progress-label">Category 1 of 4: Current Infrastructure</span>
+                        <span id="assessment-progress-pct">0% complete</span>
+                    </div>
+                </div>
+
+                <div id="assessment-categories">
+                </div>
+
+                <div class="assessment-nav" id="assessment-nav">
+                    <button class="btn" id="assessment-prev" disabled>Previous</button>
+                    <button class="btn btn-primary" id="assessment-next">Next Category</button>
+                </div>
+
+                <div class="assessment-results" id="assessment-results">
+                    <div class="assessment-score-display">
+                        <div class="assessment-score-big" id="assessment-total-score">0</div>
+                        <div class="assessment-score-max">out of 80 points</div>
+                        <div id="assessment-readiness-label" style="font-size: 1.25rem; font-weight: 700; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <div class="assessment-radar-container">
+                        <div class="assessment-radar-chart">
+                            <canvas id="radar-chart" width="350" height="350"></canvas>
+                        </div>
+                        <div class="assessment-category-scores" id="assessment-category-scores">
+                        </div>
+                    </div>
+
+                    <div class="assessment-rec-box" id="assessment-rec-box">
+                    </div>
+
+                    <div class="assessment-gaps" id="assessment-gaps">
+                        <h4>Identified Gaps and Action Items</h4>
+                        <div id="assessment-gaps-list"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn btn-primary" id="assessment-download">Download Assessment</button>
+                        <button class="btn" id="assessment-restart">Retake Assessment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="migration" class="animate-on-scroll">
         <div class="container">
             <h2>Migration Wizard</h2>
@@ -2221,73 +3037,26 @@
     <section id="timeline" class="animate-on-scroll">
         <div class="container">
             <h2>Release Timeline</h2>
-            <p class="subtitle">Upstream llm-d releases flow downstream to Red Hat AI Inference Server</p>
+            <p class="subtitle">Upstream llm-d releases flow downstream to Red Hat AI Inference Server. Click any release for details.</p>
 
             <div class="timeline-container">
                 <div class="timeline">
                     <div class="timeline-line"></div>
-                    <div class="timeline-items">
-                        <div class="timeline-item">
-                            <div class="timeline-point"></div>
-                            <div class="timeline-connector"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-upstream">
-                                    <div class="timeline-version">llm-d 0.1.0</div>
-                                    <div class="timeline-date">January 2025</div>
-                                </div>
-                                <div class="timeline-downstream">
-                                    <div class="timeline-version">Red Hat AI 3.0</div>
-                                    <div class="timeline-date">February 2025</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-point"></div>
-                            <div class="timeline-connector"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-upstream">
-                                    <div class="timeline-version">llm-d 0.2.0</div>
-                                    <div class="timeline-date">March 2025</div>
-                                </div>
-                                <div class="timeline-downstream">
-                                    <div class="timeline-version">Red Hat AI 3.3</div>
-                                    <div class="timeline-date">April 2025</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-point"></div>
-                            <div class="timeline-connector"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-upstream">
-                                    <div class="timeline-version">llm-d 0.3.0</div>
-                                    <div class="timeline-date">May 2025</div>
-                                </div>
-                                <div class="timeline-downstream">
-                                    <div class="timeline-version">Red Hat AI 3.4</div>
-                                    <div class="timeline-date">June 2025</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-point"></div>
-                            <div class="timeline-connector"></div>
-                            <div class="timeline-content">
-                                <div class="timeline-upstream">
-                                    <div class="timeline-version">llm-d 0.4.0</div>
-                                    <div class="timeline-date">August 2025</div>
-                                </div>
-                                <div class="timeline-downstream">
-                                    <div class="timeline-version">Red Hat AI 3.5</div>
-                                    <div class="timeline-date">Planned</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="timeline-particles-layer">
+                        <div class="tl-particle"></div>
+                        <div class="tl-particle"></div>
+                        <div class="tl-particle"></div>
+                        <div class="tl-particle"></div>
+                    </div>
+                    <div class="timeline-items" id="timeline-items">
                     </div>
                 </div>
+            </div>
+
+            <div class="timeline-position-controls">
+                <label>Your Position:</label>
+                <input type="range" id="timeline-position-slider" min="0" max="4" step="1" value="2">
+                <span class="timeline-position-label" id="timeline-position-label">Red Hat AI 3.4</span>
             </div>
         </div>
     </section>
@@ -2517,6 +3286,229 @@
         </div>
     </section>
 
+    <section id="financial" class="animate-on-scroll">
+        <div class="container">
+            <h2>Financial Model Builder</h2>
+            <p class="subtitle">Advanced TCO analysis with break-even, sensitivity, and risk-adjusted NPV calculations</p>
+
+            <div class="financial-model">
+                <div class="financial-tabs">
+                    <button class="financial-tab active" data-ftab="infrastructure">Infrastructure</button>
+                    <button class="financial-tab" data-ftab="team">Team</button>
+                    <button class="financial-tab" data-ftab="operations">Operations</button>
+                    <button class="financial-tab" data-ftab="business">Business</button>
+                </div>
+
+                <div class="financial-panel active" id="ftab-infrastructure">
+                    <div class="financial-input-grid">
+                        <div class="input-group">
+                            <label>GPU Count</label>
+                            <input type="range" id="fm-gpu-count" min="1" max="200" value="16">
+                            <div class="input-value">
+                                <span>GPUs:</span>
+                                <span id="fm-gpu-count-val">16</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>GPU Type</label>
+                            <select id="fm-gpu-type">
+                                <option value="a100" data-cost="2.21">NVIDIA A100 ($2.21/hr)</option>
+                                <option value="h100" data-cost="3.89" selected>NVIDIA H100 ($3.89/hr)</option>
+                                <option value="h200" data-cost="5.50">NVIDIA H200 ($5.50/hr)</option>
+                                <option value="mi300x" data-cost="3.50">AMD MI300X ($3.50/hr)</option>
+                                <option value="gaudi3" data-cost="2.80">Intel Gaudi 3 ($2.80/hr)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Deployment Model</label>
+                            <select id="fm-deploy-model">
+                                <option value="cloud" selected>Cloud (pay-as-you-go)</option>
+                                <option value="reserved">Cloud (reserved instances)</option>
+                                <option value="onprem">On-Premises</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Average GPU Utilization (%)</label>
+                            <input type="range" id="fm-utilization" min="20" max="95" value="60">
+                            <div class="input-value">
+                                <span>Utilization:</span>
+                                <span id="fm-utilization-val">60%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="financial-panel" id="ftab-team">
+                    <div class="financial-input-grid">
+                        <div class="input-group">
+                            <label>Engineers on Infra Team</label>
+                            <input type="range" id="fm-engineers" min="1" max="30" value="5">
+                            <div class="input-value">
+                                <span>Engineers:</span>
+                                <span id="fm-engineers-val">5</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Average Engineer Salary</label>
+                            <input type="range" id="fm-salary" min="80000" max="350000" step="5000" value="185000">
+                            <div class="input-value">
+                                <span>Salary:</span>
+                                <span id="fm-salary-val">$185,000</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>% Time on Infra Ops (Current)</label>
+                            <input type="range" id="fm-infra-pct" min="10" max="80" value="35">
+                            <div class="input-value">
+                                <span>Infra time:</span>
+                                <span id="fm-infra-pct-val">35%</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Cost to Hire Replacement Engineer</label>
+                            <input type="range" id="fm-hiring-cost" min="10000" max="100000" step="5000" value="40000">
+                            <div class="input-value">
+                                <span>Hiring cost:</span>
+                                <span id="fm-hiring-cost-val">$40,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="financial-panel" id="ftab-operations">
+                    <div class="financial-input-grid">
+                        <div class="input-group">
+                            <label>Incidents per Month</label>
+                            <input type="range" id="fm-incidents" min="0" max="20" value="4">
+                            <div class="input-value">
+                                <span>Incidents/mo:</span>
+                                <span id="fm-incidents-val">4</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Current MTTR (hours)</label>
+                            <input type="range" id="fm-mttr" min="1" max="48" value="8">
+                            <div class="input-value">
+                                <span>MTTR:</span>
+                                <span id="fm-mttr-val">8 hrs</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Compliance Audits per Year</label>
+                            <input type="range" id="fm-audits" min="0" max="12" value="2">
+                            <div class="input-value">
+                                <span>Audits/yr:</span>
+                                <span id="fm-audits-val">2</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Security Patches per Month</label>
+                            <input type="range" id="fm-patches" min="1" max="20" value="4">
+                            <div class="input-value">
+                                <span>Patches/mo:</span>
+                                <span id="fm-patches-val">4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="financial-panel" id="ftab-business">
+                    <div class="financial-input-grid">
+                        <div class="input-group">
+                            <label>Revenue per Hour of Uptime</label>
+                            <input type="range" id="fm-revenue" min="0" max="50000" step="500" value="5000">
+                            <div class="input-value">
+                                <span>Revenue/hr:</span>
+                                <span id="fm-revenue-val">$5,000</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Customer Count</label>
+                            <input type="range" id="fm-customers" min="10" max="10000" step="10" value="500">
+                            <div class="input-value">
+                                <span>Customers:</span>
+                                <span id="fm-customers-val">500</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>SLA Penalty per Hour of Downtime</label>
+                            <input type="range" id="fm-sla-penalty" min="0" max="50000" step="500" value="5000">
+                            <div class="input-value">
+                                <span>Penalty/hr:</span>
+                                <span id="fm-sla-penalty-val">$5,000</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Annual Growth Rate (%)</label>
+                            <input type="range" id="fm-growth" min="0" max="100" value="25">
+                            <div class="input-value">
+                                <span>Growth:</span>
+                                <span id="fm-growth-val">25%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="financial-outputs">
+                    <h3 style="color: var(--accent-blue); margin-bottom: 1.5rem;">5-Year TCO Analysis</h3>
+
+                    <div class="npv-result" id="fm-summary-cards">
+                        <div class="result-item">
+                            <div class="result-label">5-Year Self-Managed TCO</div>
+                            <div class="result-value" id="fm-tco-self">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">5-Year Standard TCO</div>
+                            <div class="result-value" id="fm-tco-standard">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">5-Year Premium TCO</div>
+                            <div class="result-value" id="fm-tco-premium">$0</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Risk-Adjusted NPV (Standard)</div>
+                            <div class="result-value positive" id="fm-npv">$0</div>
+                        </div>
+                    </div>
+
+                    <div class="breakeven-chart-container">
+                        <h4>Break-Even Analysis</h4>
+                        <canvas id="breakeven-chart" width="800" height="300"></canvas>
+                    </div>
+
+                    <h4 style="color: var(--accent-blue); margin-bottom: 1rem;">Side-by-Side Comparison</h4>
+                    <table class="financial-comparison-table" id="fm-comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Cost Component</th>
+                                <th>Self-Managed</th>
+                                <th>Standard</th>
+                                <th>Premium</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fm-comparison-body">
+                        </tbody>
+                    </table>
+
+                    <div class="sensitivity-controls">
+                        <h4>Sensitivity Analysis: What if GPU count changes?</h4>
+                        <div class="sensitivity-slider-row">
+                            <label>GPU Count Multiplier</label>
+                            <input type="range" id="fm-sensitivity" min="50" max="300" value="100" step="10">
+                            <span id="fm-sensitivity-val" style="font-weight: 700; color: var(--accent-blue); min-width: 60px;">1.0x</span>
+                        </div>
+                        <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;" id="fm-sensitivity-results">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                        <button class="btn btn-primary" id="fm-download">Download Financial Summary</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -2547,47 +3539,78 @@
         });
 
         // ============================================
-        // FEATURE PARITY DATA AND RENDERING
+        // FEATURE PARITY DATA AND RENDERING (Enhanced)
         // ============================================
-        const features = [
-            { name: 'KV-cache aware routing', category: 'routing', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'PagedAttention', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Speculative decoding', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete' },
-            { name: 'Prefix caching', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete' },
-            { name: 'Multi-model serving', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'LoRA adapter hot-swap', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete' },
-            { name: 'Tensor parallelism', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Pipeline parallelism', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete' },
-            { name: 'Automatic scaling', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Prometheus metrics', category: 'monitoring', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Distributed KV-cache', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete' },
-            { name: 'FIPS 140-2 compliance', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Signed container images', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'CVE SLA patching', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Multi-arch builds (x86/ARM/POWER)', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete' },
-            { name: 'GPU certification matrix', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete' },
-            { name: 'mTLS enforcement', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Audit logging', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'RBAC integration', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'LLMInferenceService CR', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Operator lifecycle management', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete' },
-            { name: 'Canary deployments', category: 'deployment', v30: 'planned', v33: 'partial', v34: 'complete' },
-            { name: 'Blue-green rollouts', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete' },
+        var features = [
+            { name: 'KV-cache aware routing', category: 'routing', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Routes incoming requests based on which backend already has relevant KV-cache data loaded, reducing recomputation and improving latency.' },
+            { name: 'PagedAttention', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Memory management technique that pages attention key-value pairs, enabling efficient memory utilization and higher throughput.' },
+            { name: 'Speculative decoding', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Uses a smaller draft model to predict tokens, then verifies with the main model. Speeds up generation without quality loss.' },
+            { name: 'Prefix caching', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete', enterpriseExtra: '', tooltip: 'Caches computed prefixes across requests sharing the same system prompt or context, reducing redundant computation.' },
+            { name: 'Multi-model serving', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Model registry integration', tooltip: 'Serve multiple models on the same infrastructure with intelligent routing and resource sharing.' },
+            { name: 'LoRA adapter hot-swap', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Dynamically load and unload LoRA adapters at runtime without restarting the serving engine or affecting other requests.' },
+            { name: 'Tensor parallelism', category: 'inference', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Splits individual model layers across multiple GPUs, enabling serving of models that exceed single GPU memory.' },
+            { name: 'Pipeline parallelism', category: 'inference', v30: 'partial', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Distributes model layers sequentially across GPUs, enabling efficient multi-node serving for very large models.' },
+            { name: 'Automatic scaling', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Predictive autoscaling', tooltip: 'Automatically adjusts replica count based on queue depth, GPU utilization, and request latency metrics.' },
+            { name: 'Prometheus metrics', category: 'monitoring', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Pre-built Grafana dashboards', tooltip: 'Exports detailed inference metrics (latency, throughput, queue depth, GPU utilization) in Prometheus format.' },
+            { name: 'Distributed KV-cache', category: 'inference', v30: 'planned', v33: 'partial', v34: 'complete', enterpriseExtra: '', tooltip: 'Shares KV-cache data across nodes via high-speed interconnect, enabling cache hits even when requests route to different backends.' },
+            { name: 'FIPS 140-2 compliance', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Validated FIPS modules', tooltip: 'Federal Information Processing Standards compliance for cryptographic modules, required by US government agencies.' },
+            { name: 'Signed container images', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Cosign verification', tooltip: 'Container images are cryptographically signed, ensuring supply chain integrity from build to deployment.' },
+            { name: 'CVE SLA patching', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: '24-48hr critical CVE', tooltip: 'Guaranteed response times for patching Common Vulnerabilities and Exposures based on severity level.' },
+            { name: 'Multi-arch builds (x86/ARM/POWER)', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Pre-built container images for x86_64, ARM64, and IBM POWER architectures, enabling deployment on diverse hardware.' },
+            { name: 'GPU certification matrix', category: 'deployment', v30: 'partial', v33: 'complete', v34: 'complete', enterpriseExtra: 'Partner-validated configs', tooltip: 'Formally tested and certified combinations of GPU hardware, drivers, and model configurations.' },
+            { name: 'mTLS enforcement', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Cert-manager integration', tooltip: 'Mutual TLS authentication between all service components, ensuring encrypted and authenticated communication.' },
+            { name: 'Audit logging', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Splunk/ELK integration', tooltip: 'Records all API requests, responses, and administrative actions for compliance and forensic analysis.' },
+            { name: 'RBAC integration', category: 'security', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'OpenShift SSO', tooltip: 'Role-based access control integrated with enterprise identity providers for fine-grained permission management.' },
+            { name: 'LLMInferenceService CR', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'Operator managed', tooltip: 'Kubernetes Custom Resource for declarative model serving. Define desired state and the operator handles the rest.' },
+            { name: 'Operator lifecycle management', category: 'deployment', v30: 'complete', v33: 'complete', v34: 'complete', enterpriseExtra: 'OLM catalog', tooltip: 'Automated install, upgrade, and lifecycle management through the Operator Lifecycle Manager framework.' },
+            { name: 'Canary deployments', category: 'deployment', v30: 'planned', v33: 'partial', v34: 'complete', enterpriseExtra: '', tooltip: 'Gradually shift traffic to new model versions, monitoring for regressions before full rollout.' },
+            { name: 'Blue-green rollouts', category: 'deployment', v30: 'planned', v33: 'complete', v34: 'complete', enterpriseExtra: '', tooltip: 'Maintain two identical environments, switching traffic instantly between them for zero-downtime deployments.' }
         ];
+
+        var versionDiffActive = false;
+
+        function renderFeatureProgressBars() {
+            var categories = {};
+            features.forEach(function(f) {
+                if (!categories[f.category]) categories[f.category] = { total: 0, complete: 0 };
+                categories[f.category].total++;
+                if (f.v34 === 'complete') categories[f.category].complete++;
+            });
+            var container = document.getElementById('feature-progress-bars');
+            var html = '';
+            Object.keys(categories).forEach(function(cat) {
+                var pct = Math.round((categories[cat].complete / categories[cat].total) * 100);
+                html += '<div class="progress-item">' +
+                    '<div class="progress-item-label">' + cat + ' <span class="progress-pct">' + pct + '%</span></div>' +
+                    '<div class="progress-bar-container"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div>' +
+                    '</div>';
+            });
+            container.innerHTML = html;
+        }
 
         function renderFeatureTable(filteredFeatures) {
             filteredFeatures = filteredFeatures || features;
-            const tbody = document.getElementById('feature-table-body');
+            var tbody = document.getElementById('feature-table-body');
             tbody.innerHTML = '';
 
             filteredFeatures.forEach(function(feature) {
-                const row = document.createElement('tr');
+                var row = document.createElement('tr');
+                var v30Changed = feature.v30 !== feature.v33;
+                var v33Changed = feature.v33 !== feature.v34;
+                var v30class = feature.v30 + (versionDiffActive && v30Changed ? '' : '');
+                var v33class = feature.v33 + (versionDiffActive && v30Changed ? ' changed' : '');
+                var v34class = feature.v34 + (versionDiffActive && v33Changed ? ' changed' : '');
+                var extraHtml = feature.enterpriseExtra
+                    ? '<span class="enterprise-extra-badge">' + feature.enterpriseExtra + '</span>'
+                    : '<span style="color: var(--text-secondary); font-size: 0.8rem;">--</span>';
+
                 row.innerHTML =
-                    '<td><strong>' + feature.name + '</strong></td>' +
+                    '<td><div class="feature-tooltip"><strong>' + feature.name + '</strong><div class="tooltip-text">' + feature.tooltip + '</div></div></td>' +
                     '<td><span class="category-tag">' + feature.category + '</span></td>' +
-                    '<td><span class="status-badge ' + feature.v30 + '">' + getStatusText(feature.v30) + '</span></td>' +
-                    '<td><span class="status-badge ' + feature.v33 + '">' + getStatusText(feature.v33) + '</span></td>' +
-                    '<td><span class="status-badge ' + feature.v34 + '">' + getStatusText(feature.v34) + '</span></td>';
+                    '<td><span class="status-badge ' + v30class + '">' + getStatusText(feature.v30) + '</span></td>' +
+                    '<td><span class="status-badge ' + v33class + '">' + getStatusText(feature.v33) + '</span></td>' +
+                    '<td><span class="status-badge ' + v34class + '">' + getStatusText(feature.v34) + '</span></td>' +
+                    '<td>' + extraHtml + '</td>';
                 tbody.appendChild(row);
             });
         }
@@ -2597,30 +3620,33 @@
             return map[status] || status;
         }
 
-        document.getElementById('feature-search').addEventListener('input', function(e) {
-            var query = e.target.value.toLowerCase();
+        function filterFeatures() {
+            var query = document.getElementById('feature-search').value.toLowerCase();
             var activeCategory = document.querySelector('.category-btn.active').dataset.category;
             var filtered = features.filter(function(f) {
                 return f.name.toLowerCase().indexOf(query) !== -1 &&
                     (activeCategory === 'all' || f.category === activeCategory);
             });
             renderFeatureTable(filtered);
-        });
+        }
+
+        document.getElementById('feature-search').addEventListener('input', filterFeatures);
 
         document.querySelectorAll('.category-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.category-btn').forEach(function(b) { b.classList.remove('active'); });
                 this.classList.add('active');
-                var category = this.dataset.category;
-                var searchQuery = document.getElementById('feature-search').value.toLowerCase();
-                var filtered = features.filter(function(f) {
-                    return (category === 'all' || f.category === category) &&
-                        f.name.toLowerCase().indexOf(searchQuery) !== -1;
-                });
-                renderFeatureTable(filtered);
+                filterFeatures();
             });
         });
 
+        document.getElementById('version-diff-toggle').addEventListener('click', function() {
+            versionDiffActive = !versionDiffActive;
+            this.classList.toggle('active', versionDiffActive);
+            filterFeatures();
+        });
+
+        renderFeatureProgressBars();
         renderFeatureTable();
 
         // ============================================
@@ -2864,6 +3890,371 @@
         document.getElementById('download-cert-pdf').addEventListener('click', function() {
             alert('PDF generation coming soon. The certification matrix will be available for download in a future update.');
         });
+
+        // ============================================
+        // MIGRATION READINESS ASSESSMENT
+        // ============================================
+        var assessmentData = {
+            categories: [
+                {
+                    name: 'Current Infrastructure',
+                    questions: [
+                        { text: 'How many GPUs are in your inference fleet?', options: ['1-4 GPUs', '5-16 GPUs', '17-64 GPUs', '65+ GPUs'] },
+                        { text: 'How diverse is your GPU vendor mix?', options: ['Single vendor, single type', 'Single vendor, multiple types', 'Two vendors', 'Three or more vendors'] },
+                        { text: 'What serving framework do you currently use?', options: ['No framework (custom scripts)', 'Single framework (vLLM, Triton, etc.)', 'Multiple frameworks', 'Enterprise platform (e.g., SageMaker)'] },
+                        { text: 'How many clusters run inference workloads?', options: ['1 cluster', '2-3 clusters', '4-8 clusters', '9+ clusters or multi-cloud'] },
+                        { text: 'How mature is your GPU monitoring?', options: ['No monitoring', 'Basic utilization metrics', 'Prometheus + Grafana dashboards', 'Full observability with alerting and SLOs'] }
+                    ]
+                },
+                {
+                    name: 'Team Readiness',
+                    questions: [
+                        { text: 'How large is your ML/AI platform team?', options: ['1-2 people', '3-5 people', '6-10 people', '11+ people'] },
+                        { text: 'What is your team\'s vLLM or serving framework expertise?', options: ['No experience', 'Evaluated or tested', 'Running in staging', 'Running in production'] },
+                        { text: 'What is your Kubernetes/OpenShift expertise?', options: ['Limited or none', 'Basic deployments', 'Managing production clusters', 'Advanced (operators, CRDs, GitOps)'] },
+                        { text: 'How mature is your on-call process for AI workloads?', options: ['No on-call rotation', 'Ad-hoc response', 'Scheduled rotation, basic runbooks', 'Mature rotation with automated escalation'] },
+                        { text: 'What DevOps/GitOps practices are in place?', options: ['Manual deployments', 'CI pipelines only', 'CI/CD with some automation', 'Full GitOps with IaC and automated rollbacks'] }
+                    ]
+                },
+                {
+                    name: 'Business Requirements',
+                    questions: [
+                        { text: 'What uptime SLA do you need for inference?', options: ['Best effort (no formal SLA)', '99% (3.65 days downtime/year)', '99.9% (8.7 hours downtime/year)', '99.99% or higher'] },
+                        { text: 'What are your compliance requirements?', options: ['None specific', 'Internal policies only', 'Industry standards (SOC2, ISO)', 'Government/regulated (FedRAMP, HIPAA)'] },
+                        { text: 'Do you need multi-model serving?', options: ['Single model only', '2-3 models', '4-10 models', '10+ models or dynamic model loading'] },
+                        { text: 'What are your scaling patterns?', options: ['Steady, predictable load', 'Some daily variation', 'Significant peaks and valleys', 'Highly unpredictable, bursty traffic'] },
+                        { text: 'What is your annual inference infrastructure budget?', options: ['Under $100K', '$100K - $500K', '$500K - $2M', 'Over $2M'] }
+                    ]
+                },
+                {
+                    name: 'Risk Tolerance',
+                    questions: [
+                        { text: 'How much inference downtime can you tolerate during migration?', options: ['Zero (must be zero-downtime)', 'Under 1 hour', '1-4 hours', '4+ hours or full maintenance window'] },
+                        { text: 'How mature is your change management process?', options: ['Ad-hoc changes', 'Change requests but no review board', 'CAB with approval process', 'Automated change pipelines with guardrails'] },
+                        { text: 'What are your rollback requirements?', options: ['No rollback plan needed', 'Manual rollback within hours', 'Automated rollback within minutes', 'Instant failover with zero data loss'] },
+                        { text: 'How comfortable are you with vendor dependency?', options: ['Strongly prefer open source only', 'Open source preferred, commercial OK', 'Balanced approach', 'Enterprise vendor preferred for support'] },
+                        { text: 'What is your migration timeline urgency?', options: ['No deadline, exploring options', 'Within 12 months', 'Within 6 months', 'Within 3 months or sooner'] }
+                    ]
+                }
+            ]
+        };
+
+        var assessmentAnswers = new Array(20).fill(0);
+        var currentCategory = 0;
+
+        function renderAssessment() {
+            var container = document.getElementById('assessment-categories');
+            container.innerHTML = '';
+
+            assessmentData.categories.forEach(function(cat, catIdx) {
+                var catDiv = document.createElement('div');
+                catDiv.className = 'assessment-category' + (catIdx === 0 ? ' active' : '');
+                catDiv.id = 'assessment-cat-' + catIdx;
+
+                var html = '<div class="assessment-category-title"><span class="cat-num">' + (catIdx + 1) + '</span> ' + cat.name + '</div>';
+                cat.questions.forEach(function(q, qIdx) {
+                    var globalIdx = catIdx * 5 + qIdx;
+                    html += '<div class="assessment-question">' +
+                        '<div class="assessment-question-text">' + (qIdx + 1) + '. ' + q.text + '</div>' +
+                        '<div class="assessment-options">';
+                    q.options.forEach(function(opt, optIdx) {
+                        var score = optIdx + 1;
+                        html += '<div class="assessment-option" data-q="' + globalIdx + '" data-score="' + score + '">' + opt + '</div>';
+                    });
+                    html += '</div></div>';
+                });
+
+                catDiv.innerHTML = html;
+                container.appendChild(catDiv);
+            });
+
+            // Wire up option clicks
+            document.querySelectorAll('.assessment-option').forEach(function(opt) {
+                opt.addEventListener('click', function() {
+                    var qIdx = parseInt(this.dataset.q);
+                    var score = parseInt(this.dataset.score);
+                    assessmentAnswers[qIdx] = score;
+                    // Deselect siblings
+                    document.querySelectorAll('.assessment-option[data-q="' + qIdx + '"]').forEach(function(o) {
+                        o.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    updateAssessmentProgress();
+                });
+            });
+        }
+
+        function updateAssessmentProgress() {
+            var answered = assessmentAnswers.filter(function(a) { return a > 0; }).length;
+            var pct = Math.round((answered / 20) * 100);
+            document.getElementById('assessment-progress-fill').style.width = pct + '%';
+            document.getElementById('assessment-progress-pct').textContent = pct + '% complete';
+            var catNames = ['Current Infrastructure', 'Team Readiness', 'Business Requirements', 'Risk Tolerance'];
+            document.getElementById('assessment-progress-label').textContent = 'Category ' + (currentCategory + 1) + ' of 4: ' + catNames[currentCategory];
+        }
+
+        function showAssessmentCategory(idx) {
+            currentCategory = idx;
+            document.querySelectorAll('.assessment-category').forEach(function(c) { c.classList.remove('active'); });
+            var catEl = document.getElementById('assessment-cat-' + idx);
+            if (catEl) catEl.classList.add('active');
+
+            document.getElementById('assessment-prev').disabled = idx === 0;
+            var nextBtn = document.getElementById('assessment-next');
+            if (idx >= 3) {
+                nextBtn.textContent = 'View Results';
+            } else {
+                nextBtn.textContent = 'Next Category';
+            }
+            updateAssessmentProgress();
+        }
+
+        document.getElementById('assessment-next').addEventListener('click', function() {
+            if (currentCategory < 3) {
+                showAssessmentCategory(currentCategory + 1);
+            } else {
+                showAssessmentResults();
+            }
+        });
+
+        document.getElementById('assessment-prev').addEventListener('click', function() {
+            if (currentCategory > 0) {
+                showAssessmentCategory(currentCategory - 1);
+            }
+        });
+
+        function showAssessmentResults() {
+            document.querySelectorAll('.assessment-category').forEach(function(c) { c.classList.remove('active'); });
+            document.getElementById('assessment-nav').style.display = 'none';
+            document.getElementById('assessment-results').classList.add('active');
+
+            var total = assessmentAnswers.reduce(function(a, b) { return a + b; }, 0);
+            document.getElementById('assessment-total-score').textContent = total;
+
+            // Category scores
+            var catScores = [];
+            var catNames = ['Infrastructure', 'Team Readiness', 'Business Needs', 'Risk Tolerance'];
+            for (var i = 0; i < 4; i++) {
+                var score = 0;
+                for (var j = 0; j < 5; j++) {
+                    score += assessmentAnswers[i * 5 + j];
+                }
+                catScores.push(score);
+            }
+
+            // Readiness label
+            var label = document.getElementById('assessment-readiness-label');
+            if (total < 30) {
+                label.textContent = 'Early Stage -- Keep exploring';
+                label.style.color = 'var(--text-secondary)';
+            } else if (total < 50) {
+                label.textContent = 'Developing -- Some preparation needed';
+                label.style.color = 'var(--partial)';
+            } else if (total < 65) {
+                label.textContent = 'Ready -- Well-positioned for migration';
+                label.style.color = 'var(--accent-blue)';
+            } else {
+                label.textContent = 'Advanced -- Excellent migration readiness';
+                label.style.color = 'var(--success)';
+            }
+
+            // Category scores breakdown
+            var catHtml = '';
+            var catColors = ['var(--accent-blue)', 'var(--accent-purple)', 'var(--partial)', 'var(--accent-red)'];
+            catNames.forEach(function(name, idx) {
+                var pct = Math.round((catScores[idx] / 20) * 100);
+                catHtml += '<div class="assessment-cat-score-item">' +
+                    '<div><strong>' + name + '</strong><br><span style="font-size: 0.85rem; color: var(--text-secondary);">' + catScores[idx] + '/20</span></div>' +
+                    '<div class="assessment-cat-score-bar"><div class="assessment-cat-score-fill" style="width:' + pct + '%; background:' + catColors[idx] + ';"></div></div>' +
+                    '</div>';
+            });
+            document.getElementById('assessment-category-scores').innerHTML = catHtml;
+
+            // Recommendation
+            var recBox = document.getElementById('assessment-rec-box');
+            if (total < 30) {
+                recBox.className = 'assessment-rec-box decision-rec-upstream';
+                recBox.innerHTML = '<h4 style="color: var(--accent-purple);">Recommendation: Stay with Upstream llm-d</h4>' +
+                    '<p style="color: var(--text-secondary);">Your current infrastructure and team maturity suggest upstream llm-d is the right starting point. Focus on building operational experience before considering enterprise features.</p>';
+            } else if (total < 50) {
+                recBox.className = 'assessment-rec-box decision-rec-standard';
+                recBox.innerHTML = '<h4 style="color: var(--partial);">Recommendation: Red Hat AI Standard</h4>' +
+                    '<p style="color: var(--text-secondary);">You have meaningful enterprise requirements that would benefit from certified configurations and SLA-backed support. Standard tier provides a solid foundation with business-hours support.</p>';
+            } else {
+                recBox.className = 'assessment-rec-box decision-rec-premium';
+                recBox.innerHTML = '<h4 style="color: var(--accent-red);">Recommendation: Red Hat AI Premium</h4>' +
+                    '<p style="color: var(--text-secondary);">Your organization has significant scale, compliance, and operational maturity. Premium provides 24/7 support, proactive monitoring, and direct engineering escalation to match your needs.</p>';
+            }
+
+            // Gaps
+            var gapsHtml = '';
+            var gapChecks = [
+                { idx: 4, threshold: 2, text: 'GPU monitoring maturity is low. Implement Prometheus + GPU metrics exporters before migration.' },
+                { idx: 7, threshold: 2, text: 'Kubernetes expertise needs improvement. Consider Red Hat OpenShift training or hands-on workshops.' },
+                { idx: 8, threshold: 2, text: 'On-call process is immature. Establish rotation and runbooks for AI workloads.' },
+                { idx: 9, threshold: 2, text: 'DevOps practices need strengthening. Adopt CI/CD pipelines and infrastructure-as-code.' },
+                { idx: 11, threshold: 3, text: 'Compliance requirements are significant. Ensure FIPS, SOC2, or FedRAMP certification alignment during migration.' },
+                { idx: 14, threshold: 2, text: 'Budget is constrained. Run a pilot with a single model before committing to full migration.' },
+                { idx: 16, threshold: 2, text: 'Change management needs improvement. Establish CAB process and change review procedures.' },
+                { idx: 17, threshold: 3, text: 'Rollback requirements are strict. Implement automated rollback and failover testing before go-live.' },
+                { idx: 2, threshold: 2, text: 'Current serving framework is basic. Evaluate llm-d features like KV-cache-aware routing in a staging environment first.' },
+                { idx: 13, threshold: 3, text: 'Traffic patterns are unpredictable. Configure autoscaling policies and load testing before production migration.' }
+            ];
+
+            gapChecks.forEach(function(gap) {
+                if (assessmentAnswers[gap.idx] <= gap.threshold) {
+                    gapsHtml += '<div class="gap-item"><span class="gap-icon">!</span><span class="gap-action">' + gap.text + '</span></div>';
+                }
+            });
+
+            if (gapsHtml === '') {
+                gapsHtml = '<div class="gap-item"><span class="gap-icon" style="color: var(--success);">+</span><span class="gap-action">No significant gaps identified. Your organization appears well-prepared for migration.</span></div>';
+            }
+
+            document.getElementById('assessment-gaps-list').innerHTML = gapsHtml;
+
+            // Draw radar chart
+            drawRadarChart(catScores);
+        }
+
+        function drawRadarChart(scores) {
+            var canvas = document.getElementById('radar-chart');
+            var ctx = canvas.getContext('2d');
+            var w = canvas.width;
+            var h = canvas.height;
+            var cx = w / 2;
+            var cy = h / 2;
+            var maxR = Math.min(cx, cy) - 50;
+            var labels = ['Infrastructure', 'Team', 'Business', 'Risk'];
+            var n = 4;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw grid
+            for (var ring = 1; ring <= 4; ring++) {
+                var r = (ring / 4) * maxR;
+                ctx.beginPath();
+                for (var i = 0; i <= n; i++) {
+                    var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                    var x = cx + r * Math.cos(angle);
+                    var y = cy + r * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Ring label
+                ctx.fillStyle = 'rgba(161, 161, 170, 0.5)';
+                ctx.font = '10px sans-serif';
+                ctx.fillText((ring * 5).toString(), cx + 4, cy - r + 12);
+            }
+
+            // Draw axes
+            for (var i = 0; i < n; i++) {
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Labels
+                var lx = cx + (maxR + 30) * Math.cos(angle);
+                var ly = cy + (maxR + 30) * Math.sin(angle);
+                ctx.fillStyle = '#e4e4e7';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(labels[i], lx, ly);
+            }
+
+            // Draw data polygon
+            ctx.beginPath();
+            for (var i = 0; i < n; i++) {
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                var r = (scores[i] / 20) * maxR;
+                var x = cx + r * Math.cos(angle);
+                var y = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+            ctx.fill();
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw data points
+            for (var i = 0; i < n; i++) {
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                var r = (scores[i] / 20) * maxR;
+                var x = cx + r * Math.cos(angle);
+                var y = cy + r * Math.sin(angle);
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#3b82f6';
+                ctx.fill();
+                ctx.strokeStyle = '#0a0e17';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        document.getElementById('assessment-download').addEventListener('click', function() {
+            var total = assessmentAnswers.reduce(function(a, b) { return a + b; }, 0);
+            var catNames = ['Current Infrastructure', 'Team Readiness', 'Business Requirements', 'Risk Tolerance'];
+            var text = '==============================================\n';
+            text += 'MIGRATION READINESS ASSESSMENT\n';
+            text += '==============================================\n';
+            text += 'Generated: ' + new Date().toISOString().split('T')[0] + '\n';
+            text += 'Overall Score: ' + total + ' / 80\n\n';
+
+            for (var i = 0; i < 4; i++) {
+                var catScore = 0;
+                text += '--- ' + catNames[i] + ' ---\n';
+                for (var j = 0; j < 5; j++) {
+                    var gIdx = i * 5 + j;
+                    var score = assessmentAnswers[gIdx];
+                    catScore += score;
+                    var q = assessmentData.categories[i].questions[j];
+                    var answer = score > 0 ? q.options[score - 1] : 'Not answered';
+                    text += '  Q' + (j + 1) + ': ' + q.text + '\n';
+                    text += '  A: ' + answer + ' (Score: ' + score + '/4)\n\n';
+                }
+                text += '  Category Total: ' + catScore + '/20\n\n';
+            }
+
+            if (total < 30) text += 'Recommendation: Stay with upstream llm-d\n';
+            else if (total < 50) text += 'Recommendation: Red Hat AI Standard\n';
+            else text += 'Recommendation: Red Hat AI Premium\n';
+
+            text += '\n==============================================\n';
+            text += 'Generated by llm-d Content Hub #20\n';
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('Assessment copied to clipboard');
+                }).catch(function() { fallbackCopy(text); });
+            } else {
+                fallbackCopy(text);
+            }
+        });
+
+        document.getElementById('assessment-restart').addEventListener('click', function() {
+            assessmentAnswers = new Array(20).fill(0);
+            currentCategory = 0;
+            document.getElementById('assessment-results').classList.remove('active');
+            document.getElementById('assessment-nav').style.display = 'flex';
+            document.querySelectorAll('.assessment-option').forEach(function(o) { o.classList.remove('selected'); });
+            showAssessmentCategory(0);
+        });
+
+        renderAssessment();
+        showAssessmentCategory(0);
 
         // ============================================
         // MIGRATION WIZARD (with project plan details)
@@ -3187,6 +4578,117 @@
         }
 
         // ============================================
+        // ENHANCED INTERACTIVE TIMELINE
+        // ============================================
+        var timelineData = [
+            {
+                upstream: { version: 'llm-d 0.1.0', date: 'January 2025' },
+                downstream: { version: 'Red Hat AI 3.0', date: 'February 2025' },
+                features: ['KV-cache aware routing', 'PagedAttention integration', 'Multi-model serving', 'Basic tensor parallelism'],
+                breaking: ['Initial release -- no breaking changes'],
+                migration: ['First supported release', 'Requires OpenShift 4.14+', 'NVIDIA GPU drivers 535+'],
+                future: false
+            },
+            {
+                upstream: { version: 'llm-d 0.2.0', date: 'March 2025' },
+                downstream: { version: 'Red Hat AI 3.3', date: 'April 2025' },
+                features: ['Speculative decoding GA', 'LoRA adapter hot-swap', 'Pipeline parallelism', 'Blue-green rollouts'],
+                breaking: ['Routing config schema v2 (v1 deprecated)', 'Metric names standardized to OpenTelemetry'],
+                migration: ['Update routing configs to v2 schema', 'Verify LoRA adapter paths', 'Test speculative decoding with your models'],
+                future: false
+            },
+            {
+                upstream: { version: 'llm-d 0.3.0', date: 'May 2025' },
+                downstream: { version: 'Red Hat AI 3.4', date: 'June 2025' },
+                features: ['Distributed KV-cache', 'Prefix caching GA', 'Canary deployments', 'Multi-arch ARM support'],
+                breaking: ['KV-cache config moved to spec.cache namespace', 'Minimum Kubernetes 1.28 required'],
+                migration: ['Update KV-cache configuration paths', 'Validate distributed cache with your workload', 'Test ARM builds if applicable'],
+                future: false
+            },
+            {
+                upstream: { version: 'llm-d 0.4.0', date: 'August 2025' },
+                downstream: { version: 'Red Hat AI 3.5', date: 'October 2025' },
+                features: ['Disaggregated prefill/decode', 'FP4 quantization', 'Multi-node autoscaling', 'Enhanced LoRA management'],
+                breaking: ['Autoscaling config restructured', 'Deprecated v1 model CRD removed'],
+                migration: ['Migrate any remaining v1 CRDs', 'Test FP4 quantization impact on quality', 'Validate multi-node scaling behavior'],
+                future: true
+            },
+            {
+                upstream: { version: 'llm-d 0.5.0', date: 'Q1 2026' },
+                downstream: { version: 'Red Hat AI 4.0', date: 'Q2 2026' },
+                features: ['Mixture-of-Experts optimization', 'Dynamic batching v2', 'Cross-region failover', 'Model A/B testing framework'],
+                breaking: ['Major version bump -- review migration guide', 'New operator CRD group'],
+                migration: ['Full migration guide will be published', 'Pilot program available Q4 2025', 'Contact your TAM for early access'],
+                future: true
+            }
+        ];
+
+        function renderTimeline() {
+            var container = document.getElementById('timeline-items');
+            container.innerHTML = '';
+
+            timelineData.forEach(function(item, idx) {
+                var div = document.createElement('div');
+                div.className = 'timeline-item' + (item.future ? ' future-item' : '');
+                div.dataset.idx = idx;
+
+                var markerHtml = '';
+                div.innerHTML =
+                    '<div class="timeline-your-marker" id="tl-marker-' + idx + '">YOU ARE HERE</div>' +
+                    '<div class="timeline-point"></div>' +
+                    '<div class="timeline-connector"></div>' +
+                    '<div class="timeline-content">' +
+                        '<div class="timeline-upstream">' +
+                            '<div class="timeline-version">' + item.upstream.version + '</div>' +
+                            '<div class="timeline-date">' + item.upstream.date + '</div>' +
+                        '</div>' +
+                        '<div class="timeline-downstream">' +
+                            '<div class="timeline-version">' + item.downstream.version + '</div>' +
+                            '<div class="timeline-date">' + item.downstream.date + (item.future ? ' (Planned)' : '') + '</div>' +
+                        '</div>' +
+                        '<div class="timeline-detail-panel">' +
+                            '<div class="timeline-detail-panel-inner">' +
+                                '<h5>Features Included</h5>' +
+                                '<ul>' + item.features.map(function(f) { return '<li>' + f + '</li>'; }).join('') + '</ul>' +
+                                '<h5>Breaking Changes</h5>' +
+                                '<ul>' + item.breaking.map(function(b) { return '<li>' + b + '</li>'; }).join('') + '</ul>' +
+                                '<h5>Migration Notes</h5>' +
+                                '<ul>' + item.migration.map(function(m) { return '<li>' + m + '</li>'; }).join('') + '</ul>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+
+                div.addEventListener('click', function() {
+                    var wasExpanded = this.classList.contains('expanded');
+                    document.querySelectorAll('.timeline-item').forEach(function(ti) { ti.classList.remove('expanded'); });
+                    if (!wasExpanded) this.classList.add('expanded');
+                });
+
+                container.appendChild(div);
+            });
+
+            updateTimelinePosition();
+        }
+
+        var tlPositionLabels = ['Red Hat AI 3.0', 'Red Hat AI 3.3', 'Red Hat AI 3.4', 'Red Hat AI 3.5 (Planned)', 'Red Hat AI 4.0 (Planned)'];
+
+        function updateTimelinePosition() {
+            var slider = document.getElementById('timeline-position-slider');
+            var val = parseInt(slider.value);
+            document.getElementById('timeline-position-label').textContent = tlPositionLabels[val] || '';
+
+            // Show marker on correct item
+            for (var i = 0; i < timelineData.length; i++) {
+                var marker = document.getElementById('tl-marker-' + i);
+                if (marker) marker.style.display = (i === val) ? 'block' : 'none';
+            }
+        }
+
+        document.getElementById('timeline-position-slider').addEventListener('input', updateTimelinePosition);
+
+        renderTimeline();
+
+        // ============================================
         // DECISION MATRIX
         // ============================================
         var decisionRequirements = [
@@ -3259,7 +4761,7 @@
         renderDecisionMatrix();
 
         // ============================================
-        // ROI CALCULATOR (enhanced financial model)
+        // ROI CALCULATOR (original preserved)
         // ============================================
         function fmt(n) {
             return '$' + Math.round(n).toLocaleString();
@@ -3288,15 +4790,13 @@
             var annualIncidentHours = incidents * hoursPerIncident * 12;
             var incidentLaborCost = annualIncidentHours * hourlyRate;
             var downtimeCost = annualIncidentHours * revenuePerHour;
-            var infraOverheadHours = gpuNodes * 20; // 20 hrs/node/year
+            var infraOverheadHours = gpuNodes * 20;
             var infraOverheadCost = infraOverheadHours * hourlyRate;
-            var mlEngineerInfraTime = mlEngineers * salary * 0.30; // 30% on infra
+            var mlEngineerInfraTime = mlEngineers * salary * 0.30;
             var annualCloudGpu = cloudGpuSpend * 12;
 
-            // Self-managed Year 1
             var selfManaged_Y1 = incidentLaborCost + downtimeCost + infraOverheadCost + mlEngineerInfraTime + annualCloudGpu;
 
-            // Red Hat: reduces incident time by 70%, ML engineer infra time to 10%, 5% GPU optimization
             var supportCostPerNode = 15000;
             var rhSubscription_Y1 = gpuNodes * supportCostPerNode;
             var rhIncidentHours = annualIncidentHours * 0.30;
@@ -3308,7 +4808,6 @@
 
             var netSavings_Y1 = selfManaged_Y1 - rhTotal_Y1;
 
-            // Year-over-year: self-managed +8%, RH subscription +3%, GPU savings compound
             var selfManaged_Y2 = (incidentLaborCost * 1.08) + (downtimeCost * 1.08) + (infraOverheadCost * 1.08) + (mlEngineerInfraTime * 1.08) + (annualCloudGpu * 1.08);
             var selfManaged_Y3 = (incidentLaborCost * 1.1664) + (downtimeCost * 1.1664) + (infraOverheadCost * 1.1664) + (mlEngineerInfraTime * 1.1664) + (annualCloudGpu * 1.1664);
 
@@ -3320,7 +4819,6 @@
             var netSavings_Y2 = selfManaged_Y2 - rhTotal_Y2;
             var netSavings_Y3 = selfManaged_Y3 - rhTotal_Y3;
 
-            // Payback period (months)
             var monthlySelfManaged = selfManaged_Y1 / 12;
             var monthlyRH = rhTotal_Y1 / 12;
             var monthlySaving = monthlySelfManaged - monthlyRH;
@@ -3333,13 +4831,11 @@
                 paybackMonths = 0;
             }
 
-            // Per-node and per-incident costs
             var perNodeSelf = selfManaged_Y1 / gpuNodes;
             var perNodeRH = rhTotal_Y1 / gpuNodes;
             var perIncidentSelf = incidents > 0 ? (incidentLaborCost + downtimeCost) / (incidents * 12) : 0;
             var perIncidentRH = incidents > 0 ? (rhIncidentLabor + rhDowntime) / (incidents * 12) : 0;
 
-            // Animate main results
             document.getElementById('self-managed-cost').textContent = fmt(selfManaged_Y1);
             document.getElementById('redhat-cost').textContent = fmt(rhTotal_Y1);
 
@@ -3350,7 +4846,6 @@
             document.getElementById('payback-period').textContent = paybackMonths > 0 ? paybackMonths + ' mo' : 'N/A';
             document.getElementById('time-improvement').textContent = '70%';
 
-            // Bar chart
             var maxVal = Math.max(selfManaged_Y1, selfManaged_Y2, selfManaged_Y3, rhTotal_Y1, rhTotal_Y2, rhTotal_Y3);
             var chartHtml = '';
             var years = [
@@ -3373,7 +4868,6 @@
             });
             document.getElementById('cost-bar-chart').innerHTML = chartHtml;
 
-            // Projection table
             var projHtml = '';
             projHtml += '<tr><td>Incident Labor Cost</td><td>' + fmt(incidentLaborCost) + '</td><td>' + fmt(incidentLaborCost * 1.08) + '</td><td>' + fmt(incidentLaborCost * 1.1664) + '</td></tr>';
             projHtml += '<tr><td>Downtime Revenue Loss</td><td>' + fmt(downtimeCost) + '</td><td>' + fmt(downtimeCost * 1.08) + '</td><td>' + fmt(downtimeCost * 1.1664) + '</td></tr>';
@@ -3398,12 +4892,323 @@
             document.getElementById('projection-body').innerHTML = projHtml;
         }
 
-        // Attach event listeners to all ROI inputs
         ['gpu-nodes', 'salary', 'ml-engineers', 'incidents', 'hours-per-incident', 'revenue-per-hour', 'cloud-gpu-spend'].forEach(function(id) {
             document.getElementById(id).addEventListener('input', updateROI);
         });
 
         updateROI();
+
+        // ============================================
+        // FINANCIAL MODEL BUILDER
+        // ============================================
+        // Tab switching
+        document.querySelectorAll('.financial-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.financial-tab').forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+                document.querySelectorAll('.financial-panel').forEach(function(p) { p.classList.remove('active'); });
+                document.getElementById('ftab-' + this.dataset.ftab).classList.add('active');
+            });
+        });
+
+        function getGpuHourlyCost() {
+            var sel = document.getElementById('fm-gpu-type');
+            return parseFloat(sel.options[sel.selectedIndex].dataset.cost);
+        }
+
+        function updateFinancialModel() {
+            var gpuCount = parseInt(document.getElementById('fm-gpu-count').value);
+            var gpuCostHr = getGpuHourlyCost();
+            var deployModel = document.getElementById('fm-deploy-model').value;
+            var utilization = parseInt(document.getElementById('fm-utilization').value);
+            var engineers = parseInt(document.getElementById('fm-engineers').value);
+            var salary = parseInt(document.getElementById('fm-salary').value);
+            var infraPct = parseInt(document.getElementById('fm-infra-pct').value) / 100;
+            var hiringCost = parseInt(document.getElementById('fm-hiring-cost').value);
+            var incidents = parseInt(document.getElementById('fm-incidents').value);
+            var mttr = parseInt(document.getElementById('fm-mttr').value);
+            var audits = parseInt(document.getElementById('fm-audits').value);
+            var patches = parseInt(document.getElementById('fm-patches').value);
+            var revenue = parseInt(document.getElementById('fm-revenue').value);
+            var customers = parseInt(document.getElementById('fm-customers').value);
+            var slaPenalty = parseInt(document.getElementById('fm-sla-penalty').value);
+            var growthRate = parseInt(document.getElementById('fm-growth').value) / 100;
+
+            // Update display values
+            document.getElementById('fm-gpu-count-val').textContent = gpuCount;
+            document.getElementById('fm-utilization-val').textContent = utilization + '%';
+            document.getElementById('fm-engineers-val').textContent = engineers;
+            document.getElementById('fm-salary-val').textContent = fmt(salary);
+            document.getElementById('fm-infra-pct-val').textContent = (infraPct * 100) + '%';
+            document.getElementById('fm-hiring-cost-val').textContent = fmt(hiringCost);
+            document.getElementById('fm-incidents-val').textContent = incidents;
+            document.getElementById('fm-mttr-val').textContent = mttr + ' hrs';
+            document.getElementById('fm-audits-val').textContent = audits;
+            document.getElementById('fm-patches-val').textContent = patches;
+            document.getElementById('fm-revenue-val').textContent = fmt(revenue);
+            document.getElementById('fm-customers-val').textContent = customers;
+            document.getElementById('fm-sla-penalty-val').textContent = fmt(slaPenalty);
+            document.getElementById('fm-growth-val').textContent = (growthRate * 100) + '%';
+
+            // Compute costs
+            var reservedDiscount = deployModel === 'reserved' ? 0.6 : (deployModel === 'onprem' ? 0.4 : 1.0);
+            var annualGpuCost = gpuCount * gpuCostHr * 8760 * (utilization / 100) * reservedDiscount;
+            var teamInfraCost = engineers * salary * infraPct;
+            var annualIncidentHours = incidents * mttr * 12;
+            var hourlyRate = salary / 2080;
+            var incidentLaborCost = annualIncidentHours * hourlyRate;
+            var downtimeCost = annualIncidentHours * revenue;
+            var slaPenaltyCost = annualIncidentHours * slaPenalty;
+            var auditCost = audits * 25000; // $25k per audit avg
+            var patchCost = patches * 12 * 4 * hourlyRate; // 4 hrs per patch avg
+
+            // Self-managed annual
+            var selfAnnual = annualGpuCost + teamInfraCost + incidentLaborCost + downtimeCost + slaPenaltyCost + auditCost + patchCost;
+
+            // Standard: $15k/node, 60% incident reduction, 15% infra time reduction
+            var stdSub = gpuCount * 15000;
+            var stdIncidentHrs = annualIncidentHours * 0.40;
+            var stdIncidentLabor = stdIncidentHrs * hourlyRate;
+            var stdDowntime = stdIncidentHrs * revenue;
+            var stdSlaPenalty = stdIncidentHrs * slaPenalty;
+            var stdTeamInfra = engineers * salary * (infraPct * 0.5);
+            var stdGpu = annualGpuCost * 0.93; // 7% utilization improvement
+            var stdAudit = auditCost * 0.6; // Easier audits
+            var stdPatch = patchCost * 0.3; // Automated patching
+            var stdAnnual = stdSub + stdGpu + stdTeamInfra + stdIncidentLabor + stdDowntime + stdSlaPenalty + stdAudit + stdPatch;
+
+            // Premium: $25k/node, 80% incident reduction, 25% infra time reduction
+            var premSub = gpuCount * 25000;
+            var premIncidentHrs = annualIncidentHours * 0.20;
+            var premIncidentLabor = premIncidentHrs * hourlyRate;
+            var premDowntime = premIncidentHrs * revenue;
+            var premSlaPenalty = premIncidentHrs * slaPenalty;
+            var premTeamInfra = engineers * salary * (infraPct * 0.3);
+            var premGpu = annualGpuCost * 0.88; // 12% utilization improvement
+            var premAudit = auditCost * 0.4;
+            var premPatch = patchCost * 0.15;
+            var premAnnual = premSub + premGpu + premTeamInfra + premIncidentLabor + premDowntime + premSlaPenalty + premAudit + premPatch;
+
+            // 5-year TCO with growth
+            var tcoSelf = 0, tcoStd = 0, tcoPrem = 0;
+            var selfYears = [], stdYears = [], premYears = [];
+            for (var yr = 0; yr < 5; yr++) {
+                var growthMult = Math.pow(1 + growthRate * 0.3, yr); // Infrastructure grows at 30% of business growth
+                var selfYr = selfAnnual * growthMult * Math.pow(1.08, yr);
+                var stdYr = stdAnnual * growthMult * Math.pow(1.03, yr);
+                var premYr = premAnnual * growthMult * Math.pow(1.03, yr);
+                tcoSelf += selfYr;
+                tcoStd += stdYr;
+                tcoPrem += premYr;
+                selfYears.push(selfYr);
+                stdYears.push(stdYr);
+                premYears.push(premYr);
+            }
+
+            document.getElementById('fm-tco-self').textContent = fmt(tcoSelf);
+            document.getElementById('fm-tco-standard').textContent = fmt(tcoStd);
+            document.getElementById('fm-tco-premium').textContent = fmt(tcoPrem);
+
+            // NPV calculation (8% discount rate)
+            var discountRate = 0.08;
+            var npv = 0;
+            for (var yr = 0; yr < 5; yr++) {
+                var saving = selfYears[yr] - stdYears[yr];
+                npv += saving / Math.pow(1 + discountRate, yr + 1);
+            }
+            // Risk adjustment: 85% confidence
+            npv *= 0.85;
+            var npvEl = document.getElementById('fm-npv');
+            npvEl.textContent = fmt(npv);
+            npvEl.className = npv >= 0 ? 'result-value positive' : 'result-value negative';
+
+            // Comparison table
+            var compBody = document.getElementById('fm-comparison-body');
+            var compHtml = '';
+            compHtml += '<tr><td>GPU Infrastructure</td><td>' + fmt(annualGpuCost) + '</td><td>' + fmt(stdGpu) + '</td><td>' + fmt(premGpu) + '</td></tr>';
+            compHtml += '<tr><td>Team Infrastructure Time</td><td>' + fmt(teamInfraCost) + '</td><td>' + fmt(stdTeamInfra) + '</td><td>' + fmt(premTeamInfra) + '</td></tr>';
+            compHtml += '<tr><td>Incident Labor</td><td>' + fmt(incidentLaborCost) + '</td><td>' + fmt(stdIncidentLabor) + '</td><td>' + fmt(premIncidentLabor) + '</td></tr>';
+            compHtml += '<tr><td>Downtime Revenue Loss</td><td>' + fmt(downtimeCost) + '</td><td>' + fmt(stdDowntime) + '</td><td>' + fmt(premDowntime) + '</td></tr>';
+            compHtml += '<tr><td>SLA Penalties</td><td>' + fmt(slaPenaltyCost) + '</td><td>' + fmt(stdSlaPenalty) + '</td><td>' + fmt(premSlaPenalty) + '</td></tr>';
+            compHtml += '<tr><td>Compliance Audits</td><td>' + fmt(auditCost) + '</td><td>' + fmt(stdAudit) + '</td><td>' + fmt(premAudit) + '</td></tr>';
+            compHtml += '<tr><td>Security Patching</td><td>' + fmt(patchCost) + '</td><td>' + fmt(stdPatch) + '</td><td>' + fmt(premPatch) + '</td></tr>';
+            compHtml += '<tr><td>Subscription Cost</td><td>' + fmt(0) + '</td><td>' + fmt(stdSub) + '</td><td>' + fmt(premSub) + '</td></tr>';
+            compHtml += '<tr class="highlight-row"><td>Annual Total</td><td>' + fmt(selfAnnual) + '</td><td>' + fmt(stdAnnual) + '</td><td>' + fmt(premAnnual) + '</td></tr>';
+            compHtml += '<tr class="highlight-row"><td>5-Year TCO</td><td>' + fmt(tcoSelf) + '</td><td>' + fmt(tcoStd) + '</td><td>' + fmt(tcoPrem) + '</td></tr>';
+            var savingsStd = tcoSelf - tcoStd;
+            var savingsPrem = tcoSelf - tcoPrem;
+            compHtml += '<tr><td>5-Year Savings vs Self-Managed</td><td>--</td><td style="color: ' + (savingsStd >= 0 ? 'var(--success)' : 'var(--accent-red)') + '; font-weight: 700;">' + fmt(savingsStd) + '</td><td style="color: ' + (savingsPrem >= 0 ? 'var(--success)' : 'var(--accent-red)') + '; font-weight: 700;">' + fmt(savingsPrem) + '</td></tr>';
+            compBody.innerHTML = compHtml;
+
+            // Break-even chart
+            drawBreakevenChart(selfYears, stdYears, premYears);
+
+            // Sensitivity analysis
+            updateSensitivity();
+        }
+
+        function drawBreakevenChart(selfYears, stdYears, premYears) {
+            var canvas = document.getElementById('breakeven-chart');
+            var ctx = canvas.getContext('2d');
+            var w = canvas.width;
+            var h = canvas.height;
+            var padL = 80, padR = 20, padT = 20, padB = 40;
+            var chartW = w - padL - padR;
+            var chartH = h - padT - padB;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Compute cumulative costs
+            var cumSelf = [], cumStd = [], cumPrem = [];
+            var runSelf = 0, runStd = 0, runPrem = 0;
+            for (var i = 0; i < 5; i++) {
+                runSelf += selfYears[i];
+                runStd += stdYears[i];
+                runPrem += premYears[i];
+                cumSelf.push(runSelf);
+                cumStd.push(runStd);
+                cumPrem.push(runPrem);
+            }
+
+            var maxVal = Math.max.apply(null, cumSelf.concat(cumStd).concat(cumPrem));
+
+            // Grid
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+            ctx.lineWidth = 1;
+            for (var i = 0; i <= 4; i++) {
+                var y = padT + (i / 4) * chartH;
+                ctx.beginPath();
+                ctx.moveTo(padL, y);
+                ctx.lineTo(padL + chartW, y);
+                ctx.stroke();
+
+                var labelVal = maxVal - (i / 4) * maxVal;
+                ctx.fillStyle = '#a1a1aa';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(fmt(labelVal), padL - 8, y + 4);
+            }
+
+            // X axis labels
+            ctx.textAlign = 'center';
+            for (var i = 0; i < 5; i++) {
+                var x = padL + ((i + 0.5) / 5) * chartW;
+                ctx.fillText('Year ' + (i + 1), x, h - 10);
+            }
+
+            // Draw lines
+            function drawLine(data, color) {
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                for (var i = 0; i < data.length; i++) {
+                    var x = padL + ((i + 0.5) / 5) * chartW;
+                    var y = padT + (1 - data[i] / maxVal) * chartH;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+
+                // Dots
+                for (var i = 0; i < data.length; i++) {
+                    var x = padL + ((i + 0.5) / 5) * chartW;
+                    var y = padT + (1 - data[i] / maxVal) * chartH;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                }
+            }
+
+            drawLine(cumSelf, '#9b4d9b');
+            drawLine(cumStd, '#eab308');
+            drawLine(cumPrem, '#ee0000');
+
+            // Legend
+            var legendY = padT + 10;
+            var legends = [
+                { label: 'Self-Managed', color: '#9b4d9b' },
+                { label: 'Standard', color: '#eab308' },
+                { label: 'Premium', color: '#ee0000' }
+            ];
+            legends.forEach(function(leg, idx) {
+                var lx = padL + 10 + idx * 130;
+                ctx.fillStyle = leg.color;
+                ctx.fillRect(lx, legendY, 12, 12);
+                ctx.fillStyle = '#e4e4e7';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(leg.label, lx + 16, legendY + 10);
+            });
+        }
+
+        function updateSensitivity() {
+            var mult = parseInt(document.getElementById('fm-sensitivity').value) / 100;
+            document.getElementById('fm-sensitivity-val').textContent = mult.toFixed(1) + 'x';
+
+            var gpuCount = Math.round(parseInt(document.getElementById('fm-gpu-count').value) * mult);
+            var gpuCostHr = getGpuHourlyCost();
+            var deployModel = document.getElementById('fm-deploy-model').value;
+            var utilization = parseInt(document.getElementById('fm-utilization').value);
+            var reservedDiscount = deployModel === 'reserved' ? 0.6 : (deployModel === 'onprem' ? 0.4 : 1.0);
+            var annualGpuCost = gpuCount * gpuCostHr * 8760 * (utilization / 100) * reservedDiscount;
+
+            var stdSub = gpuCount * 15000;
+            var premSub = gpuCount * 25000;
+            var selfTotal = annualGpuCost + annualGpuCost * 0.15; // simplified
+            var stdTotal = annualGpuCost * 0.93 + stdSub;
+            var premTotal = annualGpuCost * 0.88 + premSub;
+
+            var html = '<div class="result-item"><div class="result-label">Adjusted GPU Count</div><div class="result-value">' + gpuCount + '</div></div>';
+            html += '<div class="result-item"><div class="result-label">Self-Managed (infra only)</div><div class="result-value">' + fmt(selfTotal) + '</div></div>';
+            html += '<div class="result-item"><div class="result-label">Standard (infra + sub)</div><div class="result-value">' + fmt(stdTotal) + '</div></div>';
+            html += '<div class="result-item"><div class="result-label">Premium (infra + sub)</div><div class="result-value">' + fmt(premTotal) + '</div></div>';
+            document.getElementById('fm-sensitivity-results').innerHTML = html;
+        }
+
+        // Wire up all financial model inputs
+        var fmInputIds = ['fm-gpu-count', 'fm-gpu-type', 'fm-deploy-model', 'fm-utilization', 'fm-engineers', 'fm-salary', 'fm-infra-pct', 'fm-hiring-cost', 'fm-incidents', 'fm-mttr', 'fm-audits', 'fm-patches', 'fm-revenue', 'fm-customers', 'fm-sla-penalty', 'fm-growth'];
+        fmInputIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            el.addEventListener('input', updateFinancialModel);
+            el.addEventListener('change', updateFinancialModel);
+        });
+
+        document.getElementById('fm-sensitivity').addEventListener('input', updateSensitivity);
+
+        document.getElementById('fm-download').addEventListener('click', function() {
+            var text = '==============================================\n';
+            text += 'FINANCIAL MODEL SUMMARY\n';
+            text += '==============================================\n';
+            text += 'Generated: ' + new Date().toISOString().split('T')[0] + '\n\n';
+            text += '5-Year TCO (Self-Managed): ' + document.getElementById('fm-tco-self').textContent + '\n';
+            text += '5-Year TCO (Standard):     ' + document.getElementById('fm-tco-standard').textContent + '\n';
+            text += '5-Year TCO (Premium):      ' + document.getElementById('fm-tco-premium').textContent + '\n';
+            text += 'Risk-Adjusted NPV:         ' + document.getElementById('fm-npv').textContent + '\n\n';
+            text += 'INPUTS:\n';
+            text += '  GPU Count:        ' + document.getElementById('fm-gpu-count').value + '\n';
+            text += '  GPU Type:         ' + document.getElementById('fm-gpu-type').options[document.getElementById('fm-gpu-type').selectedIndex].text + '\n';
+            text += '  Deploy Model:     ' + document.getElementById('fm-deploy-model').value + '\n';
+            text += '  Utilization:      ' + document.getElementById('fm-utilization').value + '%\n';
+            text += '  Engineers:        ' + document.getElementById('fm-engineers').value + '\n';
+            text += '  Avg Salary:       ' + fmt(parseInt(document.getElementById('fm-salary').value)) + '\n';
+            text += '  Incidents/mo:     ' + document.getElementById('fm-incidents').value + '\n';
+            text += '  MTTR:             ' + document.getElementById('fm-mttr').value + ' hrs\n';
+            text += '  Revenue/hr:       ' + fmt(parseInt(document.getElementById('fm-revenue').value)) + '\n';
+            text += '  Growth Rate:      ' + document.getElementById('fm-growth').value + '%\n\n';
+            text += '==============================================\n';
+            text += 'Generated by llm-d Content Hub #20\n';
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('Financial summary copied to clipboard');
+                }).catch(function() { fallbackCopy(text); });
+            } else {
+                fallbackCopy(text);
+            }
+        });
+
+        updateFinancialModel();
 
         // ============================================
         // SCROLL ANIMATIONS

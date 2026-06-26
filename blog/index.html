@@ -6,9 +6,6 @@
     <title>From llm-d to Red Hat AI Inference Server: The Upstream-First Enterprise Path | Markell Rawls</title>
     <meta name="description" content="A deep technical exploration of how Red Hat transforms the open-source llm-d inference server into an enterprise-grade platform, following the proven upstream-first model of Linux to RHEL and Kubernetes to OpenShift.">
     <meta name="author" content="Markell Rawls">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;600;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -32,7 +29,7 @@
         }
 
         body {
-            font-family: 'Red Hat Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-secondary);
             line-height: 1.8;
@@ -90,7 +87,7 @@
         }
 
         h1 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 48px;
             font-weight: 900;
             color: var(--text-primary);
@@ -116,7 +113,7 @@
         }
 
         .toc h2 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
@@ -151,7 +148,7 @@
             content: counter(toc-counter);
             color: var(--accent);
             font-weight: 700;
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         article {
@@ -161,7 +158,7 @@
         }
 
         h2 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 36px;
             font-weight: 700;
             color: var(--text-primary);
@@ -171,7 +168,7 @@
         }
 
         h3 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 26px;
             font-weight: 600;
             color: var(--text-primary);
@@ -180,7 +177,7 @@
         }
 
         h4 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 20px;
             font-weight: 600;
             color: var(--text-primary);
@@ -246,7 +243,7 @@
         }
 
         .callout h4 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
@@ -302,7 +299,7 @@
             background: var(--bg-secondary);
             color: var(--text-primary);
             font-weight: 700;
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         tr:hover {
@@ -315,7 +312,7 @@
         }
 
         .cert-matrix-header {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 16px;
             font-weight: 700;
             color: var(--accent-redhat);
@@ -418,7 +415,7 @@
         }
 
         .persona-card h4 {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
@@ -426,7 +423,7 @@
         }
 
         .persona-score {
-            font-family: 'Red Hat Display', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 36px;
             font-weight: 900;
             margin: 12px 0;
@@ -467,6 +464,127 @@
         .tco-savings td {
             color: #22c55e;
             font-weight: 600;
+        }
+
+        .timeline-container {
+            position: relative;
+            margin: 40px 0;
+            padding-left: 40px;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 28px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 22px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg-primary);
+        }
+
+        .timeline-item.timeline-linux::before {
+            background: var(--accent-upstream);
+        }
+
+        .timeline-item.timeline-ai::before {
+            background: var(--accent-redhat);
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .timeline-item.timeline-linux .timeline-year {
+            color: var(--accent-upstream);
+        }
+
+        .timeline-item.timeline-ai .timeline-year {
+            color: var(--accent-redhat);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 16px;
+        }
+
+        .risk-high {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        .risk-medium {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .risk-low {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .phase-header {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
         }
 
         footer {
@@ -530,7 +648,9 @@
             <span>&bull;</span>
             <span>June 25, 2026</span>
             <span>&bull;</span>
-            <span>~28 min read</span>
+            <span>~55 min read</span>
+            <span>&bull;</span>
+            <span>~11,000 words</span>
         </div>
         <h1>From llm-d to Red Hat AI Inference Server: The Upstream-First Enterprise Path</h1>
         <p class="subtitle">How Red Hat transforms open-source LLM inference into enterprise-grade infrastructure, following the proven patterns of Linux to RHEL and Kubernetes to OpenShift</p>
@@ -549,11 +669,15 @@
         <ol>
             <li><a href="#upstream-first">The Upstream-First Model</a></li>
             <li><a href="#pattern">The Pattern: Linux to RHEL, Kubernetes to OpenShift, llm-d to Red Hat AI</a></li>
+            <li><a href="#linux-rhel-analogy">The Linux-to-RHEL Analogy in Depth</a></li>
             <li><a href="#enterprise-grade">What "Enterprise-Grade" Actually Means for LLM Inference</a></li>
             <li><a href="#deep-comparison">Deep Comparison: What Red Hat AI Adds Beyond Upstream llm-d</a></li>
             <li><a href="#certification">The Certification Process</a></li>
+            <li><a href="#compliance-deep-dive">Compliance and Certification Deep Dive</a></li>
+            <li><a href="#support-tiers">Support Tiers in Detail</a></li>
             <li><a href="#deployment">Customer Deployment Patterns</a></li>
             <li><a href="#migration">Migration Stories</a></li>
+            <li><a href="#migration-planning">Migration Planning</a></li>
             <li><a href="#tco">The Business Case: TCO Analysis</a></li>
             <li><a href="#decision-matrix">Decision Framework: When Upstream is Enough, When Enterprise Pays Off</a></li>
             <li><a href="#roadmap">Future Roadmap Alignment</a></li>
@@ -626,6 +750,96 @@
         <p>The pattern also protects the customer's investment. If you build on RHEL, your applications are not locked to RHEL. They run on any Linux. If you build on OpenShift, your workloads are not locked to OpenShift. They run on any Kubernetes. If you build on Red Hat AI, your models and clients are not locked to Red Hat AI. They run on any llm-d deployment. The APIs are the same. The data formats are the same. The portability is real.</p>
 
         <p>This is the deepest strategic argument for the upstream-first model: it de-risks procurement. You are not buying a proprietary inference server that will strand your investment if the vendor changes direction. You are buying enterprise support for an open-source project that will outlive any single vendor's business decisions.</p>
+
+        <h2 id="linux-rhel-analogy">The Linux-to-RHEL Analogy in Depth</h2>
+
+        <p>The parallel between Linux's journey to enterprise dominance and the current AI inference landscape is not a loose metaphor. It is a structural analog that explains why the upstream-first enterprise model works, why it takes the shape it does, and what it predicts about the future of AI infrastructure. To understand where Red Hat AI is going, it helps to understand exactly where Linux and RHEL have been.</p>
+
+        <h3>From Hobbyist OS to Enterprise Standard: The Linux Arc</h3>
+
+        <p>In 1991, Linus Torvalds posted his famous message to comp.os.minix: "I'm doing a (free) operating system (just a hobby, won't be big and professional)." Within three years, Linux was powering web servers at universities. Within ten years, it was running stock exchanges. Within twenty years, it was the operating system for 90% of public cloud infrastructure and the majority of the world's supercomputers. That trajectory -- from hobbyist project to the foundation of global infrastructure -- did not happen by accident. It happened because the open development model attracted the best contributors, the permissive licensing attracted the broadest ecosystem, and the enterprise packaging model (Red Hat, SUSE, Canonical) bridged the gap between community innovation and enterprise operational requirements.</p>
+
+        <p>The key inflection point was not a technical milestone. It was a business one. In the late 1990s and early 2000s, enterprises began seriously evaluating Linux as a replacement for proprietary Unix systems (Solaris, AIX, HP-UX). The technical case was strong: Linux ran on commodity x86 hardware, which was dramatically cheaper than proprietary RISC/Itanium systems. The feature set was comparable for most workloads. Performance was competitive and improving rapidly. But technical superiority was not enough. CIOs and procurement teams needed answers to questions that the Linux community could not answer: Who is legally responsible if this breaks? Who guarantees a patch within 24 hours? Who will still support this kernel version in 2012 when our SAP deployment depends on it?</p>
+
+        <p>Red Hat answered those questions without changing the kernel. RHEL is the same Linux kernel that anyone can download from kernel.org. What Red Hat added was the enterprise layer -- and that layer is what made Linux deployable in the Fortune 500.</p>
+
+        <h3>Red Hat's Kernel Backporting Strategy</h3>
+
+        <p>One of the most misunderstood aspects of RHEL is its relationship to the upstream kernel. RHEL does not track the latest kernel release. Instead, it selects a specific kernel version at the start of each major RHEL release, then backports security fixes and critical bug fixes from newer upstream kernels onto that base for the duration of the release's lifecycle. RHEL 9, for example, launched with a kernel based on Linux 5.14 and will continue to ship a 5.14-based kernel through 2032, even though upstream will be on kernel 8.x or 9.x by then.</p>
+
+        <p>This backporting strategy is the key to enterprise stability. Applications do not break because the kernel API changed. Drivers that were certified in 2022 still work in 2030. Performance characteristics are predictable. The kernel team at Red Hat maintains a set of patches -- thousands of them over a release's lifetime -- that bring security and reliability improvements from newer kernels without changing the stable ABI that applications depend on.</p>
+
+        <p>The same strategy applies to Red Hat AI. The upstream llm-d project moves fast -- new features, API changes, dependency updates every two months. Red Hat AI selects a stable upstream version, then backports security fixes and critical bug fixes for 18 months per minor release. Your application code, your deployment manifests, your monitoring integrations -- they all continue to work across patch releases. You get the security posture of the latest upstream without the churn.</p>
+
+        <h3>How RHEL Certifies Hardware -- and How Red Hat AI Certifies GPU Configurations</h3>
+
+        <p>When Dell ships a new PowerEdge server, Red Hat tests it in a lab: boots RHEL, runs stress tests on CPU, memory, disk I/O, and networking, validates that every hardware component (NIC, RAID controller, GPU, BMC) works with the RHEL kernel's drivers, and publishes the results in the Red Hat Hardware Catalog. This catalog is publicly searchable. An IT administrator can look up their exact server model and see whether it is certified for RHEL 8, RHEL 9, or both, and which kernel versions were tested.</p>
+
+        <p>Red Hat AI applies the same methodology to GPU-accelerated inference workloads. Instead of certifying that a RAID controller works with a kernel, Red Hat certifies that a specific GPU (NVIDIA H100 SXM), with a specific driver version (CUDA 12.x), running a specific model (Llama-3.1-70B), in a specific configuration (4-way tensor parallelism, BF16 precision), produces correct outputs at documented performance levels. The Red Hat Certified Configuration Matrix is the GPU equivalent of the Red Hat Hardware Catalog.</p>
+
+        <p>The parallel is exact. Just as you would not deploy an untested server model in a RHEL production environment, you should not deploy an untested GPU-model-quantization combination in an AI inference production environment. The state space of possible configurations is enormous, and edge cases are common. Certification reduces the state space to known-good combinations.</p>
+
+        <h3>The 10-Year Lifecycle and What It Means for AI Infrastructure</h3>
+
+        <p>RHEL's 10-year lifecycle (5 years of full support + 5 years of maintenance support, with optional Extended Life Cycle Support beyond that) is one of the most powerful features of the enterprise Linux model. It means that an application deployed on RHEL 9 in 2022 will receive security patches until at least 2032. It means that SAP, Oracle, and other enterprise software vendors can certify their products on a specific RHEL version and guarantee support for a decade. It means that enterprises can plan hardware refresh cycles, application migrations, and compliance audits around published dates, not around the whims of an upstream release schedule.</p>
+
+        <p>AI inference infrastructure is not yet at the 10-year lifecycle stage. The technology is moving too fast. But Red Hat AI's 18-month full support plus 12-month extended update support (30 months total per minor release) is a deliberate step in that direction. It provides enough stability for enterprises to deploy a version, run it in production, and plan a migration to the next version without being forced to upgrade on the upstream project's cadence.</p>
+
+        <p>As AI inference matures -- as the APIs stabilize, as the model architectures converge, as the GPU hardware becomes more predictable -- expect Red Hat AI's lifecycle to lengthen, just as RHEL's lifecycle lengthened from 5 years in the early days to 10 years today. The trajectory is the same. The pace is accelerated because the AI industry moves faster than the server operating system industry did in the 2000s, but the direction is identical.</p>
+
+        <h3>Adoption Timeline: Linux Milestones Alongside Projected AI Inference</h3>
+
+        <p>Looking at the parallel histories side by side reveals how far along the AI inference adoption curve has progressed -- and where it is likely heading.</p>
+
+        <div class="timeline-container">
+            <div class="timeline-item timeline-linux">
+                <p class="timeline-year">1991 -- Linux</p>
+                <p class="timeline-title">Linus releases Linux 0.01</p>
+                <p class="timeline-desc">A hobbyist project, explicitly "not big and professional." Universities and enthusiasts adopt it.</p>
+            </div>
+            <div class="timeline-item timeline-ai">
+                <p class="timeline-year">2023 -- AI Inference</p>
+                <p class="timeline-title">vLLM launches, llm-d development begins</p>
+                <p class="timeline-desc">Open-source LLM inference emerges. Early adopters run vLLM on bare metal. No enterprise packaging.</p>
+            </div>
+            <div class="timeline-item timeline-linux">
+                <p class="timeline-year">1994 -- Linux</p>
+                <p class="timeline-title">Red Hat Linux 1.0 ships</p>
+                <p class="timeline-desc">First commercial Linux distribution. Enterprises experiment but do not trust it for production workloads.</p>
+            </div>
+            <div class="timeline-item timeline-ai">
+                <p class="timeline-year">2024-2025 -- AI Inference</p>
+                <p class="timeline-title">Red Hat AI Inference Server launches</p>
+                <p class="timeline-desc">First enterprise packaging of llm-d. Certified containers, support SLAs, lifecycle commitments. Enterprises evaluate.</p>
+            </div>
+            <div class="timeline-item timeline-linux">
+                <p class="timeline-year">1999-2002 -- Linux</p>
+                <p class="timeline-title">Enterprise adoption inflection</p>
+                <p class="timeline-desc">IBM invests $1B in Linux. RHEL launches (2002). Wall Street, telecom, and government adopt. Linux displaces proprietary Unix.</p>
+            </div>
+            <div class="timeline-item timeline-ai">
+                <p class="timeline-year">2026-2028 (projected) -- AI Inference</p>
+                <p class="timeline-title">Enterprise adoption inflection</p>
+                <p class="timeline-desc">Major enterprises move AI inference from experimentation to production at scale. Certified, supported platforms become the default. Proprietary inference solutions lose share.</p>
+            </div>
+            <div class="timeline-item timeline-linux">
+                <p class="timeline-year">2008-2012 -- Linux</p>
+                <p class="timeline-title">Cloud era dominance</p>
+                <p class="timeline-desc">Linux becomes the default OS for cloud infrastructure. AWS, Azure, GCP all run on Linux. RHEL lifecycle extends to 10 years.</p>
+            </div>
+            <div class="timeline-item timeline-ai">
+                <p class="timeline-year">2029-2032 (projected) -- AI Inference</p>
+                <p class="timeline-title">AI inference as utility infrastructure</p>
+                <p class="timeline-desc">LLM inference becomes as routine as running a web server. Enterprise lifecycle support extends to 3-5 years. Hardware certification becomes comprehensive.</p>
+            </div>
+        </div>
+
+        <p>The trajectory is compressed. Linux took 11 years to go from Linus's first release to RHEL. AI inference took roughly 2 years to go from vLLM's launch to Red Hat AI. The compression factor is approximately 5x, driven by the maturity of the open-source ecosystem, the existing enterprise distribution infrastructure, and the intensity of enterprise demand for AI capabilities. What took Linux a decade will likely take AI inference two to three years.</p>
+
+        <div class="callout callout-upstream">
+            <h4>Open Source Highlight</h4>
+            <p>The structural analogy extends to the component model. In Linux, the kernel is the engine, the distribution is the vehicle, and the enterprise distribution is the certified, warrantied vehicle. In AI inference, vLLM is the engine, llm-d is the vehicle (adding routing, Kubernetes integration, and multi-model management), and Red Hat AI is the certified, warrantied vehicle. The layering is identical. The value add at each layer is identical. The business model is identical.</p>
+        </div>
 
         <h2 id="enterprise-grade">What "Enterprise-Grade" Actually Means for LLM Inference</h2>
 
@@ -1018,6 +1232,288 @@
 
         <p>This is the same vendor partnership model that has allowed RHEL to support enterprise hardware on day one of product launches for two decades. GPU vendors invest in Red Hat certification because their enterprise customers demand it. Red Hat invests in GPU vendor certification because its customers deploy on diverse hardware. The result is a tested, supported configuration matrix that no individual customer could afford to build on their own.</p>
 
+        <h2 id="compliance-deep-dive">Compliance and Certification Deep Dive</h2>
+
+        <p>For enterprises in regulated industries, compliance is not optional -- it is a prerequisite for doing business. Running AI inference in production means running it in an environment that satisfies auditors, regulators, and security teams. This section breaks down the major compliance frameworks, how they apply to AI inference infrastructure, and how Red Hat AI helps you meet each one.</p>
+
+        <h3>FIPS 140-2 and FIPS 140-3: Cryptographic Module Validation</h3>
+
+        <p>The Federal Information Processing Standard (FIPS) 140 defines security requirements for cryptographic modules used in government systems. FIPS 140-2 has been the standard since 2001; FIPS 140-3, based on ISO/IEC 19790, is its successor and is now required for new module submissions. Many private-sector organizations -- particularly in finance and healthcare -- also require FIPS validation as a matter of policy, even when not mandated by regulation.</p>
+
+        <p>What does FIPS validation actually require? At a high level, it means that every cryptographic operation in the system -- TLS handshakes, certificate verification, data encryption at rest, hashing for integrity checks -- must use algorithms and implementations that have been tested and validated by an accredited laboratory (a Cryptographic and Security Testing Laboratory, or CSTL) and listed on NIST's Cryptographic Module Validation Program (CMVP). This is not a self-certification. The testing process typically takes 6-18 months and costs hundreds of thousands of dollars.</p>
+
+        <p>For AI inference, FIPS applies at multiple layers. The operating system layer (RHEL) must use FIPS-validated cryptographic libraries for system-level TLS, SSH, and disk encryption. The container runtime must respect FIPS mode. The inference server itself must use FIPS-validated libraries for any TLS connections it makes (to model registries, to clients, to monitoring endpoints). Even the Python runtime's <code>hashlib</code> and <code>ssl</code> modules must be configured to use FIPS-approved algorithms.</p>
+
+        <p>Red Hat AI achieves FIPS compliance by building on RHEL's FIPS-validated cryptographic modules. RHEL's OpenSSL, GnuTLS, and NSS libraries are FIPS 140-2 validated (with FIPS 140-3 validation in progress for RHEL 9.x). The UBI base images used by Red Hat AI inherit this validation. When you enable FIPS mode on an OpenShift cluster, all pods -- including Red Hat AI inference pods -- automatically use FIPS-validated cryptographic implementations. No application-level changes are needed.</p>
+
+        <h3>SOC 2 Type II: Continuous Security Controls</h3>
+
+        <p>SOC 2 (System and Organization Controls 2) is an auditing framework developed by the AICPA that evaluates an organization's controls relevant to security, availability, processing integrity, confidentiality, and privacy. A SOC 2 Type II report covers a specific period (typically 6-12 months) and requires evidence that controls were not just designed but actually operating effectively throughout that period.</p>
+
+        <p>For AI inference infrastructure, SOC 2 auditors typically look for: access controls (who can deploy models, who can access inference endpoints, who can view logs), change management (how are updates to the inference server deployed, is there an approval process, is there a rollback plan), vulnerability management (how are CVEs tracked and remediated, what are the response timeframes), monitoring and alerting (are there alerts for anomalous behavior, are logs retained for the required period), and incident response (is there a documented process, has it been tested).</p>
+
+        <p>Red Hat AI supports SOC 2 compliance through several mechanisms. OpenShift's RBAC (Role-Based Access Control) provides fine-grained access controls for inference resources. The Operator's declarative management model creates an auditable change trail -- every configuration change is a Kubernetes resource update, logged in the API server's audit log. Red Hat's CVE response SLAs provide documented vulnerability management timeframes. Pre-built monitoring and alerting satisfy the monitoring requirement. And Red Hat's incident response processes, documented in support agreements, provide the incident response framework that auditors expect.</p>
+
+        <h3>FedRAMP: Federal Risk and Authorization Management Program</h3>
+
+        <p>FedRAMP is the U.S. government's standardized approach to security assessment, authorization, and continuous monitoring for cloud products and services. There are three impact levels -- Low, Moderate, and High -- corresponding to the sensitivity of the data and the potential impact of a security breach. Most AI workloads in government fall under Moderate or High.</p>
+
+        <p>The FedRAMP authorization process is notoriously rigorous. It requires implementing hundreds of security controls from NIST SP 800-53, documenting each control in a System Security Plan (SSP), having the controls assessed by an independent Third Party Assessment Organization (3PAO), and maintaining continuous monitoring with monthly vulnerability scans and annual assessments.</p>
+
+        <p>OpenShift is FedRAMP authorized at the Moderate level on multiple cloud providers. Red Hat AI, deployed on FedRAMP-authorized OpenShift, inherits this authorization posture. This does not mean Red Hat AI itself is "FedRAMP authorized" as a standalone product -- FedRAMP authorizes systems, not individual components -- but it means that the platform on which Red Hat AI runs has already satisfied the most demanding controls. The agency deploying AI inference needs to document the AI-specific controls (model provenance, inference data handling, AI-specific access controls) but does not need to re-certify the entire infrastructure stack.</p>
+
+        <h3>SBOM: Software Bill of Materials</h3>
+
+        <p>An SBOM is a formal, machine-readable inventory of all components in a software artifact. Think of it as the ingredient list on a food package, but for software. For a container image, the SBOM lists every package: operating system packages (glibc, openssl, python3), Python packages (vllm, torch, numpy, transformers), shared libraries, and any other binaries included in the image.</p>
+
+        <p>SBOMs matter for AI inference for the same reason they matter for any software: supply chain visibility. When Log4Shell (CVE-2021-44228) was disclosed, organizations without SBOMs spent days or weeks inventorying their software to determine if they were affected. Organizations with SBOMs could query them programmatically and know within minutes. The same applies to AI inference: when a CVE is disclosed in PyTorch, numpy, or any other dependency, you need to know immediately whether your inference images are affected.</p>
+
+        <p>Red Hat AI ships SBOMs in both SPDX and CycloneDX formats. The SBOM is generated at build time and signed alongside the container image. You can verify the SBOM's authenticity using the same signature verification process used for the image itself. The SBOM is also published to a central registry, so you can query it without pulling the image.</p>
+
+        <p>Executive Order 14028 (Improving the Nation's Cybersecurity, issued May 2021) requires SBOMs for all software sold to the U.S. federal government. Many private-sector organizations have adopted similar requirements. Red Hat AI's SBOM support satisfies these requirements out of the box.</p>
+
+        <h3>Container Image Signing: The Sigstore/Cosign Workflow</h3>
+
+        <p>Container image signing ensures that the image you deploy is the image the vendor built -- not a tampered version injected by an attacker. Red Hat AI uses a two-layer signing approach: traditional GPG signatures (for backward compatibility with existing Red Hat tooling) and Sigstore/cosign signatures (the modern, keyless signing standard).</p>
+
+        <p>The Sigstore workflow works as follows. At build time, Red Hat's CI/CD pipeline generates a cosign signature for the container image. The signature is stored in the container registry alongside the image (as an OCI artifact). The signature includes a certificate issued by Fulcio (Sigstore's certificate authority), which binds the signature to the identity of the builder (in this case, Red Hat's CI/CD pipeline). The certificate and signature are also recorded in Rekor, Sigstore's transparency log, creating an immutable, publicly auditable record of every image Red Hat has ever signed.</p>
+
+        <p>On the deployment side, OpenShift can enforce a ClusterImagePolicy that requires cosign signatures. Before pulling an image, the cluster verifies the signature against the configured trust policy. If the signature is missing, invalid, or signed by an untrusted identity, the image pull is rejected and an audit event is logged. This happens at the container runtime level, so it cannot be bypassed by application code.</p>
+
+        <h3>Air-Gapped Deployment: Running RHAIS in Disconnected Environments</h3>
+
+        <p>Many high-security environments -- government classified networks, financial trading floors, healthcare systems with PHI -- operate in air-gapped or disconnected configurations, meaning the cluster has no internet access. Running AI inference in these environments requires careful planning.</p>
+
+        <p>Red Hat AI supports air-gapped deployment through the following process. First, container images are mirrored from Red Hat's public registry to an internal, disconnected registry using <code>oc mirror</code> or <code>skopeo</code>. The mirror process preserves image signatures, so the receiving registry can verify authenticity. Second, model weights are transferred to the disconnected environment via a secure data diode or physical media, then stored in an internal S3-compatible object store (such as MinIO or Ceph) or on local persistent volumes. Third, the Red Hat AI Operator is configured to pull images from the internal registry and model weights from the internal object store, with no references to external URLs.</p>
+
+        <p>The Operator's reconciliation loop works identically in disconnected environments. It creates pods, monitors health, performs rolling updates -- all using only internal resources. Monitoring works the same way (Prometheus and Grafana run within the cluster). The only difference is that updates must be manually mirrored rather than automatically pulled. Red Hat publishes a detailed disconnected installation guide with step-by-step procedures for each component.</p>
+
+        <h3>Compliance Checklist</h3>
+
+        <p>The following table summarizes compliance readiness across major frameworks for upstream llm-d versus Red Hat AI.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Compliance Requirement</th>
+                    <th>Upstream llm-d</th>
+                    <th>Red Hat AI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>FIPS 140-2/140-3 validated crypto</td>
+                    <td class="cert-no">Not available</td>
+                    <td class="cert-yes">Included via RHEL UBI</td>
+                </tr>
+                <tr>
+                    <td>Signed container images (GPG)</td>
+                    <td class="cert-no">Not available</td>
+                    <td class="cert-yes">All images signed</td>
+                </tr>
+                <tr>
+                    <td>Signed container images (Sigstore)</td>
+                    <td class="cert-no">Not available</td>
+                    <td class="cert-yes">Cosign signatures + Rekor log</td>
+                </tr>
+                <tr>
+                    <td>SBOM (SPDX/CycloneDX)</td>
+                    <td class="cert-no">Not provided</td>
+                    <td class="cert-yes">Shipped with every image</td>
+                </tr>
+                <tr>
+                    <td>CVE response SLA</td>
+                    <td class="cert-no">Best-effort</td>
+                    <td class="cert-yes">Critical: 24h, High: 48h</td>
+                </tr>
+                <tr>
+                    <td>FedRAMP-authorized platform</td>
+                    <td class="cert-no">Customer responsibility</td>
+                    <td class="cert-yes">Via OpenShift authorization</td>
+                </tr>
+                <tr>
+                    <td>SOC 2 audit artifacts</td>
+                    <td class="cert-no">Customer-built</td>
+                    <td class="cert-yes">RBAC, audit logs, SLAs documented</td>
+                </tr>
+                <tr>
+                    <td>Air-gapped/disconnected deployment</td>
+                    <td class="cert-preview">Possible but undocumented</td>
+                    <td class="cert-yes">Documented, tested, supported</td>
+                </tr>
+                <tr>
+                    <td>Non-root container execution</td>
+                    <td class="cert-preview">Requires custom config</td>
+                    <td class="cert-yes">Default behavior</td>
+                </tr>
+                <tr>
+                    <td>mTLS for inference endpoints</td>
+                    <td class="cert-preview">Manual configuration</td>
+                    <td class="cert-yes">Operator-managed, automatic rotation</td>
+                </tr>
+                <tr>
+                    <td>Model provenance tracking</td>
+                    <td class="cert-no">Not available</td>
+                    <td class="cert-yes">Registry integration with content trust</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="support-tiers">Support Tiers in Detail</h2>
+
+        <p>Red Hat AI Inference Server is available at three support levels: Self-Support, Standard, and Premium. The choice between them is not just about cost -- it is about how incidents play out, how quickly you recover, and how much operational burden your team absorbs versus how much Red Hat absorbs on your behalf. This section breaks down each tier in depth, including concrete scenarios showing what each tier looks like in practice.</p>
+
+        <h3>Self-Support</h3>
+
+        <p>Self-Support provides access to Red Hat's software, certified container images, and the Red Hat Customer Portal (knowledge base articles, documentation, errata). It does not include access to Red Hat's support engineers. You cannot open support tickets. There is no SLA for incident response.</p>
+
+        <h4>What You Get</h4>
+        <ul>
+            <li>Access to certified, signed container images from Red Hat's registry</li>
+            <li>Access to the Red Hat Customer Portal (knowledge base, documentation, errata)</li>
+            <li>SBOM and vulnerability data for all images</li>
+            <li>Lifecycle support -- backported security patches published as errata</li>
+            <li>Access to the Red Hat Ecosystem Catalog for certified configurations</li>
+        </ul>
+
+        <h4>What You Do Not Get</h4>
+        <ul>
+            <li>No support tickets -- you cannot contact Red Hat support engineers</li>
+            <li>No incident response SLA</li>
+            <li>No architecture reviews or deployment guidance</li>
+            <li>No escalation path to engineering for bugs or feature requests</li>
+            <li>No proactive monitoring or health checks from Red Hat</li>
+        </ul>
+
+        <h4>When Self-Support is Appropriate</h4>
+        <p>Self-Support makes sense for teams that have deep in-house expertise with vLLM and Kubernetes, operate in non-regulated industries, and primarily need the certified images and lifecycle support rather than hands-on help. It is also appropriate for development and staging environments that need to run the same images as production but do not need incident response coverage.</p>
+
+        <h4>A Day in the Life: Self-Support Incident</h4>
+        <p>It is Tuesday at 3 PM. Your inference service starts returning HTTP 500 errors on approximately 15% of requests. Your on-call engineer investigates. They check logs and find CUDA memory allocation failures. They search the Red Hat Customer Portal knowledge base and find an article describing a similar issue with a specific model-GPU combination. The article suggests increasing the <code>gpu-memory-utilization</code> parameter from 0.9 to 0.85 to leave more headroom. Your engineer applies the change, monitors for 30 minutes, and the errors stop. Total resolution time: approximately 2 hours. If the knowledge base article had not covered this specific issue, your engineer would be on their own -- reading vLLM source code, checking upstream GitHub issues, and experimenting with configurations.</p>
+
+        <h3>Standard Support</h3>
+
+        <p>Standard Support adds access to Red Hat's support engineering team during business hours. You can open support tickets via the Customer Portal or by phone. Response times are SLA-bound, but coverage is limited to business hours in your contracted time zone.</p>
+
+        <h4>Coverage Details</h4>
+        <ul>
+            <li><strong>Hours:</strong> Business hours (typically 8 AM - 5 PM) in your contracted time zone. Red Hat offers coverage in multiple time zones -- Americas, EMEA, APAC -- so you choose the one that aligns with your operations</li>
+            <li><strong>Languages:</strong> English is universally supported. Japanese, Korean, Chinese (Mandarin), Spanish, Portuguese, French, German, and Italian are available depending on the region</li>
+            <li><strong>Channels:</strong> Web (Customer Portal), phone, and chat</li>
+            <li><strong>Escalation path:</strong> Support engineers can escalate to the product engineering team for bugs and complex issues. Engineering escalations are handled during Red Hat's business hours, which may differ from yours</li>
+        </ul>
+
+        <h4>Response Time Matrix: Standard Support</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Definition</th>
+                    <th>Initial Response</th>
+                    <th>Update Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Severity 1 (Urgent)</strong></td>
+                    <td>Production system down, no workaround, critical business impact</td>
+                    <td>1 business hour</td>
+                    <td>Every 4 business hours</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 2 (High)</strong></td>
+                    <td>Production system severely degraded, workaround available but inadequate</td>
+                    <td>4 business hours</td>
+                    <td>Every business day</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 3 (Medium)</strong></td>
+                    <td>Non-critical issue, partial functionality loss, workaround available</td>
+                    <td>1 business day</td>
+                    <td>Every 3 business days</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 4 (Low)</strong></td>
+                    <td>General question, documentation issue, minor enhancement request</td>
+                    <td>2 business days</td>
+                    <td>As agreed</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>A Day in the Life: Standard Support Incident</h4>
+        <p>It is Wednesday at 10 AM. Your inference service is experiencing intermittent latency spikes -- P99 latency jumps from 200ms to 2,000ms every few minutes. Your on-call engineer opens a Severity 2 support ticket via the Customer Portal, attaching Grafana screenshots and a must-gather bundle. Within 3 hours, a Red Hat support engineer responds. They review the must-gather data and identify the root cause: the inference server's KV cache is being fragmented by a mix of short and long-context requests, and the defragmentation process is blocking the inference loop. They recommend enabling chunked prefill with a max-prefill-tokens setting tuned to your workload, and provide a ConfigMap update to apply. Your engineer deploys the change during a maintenance window that evening. The latency spikes stop. Total resolution time: approximately 10 hours from ticket to fix.</p>
+
+        <h3>Premium Support</h3>
+
+        <p>Premium Support provides 24/7 coverage, faster response times, and a dedicated Technical Account Manager (TAM). This is the tier for mission-critical production workloads where downtime has immediate business impact.</p>
+
+        <h4>Coverage Details</h4>
+        <ul>
+            <li><strong>Hours:</strong> 24 hours a day, 7 days a week, 365 days a year. Severity 1 and Severity 2 tickets are worked around the clock, following the sun across Red Hat's global support centers</li>
+            <li><strong>Languages:</strong> Same as Standard, with priority routing to native-language engineers when available</li>
+            <li><strong>Channels:</strong> Web, phone, chat, and direct access to your TAM via email and scheduled calls</li>
+            <li><strong>Escalation path:</strong> Engineering escalations can be initiated 24/7 for Severity 1 issues. Your TAM has direct relationships with the engineering team and can expedite escalations</li>
+        </ul>
+
+        <h4>Response Time Matrix: Premium Support</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Definition</th>
+                    <th>Initial Response</th>
+                    <th>Update Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Severity 1 (Urgent)</strong></td>
+                    <td>Production system down, no workaround, critical business impact</td>
+                    <td>15 minutes (24/7)</td>
+                    <td>Every hour</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 2 (High)</strong></td>
+                    <td>Production system severely degraded, workaround available but inadequate</td>
+                    <td>2 hours (24/7)</td>
+                    <td>Every 4 hours</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 3 (Medium)</strong></td>
+                    <td>Non-critical issue, partial functionality loss, workaround available</td>
+                    <td>4 business hours</td>
+                    <td>Every 2 business days</td>
+                </tr>
+                <tr>
+                    <td><strong>Severity 4 (Low)</strong></td>
+                    <td>General question, documentation issue, minor enhancement request</td>
+                    <td>1 business day</td>
+                    <td>As agreed</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>The TAM (Technical Account Manager) Role</h4>
+
+        <p>The TAM is not a glorified support ticket router. A TAM is a senior engineer assigned to your account who becomes deeply familiar with your infrastructure, your workloads, your deployment patterns, and your business priorities. The TAM's responsibilities include:</p>
+
+        <ul>
+            <li><strong>Proactive monitoring:</strong> The TAM reviews your support history, errata consumption, and cluster health data on a regular cadence (typically biweekly). They identify potential issues before they become incidents -- for example, noticing that you have not applied a critical security errata, or that your GPU utilization patterns suggest you are approaching memory limits</li>
+            <li><strong>Architecture reviews:</strong> Before major deployments or changes, the TAM reviews your architecture and provides guidance. Adding a new model? The TAM advises on GPU sizing, parallelism strategy, and configuration. Migrating from NVIDIA to AMD GPUs? The TAM walks through the certified configurations, known limitations, and recommended testing approach</li>
+            <li><strong>Upgrade planning:</strong> The TAM helps you plan upgrades from one Red Hat AI release to the next, reviewing release notes, identifying breaking changes that affect your configuration, and providing a recommended upgrade sequence. They coordinate with your team's maintenance windows</li>
+            <li><strong>Escalation advocacy:</strong> When you hit a bug that requires engineering attention, the TAM owns the escalation. They have relationships with the product engineering team and can provide context that accelerates resolution. They track the fix through development, testing, and release, keeping you informed at every step</li>
+            <li><strong>Quarterly business reviews:</strong> The TAM presents a quarterly summary of support activity, incident trends, and recommendations. This report is useful for management visibility and for justifying continued investment in the platform</li>
+        </ul>
+
+        <h4>A Day in the Life: Premium Support Incident</h4>
+        <p>It is Saturday at 2 AM. Your LLM inference cluster -- powering a customer-facing chatbot that serves 200,000 users -- goes completely dark. No responses, all requests timing out. Your monitoring fires a Severity 1 alert. Your on-call engineer opens a Severity 1 ticket. Within 8 minutes, a Red Hat support engineer is on a bridge call. Your TAM, who received an automatic notification for Sev-1 tickets on your account, joins the call 15 minutes later. The support engineer asks your team to collect a must-gather bundle while they review the monitoring data remotely. Within 30 minutes, they identify the issue: a GPU driver update that was applied to the host OS during a routine patching cycle is incompatible with the CUDA version in the inference container. The support engineer provides a rollback procedure for the driver and a pinning configuration to prevent future automatic updates. Your TAM files an internal engineering request to add this driver version to the incompatibility matrix. Your service is back online within 45 minutes of the initial alert. On Monday morning, your TAM sends a post-incident summary documenting the root cause, the fix, and three preventive recommendations. Total downtime: 45 minutes. Without Premium support, this incident could have taken hours to diagnose.</p>
+
+        <div class="callout callout-redhat">
+            <h4>Enterprise Value</h4>
+            <p>The TAM model is not new -- Red Hat has offered TAMs for RHEL and OpenShift for over a decade. What is new is the application to AI inference, where the debugging surface is broader (GPU hardware, CUDA drivers, model configurations, quantization, parallelism) and the expertise required is deeper. A TAM who understands both Kubernetes operations and LLM inference internals is a force multiplier for your team, especially during incidents where time pressure makes methodical debugging difficult.</p>
+        </div>
+
         <h2 id="deployment">Customer Deployment Patterns</h2>
 
         <p>What do large enterprises actually deploy when they adopt Red Hat AI Inference Server? The following deployment patterns are informed by real customer engagements (anonymized to protect NDA-covered details, but grounded in concrete use cases).</p>
@@ -1106,6 +1602,191 @@
         <p>A phased migration is common: deploy Red Hat AI alongside the custom solution, migrate low-risk workloads first (internal tools, non-critical features), gain confidence, then migrate production workloads. Keep the custom solution running in read-only mode for a few months as a fallback. Eventually, decommission it.</p>
 
         <p>Typical timeline: 6-12 months, depending on the complexity of the custom solution and the number of integrated systems.</p>
+
+        <h2 id="migration-planning">Migration Planning</h2>
+
+        <p>Migrating to Red Hat AI is not a weekend project. It is a phased initiative that requires planning, testing, and organizational coordination. This section provides a structured migration framework -- the same approach that Red Hat's consulting teams use with enterprise customers -- including detailed phase descriptions, rollback strategies, a comprehensive checklist, a risk matrix, and the "strangler fig" pattern for incremental migration.</p>
+
+        <h3>Phased Migration: Assess, Pilot, Migrate, Optimize</h3>
+
+        <p>Every successful migration follows four phases. Skipping a phase saves time in the short term and costs time (and stability) in the long term.</p>
+
+        <h4><span class="phase-header">Phase 1: Assess</span></h4>
+        <p>Duration: 2-4 weeks. The assessment phase answers three questions. First, what are you running today? Inventory your current inference infrastructure: models, GPU hardware, deployment configuration, client integrations, monitoring, access controls. Second, what does Red Hat AI support? Compare your inventory against the Red Hat Certified Configuration Matrix. Identify any gaps -- unsupported model architectures, GPU types not yet certified, custom features that Red Hat AI does not expose. Third, what is the migration scope? Decide which workloads to migrate (all at once, or a phased subset?) and identify dependencies -- services that call the inference API, monitoring dashboards that reference specific metric names, CI/CD pipelines that build and deploy inference images.</p>
+
+        <p><strong>Rollback strategy for Phase 1:</strong> There is nothing to roll back. Assessment is read-only -- no infrastructure changes are made. The deliverable is a migration plan document that your team reviews before proceeding.</p>
+
+        <h4><span class="phase-header">Phase 2: Pilot</span></h4>
+        <p>Duration: 4-8 weeks. Deploy Red Hat AI in a non-production environment (staging, dev, or a dedicated pilot cluster). Mirror your production configuration as closely as possible: same model, same GPU type, same quantization format, same client code. Run your existing test suite against the pilot deployment. Benchmark performance and compare against your current infrastructure. Identify any behavioral differences -- different default configurations, different error messages, different monitoring metric names.</p>
+
+        <p>The pilot phase is also when you train your operations team. They need to learn the Operator's custom resources, the monitoring dashboards, the support ticket process, and the must-gather bundle collection procedure. Schedule a dry-run incident: simulate a failure (e.g., kill a GPU pod) and practice the response workflow.</p>
+
+        <p><strong>Rollback strategy for Phase 2:</strong> The pilot runs alongside your existing infrastructure, serving no production traffic. Rolling back means deleting the pilot deployment and its associated resources. No production impact.</p>
+
+        <h4><span class="phase-header">Phase 3: Migrate</span></h4>
+        <p>Duration: 2-8 weeks, depending on scope. Move production workloads to Red Hat AI. The recommended approach is traffic shifting: deploy Red Hat AI alongside your existing inference service, route a small percentage of production traffic to Red Hat AI (5-10%), monitor for errors and performance regressions, then gradually increase the traffic share (25%, 50%, 75%, 100%). This is a canary deployment at the migration level.</p>
+
+        <p>During the migration phase, both the old and new inference services are running. Client code should use a load balancer or service mesh (like Istio or OpenShift Service Mesh) that supports weighted routing. If Red Hat AI shows higher error rates or worse latency, you shift traffic back to the old service immediately.</p>
+
+        <p><strong>Rollback strategy for Phase 3:</strong> Shift all traffic back to the old inference service. Because both services run simultaneously during migration, rollback is a configuration change (update the traffic weight to 0% for Red Hat AI), not an infrastructure change. Rollback time: minutes.</p>
+
+        <h4><span class="phase-header">Phase 4: Optimize</span></h4>
+        <p>Duration: Ongoing, with an intensive first 4 weeks. After migration is complete, tune the deployment for optimal performance and cost. Review monitoring data to identify bottlenecks. Adjust autoscaling parameters based on real traffic patterns. Optimize model configurations -- try different quantization formats, adjust batch sizes, experiment with speculative decoding. Decommission the old inference infrastructure.</p>
+
+        <p><strong>Rollback strategy for Phase 4:</strong> At this point, the old infrastructure has been decommissioned. Rollback would require re-deploying it, which is a significant effort. This is why Phase 4 does not start until you are confident in the Phase 3 deployment. If you are not confident, extend Phase 3.</p>
+
+        <h3>Migration Checklist</h3>
+
+        <p>Use this checklist to track migration progress. Each item should be completed and verified before moving to the next phase.</p>
+
+        <h4>Pre-Migration (Phase 1: Assess)</h4>
+        <ul class="checklist">
+            <li>Inventory all models currently in production (name, architecture, size, quantization)</li>
+            <li>Inventory all GPU hardware (type, count, interconnect, driver version)</li>
+            <li>Document current deployment configuration (Helm charts, manifests, launch flags)</li>
+            <li>Map all client integrations (services calling inference API, expected request/response schemas)</li>
+            <li>Identify monitoring and alerting dependencies (dashboard references, metric names, alert rules)</li>
+            <li>Review Red Hat Certified Configuration Matrix for compatibility</li>
+            <li>Identify gaps between current configuration and certified configurations</li>
+            <li>Estimate resource requirements for running old and new systems in parallel</li>
+            <li>Define success criteria for pilot phase (latency, throughput, error rate thresholds)</li>
+            <li>Obtain Red Hat AI subscription and configure registry access</li>
+        </ul>
+
+        <h4>Pilot (Phase 2)</h4>
+        <ul class="checklist">
+            <li>Deploy OpenShift cluster (or use existing) in non-production environment</li>
+            <li>Install Red Hat AI Operator</li>
+            <li>Create LLMInferenceService custom resources matching production configuration</li>
+            <li>Load model weights into accessible storage (S3, PVC, NFS)</li>
+            <li>Run functional tests -- verify model outputs match expected results</li>
+            <li>Run performance benchmarks -- compare against current infrastructure baselines</li>
+            <li>Validate monitoring integration -- confirm dashboards and alerts work</li>
+            <li>Test support workflow -- open a non-critical support ticket to verify access</li>
+            <li>Train operations team on Operator, monitoring, and must-gather procedures</li>
+            <li>Conduct dry-run incident response exercise</li>
+            <li>Document any behavioral differences from current infrastructure</li>
+        </ul>
+
+        <h4>Production Migration (Phase 3)</h4>
+        <ul class="checklist">
+            <li>Deploy Red Hat AI alongside existing inference service in production</li>
+            <li>Configure weighted traffic routing (start at 5-10%)</li>
+            <li>Monitor error rates, latency, and throughput for 24-48 hours at each traffic level</li>
+            <li>Increase traffic share incrementally (25%, 50%, 75%, 100%)</li>
+            <li>Verify all client integrations work correctly with new endpoints</li>
+            <li>Confirm monitoring and alerting are operational for production traffic</li>
+            <li>Validate compliance artifacts (SBOM, signed images, audit logs)</li>
+            <li>Update runbooks and incident response procedures for new infrastructure</li>
+            <li>Notify stakeholders (security team, compliance team, application owners) of migration completion</li>
+        </ul>
+
+        <h4>Post-Migration (Phase 4: Optimize)</h4>
+        <ul class="checklist">
+            <li>Decommission old inference infrastructure</li>
+            <li>Tune autoscaling parameters based on real traffic patterns</li>
+            <li>Optimize model configurations (quantization, batch size, speculative decoding)</li>
+            <li>Review and refine alert thresholds to reduce false positives</li>
+            <li>Schedule quarterly review with TAM (if Premium support)</li>
+        </ul>
+
+        <h3>Risk Matrix: Common Migration Risks</h3>
+
+        <p>The following matrix maps common migration risks by likelihood and impact, with mitigation strategies for each.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Risk</th>
+                    <th>Likelihood</th>
+                    <th>Impact</th>
+                    <th>Mitigation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Performance regression after migration</td>
+                    <td class="risk-medium">Medium</td>
+                    <td class="risk-high">High</td>
+                    <td>Benchmark during pilot phase; use traffic shifting for gradual cutover; maintain rollback capability</td>
+                </tr>
+                <tr>
+                    <td>Client API incompatibility</td>
+                    <td class="risk-low">Low</td>
+                    <td class="risk-high">High</td>
+                    <td>Both use OpenAI-compatible API; test all client code during pilot; check for custom headers or parameters</td>
+                </tr>
+                <tr>
+                    <td>Model output differences (quantization-related)</td>
+                    <td class="risk-medium">Medium</td>
+                    <td class="risk-medium">Medium</td>
+                    <td>Run output comparison tests; accept minor numerical differences as expected for different quantization implementations</td>
+                </tr>
+                <tr>
+                    <td>GPU driver incompatibility</td>
+                    <td class="risk-low">Low</td>
+                    <td class="risk-high">High</td>
+                    <td>Verify driver versions against Red Hat Certified Configuration Matrix; test in pilot before production</td>
+                </tr>
+                <tr>
+                    <td>Monitoring metric name changes</td>
+                    <td class="risk-high">High</td>
+                    <td class="risk-low">Low</td>
+                    <td>Map old metric names to new ones; update dashboards and alert rules during pilot phase</td>
+                </tr>
+                <tr>
+                    <td>Team resistance / knowledge gaps</td>
+                    <td class="risk-medium">Medium</td>
+                    <td class="risk-medium">Medium</td>
+                    <td>Include team training in pilot phase; provide documentation and runbooks; schedule dry-run incidents</td>
+                </tr>
+                <tr>
+                    <td>Extended parallel-run costs (running both systems)</td>
+                    <td class="risk-high">High</td>
+                    <td class="risk-low">Low</td>
+                    <td>Set a firm deadline for old system decommission; track parallel-run costs weekly; escalate if timeline slips</td>
+                </tr>
+                <tr>
+                    <td>Model weight storage migration issues</td>
+                    <td class="risk-medium">Medium</td>
+                    <td class="risk-medium">Medium</td>
+                    <td>Test model loading from target storage during pilot; verify checksums; keep backup copies of model weights</td>
+                </tr>
+                <tr>
+                    <td>Compliance gap discovered post-migration</td>
+                    <td class="risk-low">Low</td>
+                    <td class="risk-high">High</td>
+                    <td>Involve compliance and security teams in assessment phase; validate all compliance artifacts during pilot</td>
+                </tr>
+                <tr>
+                    <td>Autoscaling behavior mismatch</td>
+                    <td class="risk-medium">Medium</td>
+                    <td class="risk-medium">Medium</td>
+                    <td>Document current scaling behavior; tune Red Hat AI autoscaling during pilot; load-test at expected peak traffic</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>The Strangler Fig Pattern for Gradual Migration</h3>
+
+        <p>The strangler fig pattern -- named after the tropical fig that gradually envelops its host tree -- is an architectural approach to incremental migration. Instead of replacing your entire inference infrastructure at once ("big bang" migration), you gradually route workloads from the old system to the new system until the old system has no remaining traffic and can be decommissioned.</p>
+
+        <p>For LLM inference migration, the strangler fig pattern works as follows.</p>
+
+        <p><strong>Step 1: Deploy Red Hat AI alongside the existing system.</strong> Both systems serve the same models. A routing layer (load balancer, service mesh, or API gateway) sits in front of both.</p>
+
+        <p><strong>Step 2: Route new workloads to Red Hat AI.</strong> When a new model is deployed or a new application needs inference capabilities, it connects to Red Hat AI, not the old system. The old system's traffic remains unchanged.</p>
+
+        <p><strong>Step 3: Migrate existing workloads one at a time.</strong> Start with the lowest-risk workload -- perhaps an internal tool or a non-customer-facing feature. Route its traffic to Red Hat AI. Monitor for a week. If everything is stable, move to the next workload.</p>
+
+        <p><strong>Step 4: Decommission.</strong> When the old system has zero remaining traffic, shut it down. If you are cautious, keep it in a "cold standby" state (powered on but not serving traffic) for a few more weeks before fully decommissioning.</p>
+
+        <p>The strangler fig pattern reduces risk because each migration step is small and reversible. If a workload has problems on Red Hat AI, you route it back to the old system while you investigate. The old system continues to function as a safety net throughout the migration. This pattern adds calendar time (a strangler fig migration might take 3-6 months versus 2-4 weeks for a big bang migration) but dramatically reduces the blast radius of any single problem.</p>
+
+        <div class="callout callout-upstream">
+            <h4>Open Source Highlight</h4>
+            <p>The strangler fig pattern is particularly effective for llm-d migrations because the API is OpenAI-compatible on both sides. Clients do not need code changes to switch between the old and new systems -- only the endpoint URL changes. This makes the routing layer simple: just update the upstream server address in your load balancer or service mesh configuration.</p>
+        </div>
 
         <h2 id="tco">The Business Case: TCO Analysis</h2>
 
