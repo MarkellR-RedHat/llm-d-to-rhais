@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From llm-d to Red Hat AI Inference Server: The Open Source to Enterprise Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Red Hat Text', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .article-wrapper {
+      max-width: 780px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    article {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      padding: 48px 56px;
+    }
+
+    @media (max-width: 640px) {
+      article {
+        padding: 28px 20px;
+      }
+      .article-wrapper {
+        margin: 20px auto;
+      }
+    }
+
+    h1 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .byline {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .meta {
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      padding: 16px 0;
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+      color: #555;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .meta-label {
+      font-weight: 600;
+      color: #333;
+      min-width: 90px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background: #f0f0f0;
+      color: #444;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .meta a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .meta a:hover {
+      text-decoration: underline;
+    }
+
+    h2 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-top: 40px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ee0000;
+    }
+
+    h3 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    ol, ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin-bottom: 12px;
+    }
+
+    .callout {
+      border-left: 4px solid;
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 0.95rem;
+    }
+
+    .callout-oss {
+      border-color: #9b4d9b;
+      background: #f9f0f9;
+    }
+
+    .callout-enterprise {
+      border-color: #ee0000;
+      background: #fff5f5;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .callout-oss .callout-label {
+      color: #9b4d9b;
+    }
+
+    .callout-enterprise .callout-label {
+      color: #ee0000;
+    }
+
+    .dimension-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .dimension-card {
+      border-left: 4px solid #ee0000;
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .dimension-card h4 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .dimension-card p {
+      font-size: 0.88rem;
+      color: #555;
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+
+    .mapping-list {
+      list-style: none;
+      padding-left: 0;
+      counter-reset: mapping;
+    }
+
+    .mapping-list li {
+      counter-increment: mapping;
+      padding-left: 4px;
+      margin-bottom: 16px;
+    }
+
+    .mapping-list li::before {
+      content: counter(mapping) ".";
+      font-weight: 700;
+      color: #ee0000;
+      margin-right: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px 0 12px;
+      font-size: 0.88rem;
+      color: #888;
+      border-top: 1px solid #eee;
+      margin-top: 48px;
+    }
+
+    footer strong {
+      color: #555;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .footer-nav a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    .footer-nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="article-wrapper">
+    <article>
+      <h1>From llm-d to Red Hat AI Inference Server: The Open Source to Enterprise Journey</h1>
+      <div class="byline">Markell Rawls, Developer Advocate, Red Hat</div>
+
+      <div class="meta">
+        <div class="meta-row">
+          <span class="meta-label">Author</span>
+          <span>Markell Rawls</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Tags</span>
+          <div class="tags">
+            <span class="tag">llm-d</span>
+            <span class="tag">Red Hat AI</span>
+            <span class="tag">inference serving</span>
+            <span class="tag">open source</span>
+            <span class="tag">enterprise</span>
+            <span class="tag">CNCF</span>
+          </div>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Companion</span>
+          <a href="../">Open the Interactive App</a>
+        </div>
+      </div>
+
+      <!-- Introduction -->
+      <h2>Introduction</h2>
+
+      <p>There is a persistent tension at the heart of modern infrastructure: developers want open source, and enterprises need guarantees. Developers gravitate toward open source because it offers transparency, velocity, and the freedom to inspect, modify, and deploy without gatekeepers. Enterprises, on the other hand, operate under regulatory requirements, uptime SLAs, and procurement processes that demand support contracts, compliance certifications, and long-term lifecycle commitments. These two forces are not opposed. They are complementary &mdash; when the relationship between an upstream project and its downstream product is built on genuine respect for both.</p>
+
+      <p><a href="https://github.com/llm-d/llm-d">llm-d</a> is a CNCF Sandbox project for distributed LLM inference routing, started by Red Hat and contributed to a vendor-neutral foundation. It solves a real problem: as organizations deploy large language models at scale, they need intelligent routing that accounts for KV-cache locality, model availability, request priority, and hardware heterogeneity. llm-d provides the building blocks for this in the open.</p>
+
+      <p>Red Hat AI Inference Server takes those same building blocks and wraps them in everything an enterprise needs to run inference in production with confidence. The journey from llm-d to Red Hat AI Inference Server illustrates how open source becomes enterprise-ready without losing its soul &mdash; and that is the story worth telling.</p>
+
+      <div class="callout callout-oss">
+        <div class="callout-label">Open Source Highlight</div>
+        <p>llm-d is a CNCF Sandbox project with vendor-neutral governance. Every architectural decision, every routing algorithm, and every protocol change happens in the open. The project welcomes contributions from any organization or individual.</p>
+      </div>
+
+      <!-- The Architecture Mapping -->
+      <h2>The Architecture Mapping</h2>
+
+      <p>Understanding the relationship between llm-d and Red Hat AI Inference Server starts with seeing how each upstream component maps to its enterprise counterpart. This is not a fork. It is a layered transformation that preserves the upstream API surface while adding the operational infrastructure that production deployments demand.</p>
+
+      <ol class="mapping-list">
+        <li>
+          <strong>llm-d EPP &rarr; Red Hat AI Inference Server Routing Engine.</strong>
+          The Endpoint Picker Protocol is the brain of intelligent routing in llm-d. It evaluates model replicas based on KV-cache state, request load, and scheduling policy to select the optimal endpoint for each inference request. In Red Hat AI Inference Server, this becomes the enterprise routing engine: the same algorithms running on hardened infrastructure with validated configurations and tested failure modes.
+        </li>
+        <li>
+          <strong>vLLM &rarr; Red Hat AI Inference Server (vLLM-based).</strong>
+          The inference engine stays vLLM at its core. Red Hat adds multi-platform container builds, GPU vendor testing across NVIDIA, AMD, and Intel hardware, and container hardening that includes base image scanning, vulnerability remediation, and reproducible builds. Your model serving code does not change.
+        </li>
+        <li>
+          <strong>Gateway API &rarr; OpenShift Service Mesh / Routes.</strong>
+          Upstream llm-d uses the Kubernetes Gateway API for traffic ingress. In the enterprise product, this becomes OpenShift's battle-tested service mesh with mutual TLS by default, traffic management policies, and deep observability integration. The routing semantics remain the same; the security posture steps up considerably.
+        </li>
+        <li>
+          <strong>Prometheus metrics &rarr; OpenShift Monitoring / User Workload Monitoring.</strong>
+          llm-d exposes Prometheus-format metrics for routing decisions, cache hit rates, and inference latency. Red Hat AI Inference Server feeds those same metrics into OpenShift's monitoring stack, where they integrate with alerting rules, pre-built Grafana dashboards, and configurable retention policies &mdash; no custom monitoring pipeline required.
+        </li>
+        <li>
+          <strong>Helm charts &rarr; Operator / LLMInferenceService CR.</strong>
+          Upstream deployment uses Helm charts. The enterprise product introduces a Kubernetes operator with a custom resource definition called <code>LLMInferenceService</code>. You declare your desired state &mdash; model, replicas, routing policy, hardware requirements &mdash; and the operator continuously reconciles it. Day-two operations like upgrades, scaling, and configuration changes become declarative rather than imperative.
+        </li>
+        <li>
+          <strong>Community support &rarr; Red Hat subscription support.</strong>
+          Upstream llm-d support means community Slack channels, GitHub issues, and the goodwill of maintainers. Red Hat subscription support provides 24/7 access to engineers with defined response time SLAs, escalation paths, and accountability. When your inference pipeline goes down at 2 AM on a holiday, the difference is material.
+        </li>
+        <li>
+          <strong>CNCF governance &rarr; Red Hat product lifecycle.</strong>
+          CNCF governance ensures vendor neutrality and open decision-making. Red Hat's product lifecycle adds RHEL certification, FIPS compliance, CVE patching within defined SLAs, and a predictable release cadence. Both matter. They serve different needs.
+        </li>
+      </ol>
+
+      <!-- What Red Hat Adds -->
+      <h2>What Red Hat Adds</h2>
+
+      <p>The honest question is: why would you pay for something you can get for free? It deserves a direct answer. You are not paying for the code. The code is open source, and it stays open source. You are paying for the engineering, testing, certification, and support that turn working code into a product you can stake your business on.</p>
+
+      <div class="dimension-grid">
+        <div class="dimension-card">
+          <h4>Security</h4>
+          <p>FIPS 140-2 compliance, CVE patching within defined SLAs, container image signing, and supply chain security through verified build pipelines.</p>
+        </div>
+        <div class="dimension-card">
+          <h4>Support</h4>
+          <p>24/7 enterprise support with defined response time SLAs, upgrade guidance, migration assistance, and direct access to engineering.</p>
+        </div>
+        <div class="dimension-card">
+          <h4>Testing</h4>
+          <p>Multi-platform validation across x86, ARM, and POWER architectures. GPU vendor testing across NVIDIA, AMD, and Intel hardware.</p>
+        </div>
+        <div class="dimension-card">
+          <h4>Lifecycle</h4>
+          <p>Predictable release cadence, long-term support versions, backwards compatibility guarantees, and documented upgrade paths.</p>
+        </div>
+        <div class="dimension-card">
+          <h4>Integration</h4>
+          <p>OpenShift AI native integration with model registry, training pipelines, monitoring, and networking &mdash; pre-wired and tested together.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-enterprise">
+        <div class="callout-label">Enterprise Value</div>
+        <p>When an enterprise evaluates an AI inference platform, the question is not "does it work?" It is "can we prove it works, can we prove it is secure, can we get help at 2 AM, and will it still be supported in three years?" Red Hat AI Inference Server answers every one of those questions with contractual commitments, not community best-effort.</p>
+      </div>
+
+      <p>Consider security alone. Running a community container image in production means your team owns vulnerability management: scanning, patching, rebuilding, retesting, and redeploying on your own timeline. Red Hat's container images are built from a verified supply chain, signed, scanned continuously, and patched within published SLA windows. For organizations subject to FedRAMP, SOC 2, or industry-specific compliance frameworks, this is not a nice-to-have. It is a prerequisite.</p>
+
+      <p>Testing tells a similar story. The upstream project runs CI on the hardware its contributors have access to. Red Hat runs validation across the matrix of architectures and GPU vendors that its customers actually deploy on. When you file a support ticket saying "inference latency regressed after upgrading on AMD MI300X," the support engineer has access to that same hardware and can reproduce the issue.</p>
+
+      <p>And then there is integration. llm-d is designed to be composable &mdash; you bring your own monitoring, networking, model management, and deployment tooling. That composability is a strength for developers who want control. For enterprises running OpenShift AI, Red Hat AI Inference Server plugs into the existing platform: model registry for governance, training pipelines for iteration, monitoring for operations, and service mesh for security. The integration testing is done for you.</p>
+
+      <!-- The Developer Perspective -->
+      <h2>The Developer Perspective</h2>
+
+      <p>If you are a developer contributing to llm-d, here is what matters: your work counts. The code you write upstream flows directly into the enterprise product. When you improve the routing algorithm in EPP, that improvement reaches enterprise customers. When you fix a bug in the metrics pipeline, that fix ships in the next Red Hat AI Inference Server release. The upstream-first development model means the open source project is not an afterthought or a community edition with features stripped out. It is the foundation.</p>
+
+      <div class="callout callout-oss">
+        <div class="callout-label">Open Source Highlight</div>
+        <p>API compatibility is a design constraint, not an accident. If you develop against llm-d's APIs, your code works on Red Hat AI Inference Server. Your integration tests pass. Your deployment manifests apply. There is no vendor lock-in at the API layer because there is no API divergence.</p>
+      </div>
+
+      <p>Contributing upstream is also the fastest path to influencing the enterprise product. Feature requests filed as GitHub issues, design proposals discussed in community meetings, and pull requests reviewed in the open &mdash; these are the inputs to Red Hat's product roadmap. The CNCF Sandbox governance model ensures that no single vendor, including Red Hat, can unilaterally control the project's direction. This neutrality is what makes llm-d trustworthy as a foundation for multi-vendor ecosystems.</p>
+
+      <p>For developers evaluating llm-d for their own projects, the API stability guarantee means you are not building on quicksand. You can adopt llm-d today for development and testing, and if your organization later requires enterprise support, the migration to Red Hat AI Inference Server is a platform change, not a rewrite.</p>
+
+      <!-- The Enterprise Perspective -->
+      <h2>The Enterprise Perspective</h2>
+
+      <p>Enterprise adoption of open source AI infrastructure is not about the technology being insufficient. The technology is often excellent. The gap is in everything that surrounds it: the guarantees, the accountability, and the operational scaffolding.</p>
+
+      <p>When an enterprise deploys LLM inference at scale, the requirements extend well beyond "can it serve a model." They include compliance certifications that satisfy auditors. Security patching that happens within contractual timeframes, not whenever a maintainer has bandwidth. Multi-year support commitments that align with infrastructure deprecation cycles. Integration with existing identity management, networking policies, and monitoring infrastructure. And single-vendor accountability &mdash; one phone number to call when inference is down and the business is losing revenue.</p>
+
+      <p>Red Hat AI Inference Server delivers all of this on top of the same technology that developers trust in llm-d. It integrates natively with OpenShift and RHEL, which means the enterprise's existing investment in Red Hat infrastructure extends seamlessly to AI inference workloads. The <code>LLMInferenceService</code> custom resource fits into existing GitOps workflows. The monitoring integrates with existing alerting. The security posture inherits the organization's existing policies. This is not a bolted-on AI sidecar. It is a native part of the platform.</p>
+
+      <div class="callout callout-enterprise">
+        <div class="callout-label">Enterprise Value</div>
+        <p>Single-vendor accountability across the full AI inference stack &mdash; from the operating system through the container platform to the inference engine and routing layer &mdash; eliminates the finger-pointing that plagues multi-vendor support scenarios.</p>
+      </div>
+
+      <!-- Conclusion -->
+      <h2>Conclusion</h2>
+
+      <p>The best enterprise products are built on thriving open source communities. Not extracted from them &mdash; built on them, with the upstream project growing stronger as the downstream product succeeds. llm-d and Red Hat AI Inference Server prove that this model works for AI infrastructure the same way RHEL and Fedora proved it for operating systems, and OpenShift and Kubernetes proved it for container orchestration.</p>
+
+      <p>The invitation is open in both directions. If you are a developer who wants to shape the future of LLM inference routing, <a href="https://github.com/llm-d/llm-d">contribute to llm-d</a>. If you are an enterprise that needs production-grade inference serving with the guarantees your business demands, evaluate Red Hat AI Inference Server. And if you are both &mdash; as many of us are &mdash; know that these two paths reinforce each other. Every contribution upstream strengthens the enterprise product. Every enterprise deployment validates the open source architecture. That is the virtuous cycle that makes open source work.</p>
+
+      <footer>
+        <strong>Markell Rawls</strong> &middot; Developer Advocate &middot; Red Hat
+        <nav class="footer-nav">
+          <a href="https://markellr-redhat.github.io/llm-d-content-hub/">&larr; Back to Content Hub</a>
+          <a href="../">Open Interactive App &rarr;</a>
+        </nav>
+      </footer>
+    </article>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From llm-d to Red Hat AI Inference Server</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --purple: #9b4d9b;
+  --purple-light: #f3e8f3;
+  --purple-bg: #faf5fa;
+  --purple-border: #d4a5d4;
+  --red: #ee0000;
+  --red-light: #fde8e8;
+  --red-bg: #fef5f5;
+  --red-border: #f5a3a3;
+  --bg: #ffffff;
+  --bg-alt: #f9fafb;
+  --text: #1a1a2e;
+  --text-secondary: #555566;
+  --text-muted: #888899;
+  --border: #e5e7eb;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.10);
+  --radius: 12px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Red Hat Text', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Red Hat Display', sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.92);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left img {
+  height: 40px;
+  width: auto;
+}
+
+.header-center {
+  text-align: center;
+  flex: 1;
+}
+
+.header-center h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.header-center .subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-right svg {
+  height: 40px;
+  width: auto;
+}
+
+/* ── Stats Bar ── */
+.stats-bar {
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+
+.stats-inner {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--purple), var(--red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* ── View Toggle ── */
+.toggle-section {
+  padding: 32px 0 16px;
+  text-align: center;
+}
+
+.view-toggle {
+  display: inline-flex;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.toggle-btn {
+  font-family: 'Red Hat Text', sans-serif;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.toggle-btn.active {
+  background: var(--text);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.toggle-btn:hover:not(.active) {
+  color: var(--text);
+  background: rgba(0,0,0,0.04);
+}
+
+/* ── Section Heading ── */
+.section-heading {
+  text-align: center;
+  padding: 40px 0 8px;
+}
+
+.section-heading h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.section-heading p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.gradient-divider {
+  height: 3px;
+  background: linear-gradient(90deg, var(--purple), transparent 30%, transparent 70%, var(--red));
+  border-radius: 3px;
+  margin: 16px auto 0;
+  max-width: 600px;
+}
+
+/* ── Architecture Map ── */
+.architecture-map {
+  padding: 32px 0 48px;
+  position: relative;
+}
+
+.map-columns {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+.column-header {
+  text-align: center;
+  padding: 16px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+}
+
+.column-header.upstream {
+  background: var(--purple-light);
+  color: var(--purple);
+  border: 2px solid var(--purple-border);
+  border-bottom: none;
+}
+
+.column-header.enterprise {
+  background: var(--red-light);
+  color: var(--red);
+  border: 2px solid var(--red-border);
+  border-bottom: none;
+}
+
+.column-left, .column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.svg-lines {
+  width: 120px;
+  min-width: 120px;
+  position: relative;
+}
+
+/* ── Component Cards ── */
+.component-card {
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.component-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.component-card.upstream-card {
+  background: var(--purple-bg);
+  border: 2px solid var(--purple-border);
+  box-shadow: var(--shadow);
+}
+
+.component-card.upstream-card:hover {
+  border-color: var(--purple);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.component-card.enterprise-card {
+  background: var(--red-bg);
+  border: 2px solid var(--red-border);
+  box-shadow: var(--shadow);
+}
+
+.component-card.enterprise-card:hover {
+  border-color: var(--red);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.component-card.visible:hover {
+  transform: translateY(-2px);
+}
+
+.component-card.highlighted.upstream-card {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(155, 77, 155, 0.2), var(--shadow-hover);
+}
+
+.component-card.highlighted.enterprise-card {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(238, 0, 0, 0.2), var(--shadow-hover);
+}
+
+.card-icon {
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.card-title {
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.upstream-card .card-title { color: var(--purple); }
+.enterprise-card .card-title { color: var(--red); }
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.card-arrow-hint {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  transition: var(--transition);
+}
+
+.component-card:hover .card-arrow-hint {
+  opacity: 1;
+}
+
+/* ── Detail Panel ── */
+.detail-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+
+.detail-panel.open {
+  max-height: 800px;
+  opacity: 1;
+}
+
+.detail-content {
+  padding: 16px 20px 20px;
+  border-top: 1px dashed var(--border);
+  margin-top: 12px;
+}
+
+.detail-categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.detail-cat {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border);
+}
+
+.detail-cat-title {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.upstream-card .detail-cat-title { color: var(--purple); }
+.enterprise-card .detail-cat-title { color: var(--red); }
+
+.detail-cat-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* View-specific content */
+.view-dev { display: none; }
+.view-dm { display: none; }
+
+body.developer-view .view-dev { display: block; }
+body.developer-view .view-dm { display: none; }
+body.decision-maker-view .view-dev { display: none; }
+body.decision-maker-view .view-dm { display: block; }
+
+.view-note {
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.view-note.dev-note {
+  background: #f0f4ff;
+  border: 1px solid #c7d6ff;
+  color: #334;
+}
+
+.view-note.dm-note {
+  background: #fff8f0;
+  border: 1px solid #ffd6a5;
+  color: #433;
+}
+
+.view-note code {
+  background: rgba(0,0,0,0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+/* ── SVG Lines ── */
+.connector-line {
+  stroke: var(--border);
+  stroke-width: 2;
+  fill: none;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.connector-line.active {
+  stroke: url(#lineGradient);
+  stroke-width: 3;
+  stroke-dasharray: 8 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+@keyframes dashFlow {
+  to { stroke-dashoffset: -12; }
+}
+
+/* ── Timeline ── */
+.timeline-section {
+  padding: 48px 0;
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+}
+
+.timeline-track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  padding: 40px 0 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 54px;
+  left: 8%;
+  right: 8%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple), #c060c0, #d03030, var(--red));
+  border-radius: 4px;
+}
+
+.timeline-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.timeline-step.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px var(--border);
+}
+
+.timeline-step:nth-child(1) .timeline-dot { background: var(--purple); }
+.timeline-step:nth-child(2) .timeline-dot { background: #b060b0; }
+.timeline-step:nth-child(3) .timeline-dot { background: #d04040; }
+.timeline-step:nth-child(4) .timeline-dot { background: var(--red); }
+
+.timeline-label {
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.timeline-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  max-width: 160px;
+  margin: 0 auto;
+  line-height: 1.4;
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  text-align: center;
+}
+
+.footer-attribution {
+  font-family: 'Red Hat Display', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-size: 0.9rem;
+  color: var(--red);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--purple);
+  text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .header-left img, .header-right svg {
+    height: 32px;
+  }
+
+  .header-center h1 { font-size: 1.2rem; }
+
+  .stats-inner { gap: 24px; }
+
+  .map-columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .svg-lines {
+    width: 100%;
+    min-width: unset;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .svg-lines svg { display: none; }
+
+  .svg-lines::after {
+    content: '↓';
+    font-size: 1.5rem;
+    color: var(--text-muted);
+  }
+
+  .column-left, .column-right {
+    gap: 12px;
+  }
+
+  .detail-categories {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-track {
+    flex-direction: column;
+    gap: 24px;
+    padding: 0;
+  }
+
+  .timeline-track::before {
+    width: 4px;
+    height: calc(100% - 20px);
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: unset;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 16px; }
+  .component-card { padding: 14px 16px; }
+  .stat-number { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body class="developer-view">
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="header-left">
+      <img src="https://llm-d.ai/img/llm-d-icon.png" alt="llm-d icon" />
+    </div>
+    <div class="header-center">
+      <h1>From llm-d to Red Hat AI Inference Server</h1>
+      <p class="subtitle">Tracing the open source to enterprise journey</p>
+    </div>
+    <div class="header-right">
+      <!-- Red Hat fedora hat SVG -->
+      <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-label="Red Hat logo">
+        <path d="M70.5 32.7c3.9 0 7.4.4 9.8 1.1 2.8-6.8 4.2-14 4.2-14s-6.5-3.4-18.1-3.4c-11.6 0-19.4 4.2-24.2 8.5-4.8 4.3-8.4 10.2-13.6 10.2-3.2 0-5.6-1.8-5.6-5.1 0-5.4 6.5-10 15.6-10 4 0 7.2.7 7.2.7l2.2-6.8s-4.2-1.2-10.4-1.2C22.8 12.7 12 20.5 12 30.6c0 7.4 5.2 12.2 13.2 12.2 8.4 0 13-5.2 18.2-9.8 3.6-3.2 8-6.7 14.8-6.7 4.6 0 8.2 1.2 10 2.8-1.2 2.8-2.8 5.2-4.6 7-2-.6-4.6-1-7.6-1-8.6 0-14.2 3.8-14.2 8.6 0 4.4 4.6 7.4 12.6 7.4 12.4 0 19.2-5 22.8-11.8 1.4.8 2.2 2 2.2 3.6 0 4-5.2 7.6-15 7.6-5.2 0-9.6-.8-12.8-2.2l-2.2 6.4c3.8 1.6 8.8 2.6 14.8 2.6 15.2 0 22.4-6.8 22.4-14.8 0-4.4-2.8-7.6-7.6-9.2.6-1.2 1-2.4 1.4-3.6zM55.4 45.5c-3.6 0-5.8-1.4-5.8-3.4 0-2.6 3.2-4.6 8-4.6 2.2 0 4.2.3 5.8.8-2 4.4-4.8 7.2-8 7.2z" fill="#ee0000"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- ── Stats Bar ── -->
+<section class="stats-bar">
+  <div class="container stats-inner">
+    <div class="stat-item">
+      <div class="stat-number" data-target="7">0</div>
+      <div class="stat-label">Component Mappings</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="5">0</div>
+      <div class="stat-label">Value-Add Categories</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="4">0</div>
+      <div class="stat-label">Journey Stages</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── View Toggle ── -->
+<section class="toggle-section">
+  <div class="view-toggle">
+    <button class="toggle-btn active" data-view="developer">Developer View</button>
+    <button class="toggle-btn" data-view="decision-maker">Decision Maker View</button>
+  </div>
+</section>
+
+<!-- ── Architecture Map Section ── -->
+<section class="architecture-map">
+  <div class="container">
+    <div class="section-heading">
+      <h2>Architecture Mapping</h2>
+      <p>Click any component to see what Red Hat adds. Hover to trace the connection.</p>
+      <div class="gradient-divider"></div>
+    </div>
+
+    <div class="map-columns" style="margin-top: 32px;">
+      <!-- Left Column: Upstream -->
+      <div class="column-left">
+        <div class="column-header upstream">Upstream (llm-d)</div>
+
+        <!-- 1. EPP -->
+        <div class="component-card upstream-card" data-pair="1">
+          <span class="card-icon">&#9881;</span>
+          <div class="card-title">llm-d EPP</div>
+          <div class="card-subtitle">Endpoint Picker &amp; routing logic for inference workloads</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same gRPC Ext-Proc interface. The EPP filter chain and scoring plugins carry over directly to the enterprise routing engine.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">Identical Ext-Proc gRPC contract; same <code>PickEndpoint</code> RPC</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Plugins</div><div class="detail-cat-text">Scoring &amp; filtering plugins compatible upstream and downstream</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Config</div><div class="detail-cat-text">Same YAML-based configuration for routing policies</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Observability</div><div class="detail-cat-text">Prometheus metrics surface identical label sets</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">The routing engine is the brain of inference traffic. Red Hat hardens it with FIPS compliance, 24/7 support, and certified multi-platform builds.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">FIPS 140-2 compliance, CVE patching within defined SLAs, container image signing</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">24/7 enterprise support with defined SLAs and escalation paths</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Validated on x86, ARM, POWER; tested with NVIDIA, AMD, Intel GPUs</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Predictable release cadence, long-term support, backwards compatibility</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. vLLM -->
+        <div class="component-card upstream-card" data-pair="2">
+          <span class="card-icon">&#9889;</span>
+          <div class="card-title">vLLM</div>
+          <div class="card-subtitle">High-throughput LLM inference engine with PagedAttention</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same vLLM API surface. <code>/v1/completions</code> and <code>/v1/chat/completions</code> endpoints are identical. Same model loading, same CUDA kernels.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">OpenAI-compatible REST API — identical endpoint signatures</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Runtime</div><div class="detail-cat-text">Same PagedAttention, continuous batching, speculative decoding</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Models</div><div class="detail-cat-text">Same model format support (safetensors, GGUF, etc.)</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Metrics</div><div class="detail-cat-text">Identical Prometheus metric names and label conventions</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Red Hat builds, tests, and certifies vLLM across GPU vendors and platforms — so you get the same engine, enterprise-hardened.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Signed container images, FIPS-validated crypto libraries, CVE response SLA</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat backed support for production vLLM deployments</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">GPU vendor certification matrix — NVIDIA A100/H100, AMD MI300, Intel Gaudi</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Pre-integrated with OpenShift AI model serving, registry, and pipelines</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Gateway API -->
+        <div class="component-card upstream-card" data-pair="3">
+          <span class="card-icon">&#128268;</span>
+          <div class="card-title">Gateway API</div>
+          <div class="card-subtitle">Kubernetes-native API gateway for inference traffic</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Standard K8s Gateway API resources (<code>Gateway</code>, <code>HTTPRoute</code>, <code>InferencePool</code>) map directly to OpenShift Service Mesh config.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">API Surface</div><div class="detail-cat-text">Same Gateway API CRDs — <code>HTTPRoute</code>, <code>GRPCRoute</code></div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">TLS</div><div class="detail-cat-text">Same cert-manager integration patterns</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Routing</div><div class="detail-cat-text">Same header-based, path-based routing rules</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Backends</div><div class="detail-cat-text">InferencePool/InferenceModel CRDs supported natively</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">OpenShift Service Mesh provides mTLS, traffic management, and observability out of the box — no assembly required.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Automatic mTLS between services, policy-driven access control</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat-supported Istio-based service mesh with upgrade paths</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Validated with OpenShift networking stack across platforms</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Native OpenShift Routes, integrated with cluster monitoring</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Prometheus metrics -->
+        <div class="component-card upstream-card" data-pair="4">
+          <span class="card-icon">&#128200;</span>
+          <div class="card-title">Prometheus Metrics</div>
+          <div class="card-subtitle">Standard metrics for request latency, throughput, and queue depth</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same Prometheus endpoint format, same metric names. <code>vllm:request_latency_seconds</code>, <code>vllm:num_requests_running</code> — all carry over.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Endpoints</div><div class="detail-cat-text">Same <code>/metrics</code> endpoint, same scrape config patterns</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Labels</div><div class="detail-cat-text">Identical label taxonomy for model, endpoint, status</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Dashboards</div><div class="detail-cat-text">Community Grafana dashboards work with both</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Alerts</div><div class="detail-cat-text">Same PromQL alert expressions, same recording rules</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">OpenShift Monitoring gives you production-grade Prometheus with persistent storage, HA, and user workload isolation built in.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">RBAC-controlled metric access, audit logging for queries</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat maintains the full monitoring stack — Prometheus, Alertmanager, Grafana</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Managed upgrades, persistent storage, HA out of the box</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">User Workload Monitoring auto-discovers ServiceMonitors</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Helm charts -->
+        <div class="component-card upstream-card" data-pair="5">
+          <span class="card-icon">&#128230;</span>
+          <div class="card-title">Helm Charts</div>
+          <div class="card-subtitle">Community packaging for deploying llm-d on Kubernetes</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Helm values map conceptually to <code>LLMInferenceService</code> CR fields. The Operator automates Day 2 operations that Helm leaves manual.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Config</div><div class="detail-cat-text">Helm values translate to CR spec fields — similar structure</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Operator handles upgrades, rollbacks, and health reconciliation</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">CRD</div><div class="detail-cat-text"><code>LLMInferenceService</code> CR encapsulates full stack config</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Day 2</div><div class="detail-cat-text">Auto-scaling, canary rollouts, resource quotas managed by Operator</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">The Operator replaces manual Helm workflows with declarative, self-healing infrastructure. One CR deploys the entire inference stack.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Operator-managed RBAC, secrets rotation, network policies</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">Red Hat-supported Operator with certified OLM lifecycle</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Operator SDK-based testing, e2e on multiple OpenShift versions</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">OperatorHub discovery, OLM-managed upgrades, OpenShift console UI</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Community support -->
+        <div class="component-card upstream-card" data-pair="6">
+          <span class="card-icon">&#128101;</span>
+          <div class="card-title">Community Support</div>
+          <div class="card-subtitle">GitHub issues, Slack channels, community forums</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Community channels remain active. Red Hat engineers contribute upstream and triage issues in both community and enterprise contexts.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Upstream</div><div class="detail-cat-text">GitHub issues, PRs, and discussions remain the source of truth</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Triage</div><div class="detail-cat-text">Red Hat engineers participate in upstream issue triage</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Docs</div><div class="detail-cat-text">Community docs + Red Hat product docs, both maintained</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Contrib</div><div class="detail-cat-text">Upstream-first development model — fixes go upstream then downstream</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Enterprise support means SLA-backed response times, dedicated TAMs, and a clear escalation path — not waiting on a GitHub issue.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Support</div><div class="detail-cat-text">24/7 enterprise support, Sev-1 response within 1 hour, dedicated TAM available</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">Proactive CVE notification, embargo access for critical fixes</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Defined upgrade paths, backport policies, deprecation notices</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Training</div><div class="detail-cat-text">Red Hat Training courses, certification paths, partner enablement</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. CNCF governance -->
+        <div class="component-card upstream-card" data-pair="7">
+          <span class="card-icon">&#127963;</span>
+          <div class="card-title">CNCF Governance</div>
+          <div class="card-subtitle">Open governance, vendor-neutral project stewardship</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">CNCF Sandbox project with open governance. Red Hat participates as a contributor and maintains downstream conformance with upstream APIs.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Governance</div><div class="detail-cat-text">Open design docs, public roadmap, community-driven prioritization</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Conformance</div><div class="detail-cat-text">Enterprise product tracks upstream API compatibility</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Contrib</div><div class="detail-cat-text">Red Hat engineers on maintainer/reviewer teams</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">License</div><div class="detail-cat-text">Apache 2.0 — same license upstream and in the enterprise product</div></div>
+                </div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Red Hat adds product lifecycle guarantees on top of open governance — RHEL certification, FIPS, CVE patching, and predictable releases.</div>
+                <div class="detail-categories">
+                  <div class="detail-cat"><div class="detail-cat-title">Lifecycle</div><div class="detail-cat-text">Predictable GA cadence, extended update support, clear EOL policy</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Security</div><div class="detail-cat-text">FIPS 140-2 compliance, RHEL certification, container image signing</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Testing</div><div class="detail-cat-text">Multi-platform CI (x86_64, aarch64, ppc64le, s390x)</div></div>
+                  <div class="detail-cat"><div class="detail-cat-title">Integration</div><div class="detail-cat-text">Part of Red Hat AI portfolio — model registry, pipelines, notebooks, monitoring</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG Connector Lines -->
+      <div class="svg-lines" id="svgContainer">
+        <svg id="connectorSvg" width="120" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#9b4d9b"/>
+              <stop offset="100%" stop-color="#ee0000"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Right Column: Enterprise -->
+      <div class="column-right">
+        <div class="column-header enterprise">Enterprise (Red Hat AI Inference Server)</div>
+
+        <!-- 1. Routing Engine -->
+        <div class="component-card enterprise-card" data-pair="1">
+          <span class="card-icon">&#9881;</span>
+          <div class="card-title">RHAIS Routing Engine</div>
+          <div class="card-subtitle">Enterprise-hardened endpoint picker with FIPS-validated builds</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same Ext-Proc gRPC interface. Drop-in compatible with upstream EPP configurations. Added: certified multi-arch builds.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Enterprise routing with guaranteed uptime, certified security, and Red Hat subscription support backing every deployment.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. RHAIS (vLLM-based) -->
+        <div class="component-card enterprise-card" data-pair="2">
+          <span class="card-icon">&#9889;</span>
+          <div class="card-title">RHAIS (vLLM-based)</div>
+          <div class="card-subtitle">Certified vLLM runtime with multi-GPU vendor support</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same vLLM core. <code>/v1/completions</code> just works. Added: certified GPU drivers, multi-arch images, RHEL UBI base.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Production-grade inference engine backed by Red Hat support, GPU vendor partnerships, and enterprise security certifications.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. OpenShift Service Mesh -->
+        <div class="component-card enterprise-card" data-pair="3">
+          <span class="card-icon">&#128268;</span>
+          <div class="card-title">OpenShift Service Mesh / Routes</div>
+          <div class="card-subtitle">Managed Istio-based mesh with native OpenShift routing</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same Gateway API CRDs plus OpenShift-native Routes. Automatic mTLS, traffic policies, and Kiali dashboard included.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Zero-config mutual TLS, traffic management, and observability — integrated into the OpenShift platform you already run.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. OpenShift Monitoring -->
+        <div class="component-card enterprise-card" data-pair="4">
+          <span class="card-icon">&#128200;</span>
+          <div class="card-title">OpenShift Monitoring</div>
+          <div class="card-subtitle">User Workload Monitoring with persistent storage and HA</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same Prometheus metrics, auto-discovered via <code>ServiceMonitor</code> CRDs. Pre-built dashboards and alerts for inference workloads.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Fully managed monitoring stack — persistent storage, high availability, RBAC-controlled access, and platform-integrated alerting.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Operator / CR -->
+        <div class="component-card enterprise-card" data-pair="5">
+          <span class="card-icon">&#128230;</span>
+          <div class="card-title">Operator / LLMInferenceService CR</div>
+          <div class="card-subtitle">Declarative, self-healing inference stack management</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">One CR replaces multiple Helm releases. The Operator handles scaling, upgrades, and health reconciliation automatically.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Deploy, scale, and upgrade your entire inference stack with a single declarative resource — the Operator handles the rest.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Red Hat subscription support -->
+        <div class="component-card enterprise-card" data-pair="6">
+          <span class="card-icon">&#128101;</span>
+          <div class="card-title">Red Hat Subscription Support</div>
+          <div class="card-subtitle">24/7 SLA-backed support with dedicated TAMs</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Access to Red Hat support portal, knowledge base, and engineering escalation for production inference issues.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">SLA-backed response times (Sev-1 in 1hr), dedicated Technical Account Managers, and proactive security advisories.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Product lifecycle -->
+        <div class="component-card enterprise-card" data-pair="7">
+          <span class="card-icon">&#127963;</span>
+          <div class="card-title">Red Hat Product Lifecycle</div>
+          <div class="card-subtitle">RHEL certification, FIPS, CVE patching, predictable releases</div>
+          <span class="card-arrow-hint">click to expand</span>
+          <div class="detail-panel">
+            <div class="detail-content">
+              <div class="view-dev">
+                <div class="view-note dev-note">Same Apache 2.0 code, plus RHEL-certified builds, FIPS-validated crypto, and multi-platform CI across 4 architectures.</div>
+              </div>
+              <div class="view-dm">
+                <div class="view-note dm-note">Predictable release cadence, long-term support, backwards compatibility guarantees, and integration into the full Red Hat AI portfolio.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Timeline ── -->
+<section class="timeline-section">
+  <div class="container">
+    <div class="section-heading">
+      <h2>The Journey: Community to Enterprise</h2>
+      <p>How open-source innovation becomes production-ready infrastructure</p>
+      <div class="gradient-divider"></div>
+    </div>
+
+    <div class="timeline-track">
+      <div class="timeline-step" data-observe>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Community Contribution</div>
+        <div class="timeline-desc">Open-source development on GitHub with community-driven features and fixes</div>
+      </div>
+      <div class="timeline-step" data-observe>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">CNCF Sandbox</div>
+        <div class="timeline-desc">Vendor-neutral governance, growing ecosystem adoption, conformance testing</div>
+      </div>
+      <div class="timeline-step" data-observe>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Red Hat Integration</div>
+        <div class="timeline-desc">Hardening, multi-platform testing, OpenShift AI integration, FIPS certification</div>
+      </div>
+      <div class="timeline-step" data-observe>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Enterprise GA</div>
+        <div class="timeline-desc">Red Hat AI 3 with RHAIS — production-ready, supported, certified</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-attribution">Markell Rawls &middot; Developer Advocate &middot; Red Hat</div>
+    <div class="footer-links">
+      <a href="blog/">Read the companion blog post &rarr;</a>
+      <a href="https://markellr-redhat.github.io/llm-d-content-hub/" target="_blank" rel="noopener">llm-d Content Hub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── View Toggle ──
+  const toggleBtns = document.querySelectorAll('.toggle-btn');
+  toggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      toggleBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      document.body.className = view + '-view';
+      // Close all open panels when switching views
+      document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+    });
+  });
+
+  // ── Click to Expand Detail Panels ──
+  document.querySelectorAll('.component-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      const panel = card.querySelector('.detail-panel');
+      if (!panel) return;
+      const isOpen = panel.classList.contains('open');
+
+      // Close all panels first
+      document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+
+      if (!isOpen) {
+        panel.classList.add('open');
+      }
+
+      // Recalculate SVG lines after panel open/close animation
+      setTimeout(drawConnectors, 350);
+    });
+  });
+
+  // ── Hover Highlight ──
+  document.querySelectorAll('.component-card').forEach(card => {
+    const pairId = card.dataset.pair;
+    if (!pairId) return;
+
+    card.addEventListener('mouseenter', () => {
+      // Highlight paired cards
+      document.querySelectorAll(`.component-card[data-pair="${pairId}"]`).forEach(c => {
+        c.classList.add('highlighted');
+      });
+      // Activate connector line
+      const line = document.getElementById('line-' + pairId);
+      if (line) line.classList.add('active');
+    });
+
+    card.addEventListener('mouseleave', () => {
+      document.querySelectorAll(`.component-card[data-pair="${pairId}"]`).forEach(c => {
+        c.classList.remove('highlighted');
+      });
+      const line = document.getElementById('line-' + pairId);
+      if (line) line.classList.remove('active');
+    });
+  });
+
+  // ── Draw SVG Connector Lines ──
+  function drawConnectors() {
+    const svg = document.getElementById('connectorSvg');
+    const svgContainer = document.getElementById('svgContainer');
+    if (!svg || !svgContainer) return;
+
+    // Only draw on non-mobile
+    if (window.innerWidth <= 768) return;
+
+    // Clear existing lines (preserve defs)
+    const defs = svg.querySelector('defs');
+    svg.innerHTML = '';
+    svg.appendChild(defs);
+
+    const containerRect = svgContainer.getBoundingClientRect();
+    const svgWidth = containerRect.width;
+
+    // Set SVG height to match container
+    const mapColumns = document.querySelector('.map-columns');
+    if (mapColumns) {
+      const mapRect = mapColumns.getBoundingClientRect();
+      svg.setAttribute('height', mapRect.height);
+      svg.setAttribute('width', svgWidth);
+    }
+
+    for (let i = 1; i <= 7; i++) {
+      const leftCards = document.querySelectorAll(`.column-left .component-card[data-pair="${i}"]`);
+      const rightCards = document.querySelectorAll(`.column-right .component-card[data-pair="${i}"]`);
+
+      if (leftCards.length === 0 || rightCards.length === 0) continue;
+
+      const leftCard = leftCards[0];
+      const rightCard = rightCards[0];
+
+      const leftRect = leftCard.getBoundingClientRect();
+      const rightRect = rightCard.getBoundingClientRect();
+
+      // Calculate Y positions relative to SVG container
+      const y1 = leftRect.top + leftRect.height / 2 - containerRect.top;
+      const y2 = rightRect.top + rightRect.height / 2 - containerRect.top;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const x1 = 0;
+      const x2 = svgWidth;
+      const cx1 = svgWidth * 0.4;
+      const cx2 = svgWidth * 0.6;
+
+      path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`);
+      path.setAttribute('class', 'connector-line');
+      path.setAttribute('id', 'line-' + i);
+      svg.appendChild(path);
+    }
+  }
+
+  // Debounced resize handler
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(drawConnectors, 150);
+  });
+
+  // ── Scroll Animations ──
+  const observerOptions = {
+    threshold: 0.15,
+    rootMargin: '0px 0px -40px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        // Stagger animations
+        const delay = Array.from(entry.target.parentElement.children).indexOf(entry.target) * 80;
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, delay);
+        observer.unobserve(entry.target);
+
+        // Redraw connectors after cards animate in
+        setTimeout(drawConnectors, delay + 400);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.component-card').forEach(card => {
+    observer.observe(card);
+  });
+
+  // Timeline step observer
+  const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const steps = document.querySelectorAll('.timeline-step');
+        const idx = Array.from(steps).indexOf(entry.target);
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, idx * 200);
+        timelineObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.timeline-step').forEach(step => {
+    timelineObserver.observe(step);
+  });
+
+  // ── Stat Counter Animation ──
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target, 10);
+        let current = 0;
+        const increment = () => {
+          if (current < target) {
+            current++;
+            el.textContent = current;
+            setTimeout(increment, 120);
+          }
+        };
+        increment();
+        statObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+    statObserver.observe(el);
+  });
+
+  // ── Initial draw after page load ──
+  window.addEventListener('load', () => {
+    setTimeout(drawConnectors, 600);
+  });
+
+  // Also draw after a short delay for any layout shifts
+  setTimeout(drawConnectors, 1000);
+})();
+</script>
+</body>
+</html>
