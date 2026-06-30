@@ -8,835 +8,743 @@
     <link rel="icon" type="image/png" href="https://llm-d.ai/img/llm-d-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700;900&family=Red+Hat+Text:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ============================================
-           RESET & BASE
-           ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ============================================================
+           RESET & BASE -- NO SCROLLING
+           ============================================================ */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         html, body {
             overflow: hidden;
             width: 100%;
             height: 100%;
             font-family: 'Red Hat Text', sans-serif;
-            background: #faf8f5;
+            font-weight: 400;
             color: #2d2a26;
             line-height: 1.6;
         }
+        html { background: #faf8f5; }
+        body { background: #faf8f5; }
+        h1,h2,h3,h4,h5,h6 { font-family: 'Red Hat Display', sans-serif; font-weight: 900; color: #2d2a26; }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Red Hat Display', sans-serif;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        /* ============================================
-           GRADIENT BACKGROUND (flowing, warm)
-           ============================================ */
-        .bg-gradient {
+        /* ============================================================
+           FLOWING BACKGROUND GRADIENT (slow 20s cycle)
+           ============================================================ */
+        body::before {
+            content: '';
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse 80% 60% at 10% 90%, rgba(255,183,77,0.12) 0%, transparent 70%),
-                radial-gradient(ellipse 70% 50% at 90% 20%, rgba(100,181,246,0.10) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 40% at 50% 50%, rgba(239,108,103,0.06) 0%, transparent 70%),
-                linear-gradient(135deg, #faf8f5 0%, #f5f0ea 50%, #faf8f5 100%);
+            inset: 0;
+            z-index: -2;
+            background: linear-gradient(135deg, #faf8f5 0%, #fef6ee 25%, #f5f0ea 50%, #fef6ee 75%, #faf8f5 100%);
+            background-size: 400% 400%;
+            animation: bgFlow 20s ease infinite;
+        }
+        @keyframes bgFlow {
+            0%   { background-position: 0% 50%; }
+            25%  { background-position: 50% 0%; }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50% 100%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* ============================================
-           SLIDES VIEWPORT + TRACK
-           ============================================ */
-        .slides-viewport {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .slides-track {
-            display: flex;
-            width: max-content;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide {
-            width: 100vw;
-            height: 100vh;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 4rem;
-            position: relative;
-        }
-
-        .slide-inner {
-            max-width: 1200px;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* ============================================
-           NAVIGATION
-           ============================================ */
-        .nav-arrows {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #e8e4df;
-            color: #2d2a26;
-            font-size: 1.2rem;
-            cursor: pointer;
-            pointer-events: all;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-            font-family: 'Red Hat Display', sans-serif;
-            font-weight: 700;
-        }
-
-        .nav-arrow:hover {
-            background: #2d2a26;
-            color: #ffffff;
-            border-color: #2d2a26;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
-        }
-
-        .nav-arrow.prev { left: 1.5rem; }
-        .nav-arrow.next { right: 1.5rem; }
-
-        .nav-arrow:disabled {
-            opacity: 0.3;
-            cursor: default;
-            pointer-events: none;
-        }
-
-        /* Dots */
-        .nav-dots {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.6rem;
-            z-index: 100;
-            background: rgba(255,255,255,0.85);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        .nav-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #d4cfc8;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .nav-dot.active {
-            background: #d97706;
-            width: 28px;
-            border-radius: 5px;
-        }
-
-        /* Progress bar */
+        /* ============================================================
+           PROGRESS BAR (top)
+           ============================================================ */
         .progress-bar {
             position: fixed;
             top: 0; left: 0;
             height: 3px;
             background: linear-gradient(90deg, #d97706, #ef6c63, #42a5f5);
-            z-index: 200;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0 2px 2px 0;
         }
 
-        /* Slide counter */
-        .slide-counter {
-            position: fixed;
-            top: 1.5rem;
-            right: 2rem;
-            z-index: 100;
+        /* ============================================================
+           SLIDES VIEWPORT & TRACK
+           ============================================================ */
+        .slides-viewport {
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+        }
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide {
+            min-width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 48px 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============================================================
+           FULL-SLIDE CANVAS (background particles per slide)
+           ============================================================ */
+        .slide-canvas-wrap {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .slide-canvas-wrap canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* ============================================================
+           SLIDE CONTENT WRAPPERS
+           ============================================================ */
+        .slide-inner {
+            max-width: 1100px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .slide-number {
             font-family: 'Red Hat Display', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #8a847c;
-            background: rgba(255,255,255,0.85);
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            backdrop-filter: blur(8px);
-        }
-
-        .slide-counter .current { color: #d97706; font-weight: 900; font-size: 1rem; }
-
-        /* ============================================
-           TYPOGRAPHY
-           ============================================ */
-        .slide-label {
-            font-family: 'Red Hat Display', sans-serif;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: #d97706;
-            margin-bottom: 0.75rem;
-        }
-
-        .slide h2 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: #2d2a26;
-            margin-bottom: 1rem;
-        }
-
-        .slide h3 {
-            font-size: 1.5rem;
             font-weight: 700;
-            color: #2d2a26;
-            margin-bottom: 0.75rem;
-        }
-
-        .slide p.subtitle {
-            font-size: 1.15rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
             color: #6b6560;
-            max-width: 600px;
-            margin-bottom: 2rem;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .slide.active .slide-number {
+            animation: fadeSlideUp 0.5s 0.1s ease forwards;
+        }
+        .slide-title {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .slide.active .slide-title {
+            animation: fadeSlideUp 0.6s 0.2s ease forwards;
+        }
+        .slide-subtitle {
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            color: #6b6560;
+            max-width: 700px;
+            margin: 0 auto 32px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .slide.active .slide-subtitle {
+            animation: fadeSlideUp 0.5s 0.35s ease forwards;
+        }
+        .slide-body {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .slide.active .slide-body {
+            animation: fadeSlideUp 0.6s 0.45s ease forwards;
         }
 
-        /* ============================================
-           CARDS
-           ============================================ */
+        /* ============================================================
+           ENTRANCE ANIMATIONS
+           ============================================================ */
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(217,119,6,0.15); }
+            50% { box-shadow: 0 0 40px rgba(217,119,6,0.3); }
+        }
+
+        /* Staggered card entrance */
+        .stagger-1 { animation-delay: 0.5s !important; }
+        .stagger-2 { animation-delay: 0.65s !important; }
+        .stagger-3 { animation-delay: 0.8s !important; }
+        .stagger-4 { animation-delay: 0.95s !important; }
+        .stagger-5 { animation-delay: 1.1s !important; }
+        .stagger-6 { animation-delay: 1.25s !important; }
+        .stagger-7 { animation-delay: 1.4s !important; }
+        .stagger-8 { animation-delay: 1.55s !important; }
+
+        /* ============================================================
+           CARD STYLES
+           ============================================================ */
         .card {
             background: #ffffff;
             border-radius: 16px;
-            padding: 1.75rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-            border: 1px solid #ece8e2;
-            transition: transform 0.3s, box-shadow 0.3s;
+            padding: 24px 20px;
+            box-shadow: 0 2px 12px rgba(45,42,38,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(45,42,38,0.1);
         }
 
-        .card-grid {
-            display: grid;
-            gap: 1.25rem;
+        /* ============================================================
+           NAVIGATION ARROWS + DOTS
+           ============================================================ */
+        .nav-arrows {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            z-index: 500;
         }
-
-        .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-        .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-        .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-
-        /* Accent colors */
-        .accent-amber { border-left: 4px solid #d97706; }
-        .accent-coral { border-left: 4px solid #ef6c63; }
-        .accent-blue { border-left: 4px solid #42a5f5; }
-        .accent-green { border-left: 4px solid #66bb6a; }
-        .accent-purple { border-left: 4px solid #ab47bc; }
-        .accent-red { border-left: 4px solid #ee0000; }
-
-        .icon-circle {
-            width: 40px;
-            height: 40px;
+        .nav-btn {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            border: 2px solid #d4cfc9;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-            font-weight: 700;
-        }
-
-        .icon-amber { background: #fff3e0; color: #d97706; }
-        .icon-coral { background: #fce4ec; color: #ef6c63; }
-        .icon-blue { background: #e3f2fd; color: #42a5f5; }
-        .icon-green { background: #e8f5e9; color: #66bb6a; }
-        .icon-purple { background: #f3e5f5; color: #ab47bc; }
-        .icon-red { background: #ffeaea; color: #ee0000; }
-
-        .card h4 {
-            font-family: 'Red Hat Display', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #2d2a26;
-            margin-bottom: 0.4rem;
-        }
-
-        .card p, .card li {
-            font-size: 0.88rem;
+            transition: all 0.25s ease;
             color: #6b6560;
-            line-height: 1.6;
+        }
+        .nav-btn:hover {
+            border-color: #d97706;
+            color: #d97706;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(217,119,6,0.2);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+            border-color: #d4cfc9;
+            color: #d4cfc9;
+        }
+        .nav-btn:disabled:hover {
+            box-shadow: none;
+            background: rgba(255,255,255,0.9);
+        }
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .card ul {
-            list-style: none;
-            margin-top: 0.5rem;
+        .nav-dots {
+            display: flex;
+            gap: 8px;
         }
-
-        .card ul li {
-            padding: 0.25rem 0;
-            padding-left: 1.2rem;
-            position: relative;
-        }
-
-        .card ul li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0.65rem;
-            width: 6px;
-            height: 6px;
+        .nav-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #d4cfc8;
+            border: 2px solid #d4cfc9;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .nav-dot.active {
+            background: #d97706;
+            border-color: #d97706;
+            width: 28px;
+            border-radius: 5px;
+        }
+        .nav-dot:hover:not(.active) {
+            border-color: #d97706;
         }
 
-        /* ============================================
-           STAGGER ENTRANCE ANIMATIONS
-           ============================================ */
-        .slide[data-active="true"] .stagger { animation: staggerIn 0.7s ease forwards; }
-        .slide[data-active="false"] .stagger { opacity: 0; transform: translateY(30px); }
-
-        .stagger { opacity: 0; transform: translateY(30px); }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-        .stagger-6 { animation-delay: 0.6s; }
-        .stagger-7 { animation-delay: 0.7s; }
-        .stagger-8 { animation-delay: 0.8s; }
-
-        @keyframes staggerIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================
+        /* ============================================================
            SLIDE 1 -- TITLE
-           ============================================ */
-        .title-layout {
-            display: flex;
-            align-items: center;
-            gap: 4rem;
-            height: 100%;
-        }
-
-        .title-text { flex: 1; }
-        .title-canvas-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .title-text h1 {
-            font-family: 'Red Hat Display', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            line-height: 1.1;
-            color: #2d2a26;
-            margin-bottom: 1rem;
-        }
-
-        .title-text h1 .highlight {
-            background: linear-gradient(135deg, #d97706, #ef6c63);
+           ============================================================ */
+        .hero-gradient-text {
+            background: linear-gradient(135deg, #d97706 0%, #ef6c63 50%, #42a5f5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .title-meta {
-            display: flex;
+        .hero-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 1.5rem;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: #8a847c;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(217,119,6,0.1);
+            border: 1px solid rgba(217,119,6,0.25);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #b45309;
+            margin-bottom: 20px;
         }
-
-        .title-meta .divider {
-            width: 1px;
-            height: 24px;
-            background: #d4cfc8;
+        .hero-badge img { height: 20px; width: 20px; }
+        .hero-stat-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 32px;
+            flex-wrap: wrap;
         }
-
-        .analogy-banner {
-            background: #ffffff;
+        .hero-stat-item {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        .slide.active .hero-stat-item {
+            animation: scaleIn 0.5s ease forwards;
+        }
+        .hero-stat-value {
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 900;
+            line-height: 1;
+        }
+        .hero-stat-label {
+            font-size: 0.82rem;
+            color: #6b6560;
+            margin-top: 4px;
+        }
+        .hero-analogy {
+            max-width: 600px;
+            margin: 28px auto 0;
+            background: rgba(255,255,255,0.85);
             border-radius: 12px;
-            padding: 1.25rem 1.75rem;
-            margin-top: 2rem;
+            padding: 16px 24px;
             border: 1px solid #ece8e2;
             box-shadow: 0 2px 12px rgba(0,0,0,0.03);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: #6b6560;
+            opacity: 0;
         }
+        .slide.active .hero-analogy {
+            animation: fadeSlideUp 0.5s 0.8s ease forwards;
+        }
+        .hero-analogy strong { color: #2d2a26; }
 
-        .analogy-banner strong { color: #2d2a26; }
-
-        #title-canvas {
+        /* ============================================================
+           SLIDE 2 -- JOURNEY
+           ============================================================ */
+        .journey-canvas-wrap {
             width: 100%;
-            max-width: 480px;
-            height: 400px;
+            max-width: 1000px;
+            height: 200px;
+            margin: 0 auto 24px;
+            position: relative;
         }
-
-        /* ============================================
-           SLIDE 2 -- JOURNEY (Canvas)
-           ============================================ */
-        #journey-canvas {
+        .journey-canvas-wrap canvas {
             width: 100%;
-            max-width: 1100px;
-            height: 340px;
+            height: 100%;
+            display: block;
         }
-
         .journey-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
-
         .journey-card {
             background: #ffffff;
             border-radius: 12px;
-            padding: 1.25rem;
-            border: 1px solid #ece8e2;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            padding: 16px 20px;
+            box-shadow: 0 2px 12px rgba(45,42,38,0.06);
             text-align: center;
+            min-width: 180px;
+            max-width: 210px;
+            opacity: 0;
         }
-
+        .slide.active .journey-card {
+            animation: scaleIn 0.5s ease forwards;
+        }
         .journey-num {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-family: 'Red Hat Display', sans-serif;
             font-weight: 900;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #fff;
-            margin-bottom: 0.5rem;
+            margin-bottom: 6px;
         }
-
         .journey-card h4 {
             font-family: 'Red Hat Display', sans-serif;
             font-size: 0.9rem;
             font-weight: 700;
-            color: #2d2a26;
-            margin-bottom: 0.25rem;
+            margin-bottom: 4px;
         }
-
         .journey-card p {
             font-size: 0.78rem;
-            color: #8a847c;
+            color: #6b6560;
         }
 
-        /* ============================================
-           SLIDE 3 -- FEATURES (animated bars)
-           ============================================ */
-        .features-layout {
+        /* ============================================================
+           SLIDE 3 -- FEATURES
+           ============================================================ */
+        .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: start;
+            gap: 24px;
+            max-width: 950px;
+            margin: 0 auto;
+            text-align: left;
         }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid #f0ece6;
+        .features-col {
+            opacity: 0;
         }
-
-        .feature-item:last-child { border-bottom: none; }
-
-        .feature-name {
-            flex: 1;
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: #2d2a26;
+        .slide.active .features-col {
+            animation: fadeSlideUp 0.5s ease forwards;
         }
-
-        .feature-dots {
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .feature-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .dot-complete { background: #66bb6a; }
-        .dot-partial { background: #ffc107; }
-        .dot-planned { background: #e0dcd6; }
-
-        .feature-cat-tag {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            background: #f5f0ea;
-            color: #8a847c;
-        }
-
-        .features-legend {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: #8a847c;
-        }
-
-        .features-legend span {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        /* Category progress bars animated */
         .cat-progress {
-            margin-bottom: 0.8rem;
+            margin-bottom: 12px;
         }
-
         .cat-progress-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-bottom: 4px;
             text-transform: capitalize;
         }
-
-        .cat-progress-label .pct { color: #d97706; }
-
+        .cat-progress-label .pct { color: #d97706; font-weight: 700; }
         .cat-progress-bar {
             height: 8px;
             background: #f0ece6;
             border-radius: 4px;
             overflow: hidden;
         }
-
         .cat-progress-fill {
             height: 100%;
             border-radius: 4px;
             transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 0%;
         }
-
         .fill-amber { background: linear-gradient(90deg, #ffa726, #d97706); }
         .fill-coral { background: linear-gradient(90deg, #ef9a9a, #ef6c63); }
         .fill-blue { background: linear-gradient(90deg, #90caf9, #42a5f5); }
         .fill-green { background: linear-gradient(90deg, #a5d6a7, #66bb6a); }
         .fill-purple { background: linear-gradient(90deg, #ce93d8, #ab47bc); }
+        .features-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 0.78rem;
+            color: #8a847c;
+        }
+        .features-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .feature-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-complete { background: #66bb6a; }
+        .dot-partial { background: #ffc107; }
+        .dot-planned { background: #e0dcd6; }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0ece6;
+            font-size: 0.82rem;
+        }
+        .feature-item:last-child { border-bottom: none; }
+        .feature-name { flex: 1; font-weight: 500; color: #2d2a26; }
+        .feature-cat-tag {
+            font-size: 0.62rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #f5f0ea;
+            color: #8a847c;
+        }
+        .feature-dots {
+            display: flex;
+            gap: 4px;
+        }
 
-        /* ============================================
-           SLIDE 4 -- UPSTREAM vs ENTERPRISE (comparison)
-           ============================================ */
+        /* ============================================================
+           SLIDE 4 -- COMPARISON
+           ============================================================ */
         .comparison-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
         }
-
         .comparison-col {
             background: #ffffff;
             border-radius: 16px;
-            padding: 2rem;
+            padding: 24px;
             border: 2px solid #ece8e2;
+            opacity: 0;
         }
-
-        .comparison-col.col-upstream {
-            border-color: #ab47bc;
+        .slide.active .comparison-col {
+            animation: fadeSlideUp 0.5s ease forwards;
         }
-
-        .comparison-col.col-enterprise {
-            border-color: #ee0000;
-        }
-
+        .comparison-col.col-upstream { border-color: #ab47bc; }
+        .comparison-col.col-enterprise { border-color: #ee0000; }
         .comparison-col h3 {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
         }
-
         .comp-badge {
-            padding: 0.2rem 0.6rem;
+            padding: 3px 10px;
             border-radius: 6px;
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-
         .comp-badge.upstream { background: #f3e5f5; color: #ab47bc; }
         .comp-badge.enterprise { background: #ffeaea; color: #ee0000; }
-
         .comp-list {
             list-style: none;
         }
-
         .comp-list li {
-            padding: 0.6rem 0;
-            padding-left: 1.5rem;
+            padding: 7px 0;
+            padding-left: 18px;
             position: relative;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #6b6560;
             border-bottom: 1px solid #f5f0ea;
         }
-
         .comp-list li:last-child { border-bottom: none; }
-
         .comp-list li::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0.9rem;
+            top: 0.75rem;
             width: 8px;
             height: 8px;
             border-radius: 50%;
         }
-
         .comp-list.upstream-list li::before { background: #d4cfc8; }
         .comp-list.enterprise-list li::before { background: #66bb6a; }
 
-        /* ============================================
-           SLIDE 5 -- DEPLOYMENT (Code blocks)
-           ============================================ */
+        /* ============================================================
+           SLIDE 5 -- DEPLOYMENT CODE
+           ============================================================ */
         .deploy-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
         }
-
         .code-panel {
             background: #2d2a26;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 16px;
             overflow: hidden;
+            opacity: 0;
         }
-
+        .slide.active .code-panel {
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
         .code-panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .code-panel-title {
             font-family: 'Red Hat Display', sans-serif;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #d97706;
         }
-
         .code-panel-lang {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             color: rgba(255,255,255,0.4);
             letter-spacing: 0.1em;
         }
-
         .code-body {
-            font-family: 'Courier New', monospace;
-            font-size: 0.78rem;
-            line-height: 1.8;
+            font-family: 'Monaco','Menlo','Consolas', monospace;
+            font-size: 0.72rem;
+            line-height: 1.7;
             color: #e4e4e7;
         }
-
         .code-body .ck { color: #ff79c6; }
         .code-body .cs { color: #50fa7b; }
         .code-body .cn { color: #bd93f9; }
         .code-body .cp { color: #8be9fd; }
-        .code-body .cc { color: #6272a4; }
-        .code-body .ce { color: #ff5555; opacity: 0; animation: codeReveal 0.6s ease forwards; }
-
-        @keyframes codeReveal {
-            to { opacity: 1; }
-        }
-
         .enterprise-line { display: none; }
         .enterprise-line.show { display: block; }
-
+        .enterprise-line .ce { color: #ff5555; opacity: 0; animation: ceReveal 0.6s ease forwards; }
+        @keyframes ceReveal { to { opacity: 1; } }
         .code-toggle-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding: 0.5rem 1.25rem;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 16px;
             background: #ffffff;
             border: 1px solid #ece8e2;
             border-radius: 8px;
             font-family: 'Red Hat Text', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.82rem;
+            font-weight: 500;
             color: #2d2a26;
             cursor: pointer;
             transition: all 0.3s;
         }
-
-        .code-toggle-btn:hover {
+        .code-toggle-btn:hover, .code-toggle-btn.active {
             background: #d97706;
             color: #ffffff;
             border-color: #d97706;
         }
-
-        .code-toggle-btn.active {
-            background: #d97706;
-            color: #ffffff;
-            border-color: #d97706;
-        }
-
-        /* Support comparison below code */
         .support-strip {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1.25rem;
+            gap: 12px;
+            max-width: 900px;
+            margin: 16px auto 0;
         }
-
         .support-chip {
             background: #ffffff;
             border-radius: 10px;
-            padding: 1rem 1.25rem;
+            padding: 12px 14px;
             border: 1px solid #ece8e2;
+            text-align: left;
+            opacity: 0;
         }
-
+        .slide.active .support-chip {
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
         .support-chip h4 {
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 0.82rem;
+            margin-bottom: 3px;
         }
-
         .support-chip p {
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             color: #8a847c;
         }
 
-        /* ============================================
-           SLIDE 6 -- CERTIFICATION MATRIX
-           ============================================ */
+        /* ============================================================
+           SLIDE 6 -- CERTIFICATION
+           ============================================================ */
         .cert-matrix-wrap {
             background: #ffffff;
             border-radius: 16px;
             overflow: hidden;
             border: 1px solid #ece8e2;
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            max-width: 950px;
+            margin: 0 auto;
+            opacity: 0;
         }
-
+        .slide.active .cert-matrix-wrap {
+            animation: fadeSlideUp 0.5s 0.5s ease forwards;
+        }
         .cert-matrix-header {
             background: #f5f0ea;
-            padding: 1rem 1.5rem;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #ee0000;
         }
-
         .cert-matrix-header h4 {
             font-family: 'Red Hat Display', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
-
         .cert-matrix-header .cert-id {
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
+            font-family: 'Monaco', monospace;
+            font-size: 0.7rem;
             color: #8a847c;
-            background: #ffffff;
-            padding: 0.2rem 0.6rem;
+            background: #fff;
+            padding: 2px 8px;
             border-radius: 4px;
         }
-
-        .cert-table-scroll {
-            overflow-x: auto;
-        }
-
+        .cert-table-scroll { overflow-x: auto; }
         .cert-table-scroll table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
         }
-
         .cert-table-scroll th {
             background: #f9f6f2;
-            padding: 0.75rem 0.6rem;
-            font-weight: 600;
+            padding: 8px 6px;
+            font-weight: 500;
             text-align: center;
             border-bottom: 1px solid #ece8e2;
             white-space: nowrap;
         }
-
-        .cert-table-scroll th:first-child { text-align: left; padding-left: 1.5rem; }
-
+        .cert-table-scroll th:first-child { text-align: left; padding-left: 20px; }
         .cert-table-scroll td {
-            padding: 0.6rem;
+            padding: 6px;
             text-align: center;
             border-bottom: 1px solid #f0ece6;
         }
-
         .cert-table-scroll td:first-child {
             text-align: left;
-            font-weight: 600;
-            padding-left: 1.5rem;
+            font-weight: 500;
+            padding-left: 20px;
             background: #fdfcfa;
         }
-
         .cert-yes { color: #66bb6a; font-weight: 700; }
         .cert-partial { color: #ffc107; font-weight: 700; }
         .cert-no { color: #ef5350; font-weight: 700; }
-
         .cert-legend-bar {
             display: flex;
-            gap: 2rem;
-            padding: 0.75rem 1.5rem;
+            gap: 24px;
+            padding: 8px 20px;
             background: #fdfcfa;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             color: #8a847c;
         }
-
         .cert-legend-bar span {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 4px;
         }
-
         .cert-legend-dot {
             width: 8px;
             height: 8px;
@@ -844,449 +752,402 @@
             display: inline-block;
         }
 
-        /* ============================================
+        /* ============================================================
            SLIDE 7 -- MIGRATION PATHS
-           ============================================ */
+           ============================================================ */
         .migration-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: left;
         }
-
         .migration-card {
             background: #ffffff;
             border-radius: 14px;
-            padding: 1.5rem;
+            padding: 18px;
             border: 1px solid #ece8e2;
             box-shadow: 0 2px 12px rgba(0,0,0,0.03);
             cursor: pointer;
             transition: all 0.3s;
+            opacity: 0;
         }
-
+        .slide.active .migration-card {
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
         .migration-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 32px rgba(0,0,0,0.07);
             border-color: #d97706;
         }
-
         .migration-card h4 {
             font-family: 'Red Hat Display', sans-serif;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
+            font-size: 1rem;
+            margin-bottom: 3px;
         }
-
         .migration-card .duration {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #d97706;
-            margin-bottom: 0.75rem;
+            margin-bottom: 8px;
         }
-
         .migration-card .steps-preview {
-            font-size: 0.8rem;
-            color: #8a847c;
             list-style: none;
+            font-size: 0.75rem;
+            color: #8a847c;
         }
-
         .migration-card .steps-preview li {
-            padding: 0.2rem 0;
-            padding-left: 1rem;
+            padding: 2px 0;
+            padding-left: 12px;
             position: relative;
         }
-
         .migration-card .steps-preview li::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0.55rem;
-            width: 5px;
-            height: 5px;
+            top: 0.5rem;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
             background: #d4cfc8;
         }
-
         .effort-risk {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
+            gap: 4px;
+            margin-top: 8px;
         }
-
         .effort-risk .badge {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
-            padding: 0.15rem 0.5rem;
+            padding: 2px 6px;
             border-radius: 4px;
         }
-
         .badge-low { background: #e8f5e9; color: #2e7d32; }
         .badge-medium { background: #fff3e0; color: #ef6c00; }
         .badge-high { background: #fce4ec; color: #c62828; }
-
-        /* ============================================
-           SLIDE 8 -- CTA / CLOSER
-           ============================================ */
-        .cta-layout {
-            text-align: center;
+        .timeline-row {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 16px auto 0;
             justify-content: center;
-            height: 100%;
         }
-
-        .cta-layout h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta-layout p.subtitle {
+        .timeline-chip {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #ece8e2;
+            min-width: 150px;
             text-align: center;
-            max-width: 640px;
-            margin-bottom: 2.5rem;
+            opacity: 0;
+        }
+        .slide.active .timeline-chip {
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
+        .timeline-chip.planned { border-style: dashed; }
+        .timeline-chip .ver {
+            font-size: 0.65rem;
+            color: #ab47bc;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .timeline-chip .product {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #2d2a26;
+        }
+        .timeline-chip .date {
+            font-size: 0.7rem;
+            color: #8a847c;
         }
 
+        /* ============================================================
+           SLIDE 8 -- CTA
+           ============================================================ */
         .cta-links {
             display: flex;
-            gap: 1rem;
+            gap: 12px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 3rem;
+            margin-bottom: 24px;
         }
-
         .cta-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.85rem 2rem;
-            border-radius: 10px;
+            gap: 6px;
+            padding: 12px 28px;
+            border-radius: 12px;
             font-family: 'Red Hat Display', sans-serif;
             font-weight: 700;
             font-size: 0.95rem;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: transform 0.25s, box-shadow 0.25s;
             cursor: pointer;
             border: none;
         }
-
+        .cta-btn:hover { transform: translateY(-2px); }
         .cta-btn.primary {
             background: linear-gradient(135deg, #d97706, #ef6c63);
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(217,119,6,0.3);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(217,119,6,0.3);
         }
-
-        .cta-btn.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(217,119,6,0.4);
-        }
-
+        .cta-btn.primary:hover { box-shadow: 0 8px 28px rgba(217,119,6,0.4); }
         .cta-btn.secondary {
-            background: #ffffff;
+            background: #fff;
             color: #2d2a26;
             border: 2px solid #ece8e2;
         }
-
-        .cta-btn.secondary:hover {
-            border-color: #2d2a26;
-        }
-
-        .footer-info {
-            font-size: 0.85rem;
-            color: #8a847c;
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .footer-info .divider {
-            width: 1px;
-            height: 16px;
-            background: #d4cfc8;
-        }
-
-        /* ============================================
-           SUPPORT TIERS -- Slide 7 area
-           ============================================ */
-        .tier-strip {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
-            margin-top: 1.5rem;
-        }
-
-        .tier-card-mini {
-            background: #ffffff;
+        .cta-btn.secondary:hover { border-color: #2d2a26; }
+        .takeaway-card {
+            max-width: 560px;
+            margin: 0 auto 24px;
+            background: rgba(255,255,255,0.9);
             border-radius: 14px;
-            padding: 1.5rem;
+            padding: 20px 24px;
             border: 1px solid #ece8e2;
-            position: relative;
-            overflow: hidden;
+            text-align: left;
+            opacity: 0;
         }
-
-        .tier-card-mini::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
+        .slide.active .takeaway-card {
+            animation: fadeSlideUp 0.5s 0.7s ease forwards;
         }
-
-        .tier-card-mini.tier-free::before { background: #42a5f5; }
-        .tier-card-mini.tier-standard::before { background: #ffc107; }
-        .tier-card-mini.tier-premium::before { background: #ee0000; }
-
-        .tier-card-mini h4 {
+        .takeaway-card h4 {
             font-family: 'Red Hat Display', sans-serif;
             font-size: 1rem;
-            margin-bottom: 0.1rem;
+            margin-bottom: 8px;
+            text-align: center;
         }
-
-        .tier-card-mini .price {
-            font-size: 0.8rem;
-            color: #8a847c;
-            margin-bottom: 0.75rem;
-        }
-
-        .tier-card-mini ul {
+        .takeaway-card ul {
             list-style: none;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: #6b6560;
         }
-
-        .tier-card-mini ul li {
-            padding: 0.2rem 0;
-            padding-left: 1rem;
+        .takeaway-card li {
+            padding: 3px 0;
+            padding-left: 16px;
             position: relative;
         }
-
-        .tier-card-mini ul li::before {
+        .takeaway-card li::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0.55rem;
-            width: 5px;
-            height: 5px;
+            top: 0.6rem;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            background: #66bb6a;
+            background: #d97706;
+        }
+        .slide-footer {
+            margin-top: 16px;
+            font-size: 0.82rem;
+            color: #a09a94;
         }
 
-        .tier-use {
-            margin-top: 0.75rem;
-            padding: 0.6rem 0.8rem;
-            background: #f9f6f2;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            color: #8a847c;
-        }
-
-        /* ============================================
-           CANVAS (for journey diagram animation)
-           ============================================ */
-        canvas { display: block; }
-
-        /* ============================================
-           FLOATING PARTICLE ANIMATION
-           ============================================ */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .float-anim { animation: float 3s ease-in-out infinite; }
-        .float-anim-2 { animation: float 3.5s ease-in-out infinite; animation-delay: 0.5s; }
-        .float-anim-3 { animation: float 4s ease-in-out infinite; animation-delay: 1s; }
-
-        /* ============================================
-           RESPONSIVE (basic -- deck mostly for desktop)
-           ============================================ */
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 1024px) {
-            .slide { padding: 2rem; }
-            .slide h2 { font-size: 2rem; }
-            .title-text h1 { font-size: 2.5rem; }
-            .card-grid.cols-4 { grid-template-columns: 1fr 1fr; }
-            .journey-cards { grid-template-columns: 1fr 1fr; }
+            .slide { padding: 80px 24px 90px; }
             .migration-grid { grid-template-columns: 1fr 1fr; }
-            .tier-strip { grid-template-columns: 1fr; }
         }
-
         @media (max-width: 768px) {
-            .title-layout { flex-direction: column; gap: 2rem; }
-            .title-canvas-wrap { display: none; }
-            .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+            .slide { padding: 80px 20px 90px; }
+            .features-grid { grid-template-columns: 1fr; }
             .comparison-layout { grid-template-columns: 1fr; }
             .deploy-layout { grid-template-columns: 1fr; }
-            .features-layout { grid-template-columns: 1fr; }
             .support-strip { grid-template-columns: 1fr; }
+            .migration-grid { grid-template-columns: 1fr; }
+            .hero-stat-row { gap: 16px; }
+        }
+        @media (max-width: 480px) {
+            .nav-arrows { bottom: 16px; gap: 12px; }
+            .nav-btn { width: 40px; height: 40px; }
         }
     </style>
 </head>
 <body>
 
-<div class="bg-gradient"></div>
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progress-bar" style="width:12.5%"></div>
 
-<!-- Progress bar -->
-<div class="progress-bar" id="progress-bar"></div>
-
-<!-- Slide counter -->
-<div class="slide-counter">
-    <span class="current" id="counter-current">1</span> / <span id="counter-total">8</span>
-</div>
-
-<!-- Navigation arrows -->
-<div class="nav-arrows">
-    <button class="nav-arrow prev" id="btn-prev" disabled>&#8592;</button>
-    <button class="nav-arrow next" id="btn-next">&#8594;</button>
-</div>
-
-<!-- Navigation dots -->
-<div class="nav-dots" id="nav-dots"></div>
-
-<!-- ============================================
-     SLIDES
-     ============================================ -->
+<!-- SLIDES VIEWPORT -->
 <div class="slides-viewport">
-<div class="slides-track" id="slides-track">
+    <div class="slides-track" id="slides-track">
 
-<!-- SLIDE 1: TITLE -->
-<div class="slide" data-active="true">
-    <div class="slide-inner">
-        <div class="title-layout">
-            <div class="title-text">
-                <div class="slide-label stagger stagger-1">Content Hub #20</div>
-                <h1 class="stagger stagger-2">
-                    From <span class="highlight">llm-d</span><br>
-                    to Red Hat AI<br>
-                    Inference Server
-                </h1>
-                <p class="subtitle stagger stagger-3">Understanding the upstream-to-enterprise journey -- how open source innovation becomes production-grade AI infrastructure.</p>
-                <div class="analogy-banner stagger stagger-4">
-                    <strong>Just as Linux becomes RHEL...</strong> llm-d is the upstream open source project that Red Hat hardens, certifies, and supports as the Red Hat AI Inference Server. Same innovation DNA, enterprise-grade delivery.
+        <!-- ============================================================
+             SLIDE 1: TITLE
+             ============================================================ -->
+        <div class="slide active" data-slide="0">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-0"></canvas>
+            </div>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 1 of 8</div>
+                <div class="hero-badge">
+                    <img src="https://llm-d.ai/img/llm-d-icon.png" alt="llm-d">
+                    Content Hub #20
                 </div>
-                <div class="title-meta stagger stagger-5">
-                    <span><strong>Markell Rawls</strong> | AI Evangelist, Red Hat</span>
-                    <div class="divider"></div>
-                    <span>June 2026</span>
-                </div>
-            </div>
-            <div class="title-canvas-wrap stagger stagger-6">
-                <canvas id="title-canvas" width="480" height="400"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 2: JOURNEY MAP -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">The Migration Path</div>
-        <h2 class="stagger stagger-2">Upstream to Enterprise Journey</h2>
-        <p class="subtitle stagger stagger-3">How llm-d innovations flow from open source to Red Hat AI Inference Server</p>
-
-        <div class="stagger stagger-4" style="display:flex;justify-content:center;">
-            <canvas id="journey-canvas" width="1100" height="260"></canvas>
-        </div>
-
-        <div class="journey-cards stagger stagger-5">
-            <div class="journey-card float-anim">
-                <div class="journey-num" style="background:#d97706;">1</div>
-                <h4>llm-d GitHub</h4>
-                <p>Community-driven development, Apache 2.0, weekly releases, rapid iteration</p>
-            </div>
-            <div class="journey-card float-anim-2">
-                <div class="journey-num" style="background:#ef6c63;">2</div>
-                <h4>Testing & Certification</h4>
-                <p>GPU compatibility testing, security scanning, FIPS, performance benchmarking</p>
-            </div>
-            <div class="journey-card float-anim-3">
-                <div class="journey-num" style="background:#42a5f5;">3</div>
-                <h4>Red Hat AI</h4>
-                <p>Signed images, backported patches, multi-arch builds, Operator packaging</p>
-            </div>
-            <div class="journey-card float-anim">
-                <div class="journey-num" style="background:#66bb6a;">4</div>
-                <h4>Customer Deployment</h4>
-                <p>SLA-backed support, production monitoring, compliance, upgrade planning</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 3: FEATURE PARITY -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">Feature Parity</div>
-        <h2 class="stagger stagger-2">What Ships in Red Hat AI</h2>
-        <p class="subtitle stagger stagger-3">Tracking llm-d features across Red Hat AI Inference Server versions 3.0, 3.3, and 3.4</p>
-
-        <div class="features-layout">
-            <div class="stagger stagger-4">
-                <h3 style="font-size:1.1rem; margin-bottom:1rem;">Category Readiness</h3>
-                <div id="cat-progress-container"></div>
-
-                <div class="features-legend">
-                    <span><div class="feature-dot dot-complete"></div> Complete</span>
-                    <span><div class="feature-dot dot-partial"></div> Partial</span>
-                    <span><div class="feature-dot dot-planned"></div> Planned</span>
+                <h1 class="slide-title">From <span class="hero-gradient-text">llm-d</span> to Red Hat AI Inference Server</h1>
+                <p class="slide-subtitle">Understanding the upstream-to-enterprise journey. How open source innovation becomes production-grade AI infrastructure.</p>
+                <div class="slide-body">
+                    <div class="hero-stat-row">
+                        <div class="hero-stat-item stagger-1">
+                            <div class="hero-stat-value" style="color:#d97706">Apache 2.0</div>
+                            <div class="hero-stat-label">Open Source License</div>
+                        </div>
+                        <div class="hero-stat-item stagger-2">
+                            <div class="hero-stat-value" style="color:#ef6c63">70%</div>
+                            <div class="hero-stat-label">Faster Incident Resolution</div>
+                        </div>
+                        <div class="hero-stat-item stagger-3">
+                            <div class="hero-stat-value" style="color:#42a5f5">24/7</div>
+                            <div class="hero-stat-label">Enterprise Support</div>
+                        </div>
+                    </div>
+                    <div class="hero-analogy">
+                        <strong>Just as Linux becomes RHEL...</strong> llm-d is the upstream open source project that Red Hat hardens, certifies, and supports as the Red Hat AI Inference Server. Same innovation DNA, enterprise-grade delivery.
+                    </div>
                 </div>
             </div>
-
-            <div class="stagger stagger-5">
-                <h3 style="font-size:1.1rem; margin-bottom:1rem;">Key Features (v3.4 status)</h3>
-                <div id="feature-list-container"></div>
-            </div>
         </div>
-    </div>
-</div>
 
-<!-- SLIDE 4: UPSTREAM vs ENTERPRISE COMPARISON -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">Side by Side</div>
-        <h2 class="stagger stagger-2">What You Get: Upstream vs Enterprise</h2>
-        <p class="subtitle stagger stagger-3">llm-d is excellent software. This comparison helps decide when enterprise features justify the investment.</p>
-
-        <div class="comparison-layout stagger stagger-4">
-            <div class="comparison-col col-upstream">
-                <h3><span class="comp-badge upstream">Upstream</span> llm-d</h3>
-                <ul class="comp-list upstream-list">
-                    <li>Community forums and GitHub issues</li>
-                    <li>No SLA or response time guarantees</li>
-                    <li>Community-tested GPU support</li>
-                    <li>Community security patches, no CVE SLA</li>
-                    <li>Manual OpenShift integration</li>
-                    <li>Self-paced learning, community meetups</li>
-                    <li>Community-maintained docs and wikis</li>
-                </ul>
+        <!-- ============================================================
+             SLIDE 2: JOURNEY MAP
+             ============================================================ -->
+        <div class="slide" data-slide="1">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-1"></canvas>
             </div>
-            <div class="comparison-col col-enterprise">
-                <h3><span class="comp-badge enterprise">Enterprise</span> Red Hat AI</h3>
-                <ul class="comp-list enterprise-list">
-                    <li>24/7 enterprise support with 1-4hr Sev-1 SLA</li>
-                    <li>Dedicated Technical Account Manager</li>
-                    <li>Red Hat certified GPU matrix (NVIDIA, AMD, Intel)</li>
-                    <li>CVE patching within 24-48 hours, FIPS 140-2</li>
-                    <li>Native OpenShift integration, Operator managed</li>
-                    <li>Instructor-led training, Red Hat certification</li>
-                    <li>Professional docs, reference architectures</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 5: DEPLOYMENT COMPARISON -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">In Practice</div>
-        <h2 class="stagger stagger-2">Deploying Granite 3.3 8B</h2>
-        <p class="subtitle stagger stagger-3">Same model, same parameters -- the enterprise layer adds security, monitoring, and signed images.</p>
-
-        <div class="deploy-layout stagger stagger-4">
-            <div class="code-panel">
-                <div class="code-panel-header">
-                    <span class="code-panel-title">llm-d (Upstream)</span>
-                    <span class="code-panel-lang">YAML</span>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 2 of 8</div>
+                <h2 class="slide-title">Upstream to Enterprise Journey</h2>
+                <p class="slide-subtitle">How llm-d innovations flow from open source to Red Hat AI Inference Server</p>
+                <div class="slide-body">
+                    <div class="journey-canvas-wrap">
+                        <canvas id="journey-canvas"></canvas>
+                    </div>
+                    <div class="journey-cards">
+                        <div class="journey-card stagger-2">
+                            <div class="journey-num" style="background:#d97706;">1</div>
+                            <h4>llm-d GitHub</h4>
+                            <p>Community-driven development, Apache 2.0, weekly releases, rapid iteration</p>
+                        </div>
+                        <div class="journey-card stagger-3">
+                            <div class="journey-num" style="background:#ef6c63;">2</div>
+                            <h4>Testing & Certification</h4>
+                            <p>GPU compatibility, security scanning, FIPS, performance benchmarking</p>
+                        </div>
+                        <div class="journey-card stagger-4">
+                            <div class="journey-num" style="background:#42a5f5;">3</div>
+                            <h4>Red Hat AI</h4>
+                            <p>Signed images, backported patches, multi-arch builds, Operator packaging</p>
+                        </div>
+                        <div class="journey-card stagger-5">
+                            <div class="journey-num" style="background:#66bb6a;">4</div>
+                            <h4>Customer Deployment</h4>
+                            <p>SLA-backed support, production monitoring, compliance, upgrade planning</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="code-body">
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SLIDE 3: FEATURE PARITY
+             ============================================================ -->
+        <div class="slide" data-slide="2">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-2"></canvas>
+            </div>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 3 of 8</div>
+                <h2 class="slide-title">What Ships in Red Hat AI</h2>
+                <p class="slide-subtitle">Tracking llm-d features across Red Hat AI Inference Server versions 3.0, 3.3, and 3.4</p>
+                <div class="slide-body">
+                    <div class="features-grid">
+                        <div class="features-col stagger-2">
+                            <h3 style="font-size:1rem;margin-bottom:12px;font-weight:700;">Category Readiness</h3>
+                            <div id="cat-progress-container"></div>
+                            <div class="features-legend">
+                                <span><div class="feature-dot dot-complete"></div> Complete</span>
+                                <span><div class="feature-dot dot-partial"></div> Partial</span>
+                                <span><div class="feature-dot dot-planned"></div> Planned</span>
+                            </div>
+                        </div>
+                        <div class="features-col stagger-3" style="max-height:420px;overflow-y:auto;">
+                            <h3 style="font-size:1rem;margin-bottom:12px;font-weight:700;">Key Features (v3.4 status)</h3>
+                            <div id="feature-list-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SLIDE 4: UPSTREAM vs ENTERPRISE
+             ============================================================ -->
+        <div class="slide" data-slide="3">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-3"></canvas>
+            </div>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 4 of 8</div>
+                <h2 class="slide-title">What You Get: Upstream vs Enterprise</h2>
+                <p class="slide-subtitle">llm-d is excellent software. This comparison helps decide when enterprise features justify the investment.</p>
+                <div class="slide-body">
+                    <div class="comparison-layout">
+                        <div class="comparison-col col-upstream stagger-2">
+                            <h3><span class="comp-badge upstream">Upstream</span> llm-d</h3>
+                            <ul class="comp-list upstream-list">
+                                <li>Community forums and GitHub issues</li>
+                                <li>No SLA or response time guarantees</li>
+                                <li>Community-tested GPU support</li>
+                                <li>Community security patches, no CVE SLA</li>
+                                <li>Manual OpenShift integration</li>
+                                <li>Self-paced learning, community meetups</li>
+                                <li>Community-maintained docs and wikis</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-col col-enterprise stagger-3">
+                            <h3><span class="comp-badge enterprise">Enterprise</span> Red Hat AI</h3>
+                            <ul class="comp-list enterprise-list">
+                                <li>24/7 enterprise support with 1-4hr Sev-1 SLA</li>
+                                <li>Dedicated Technical Account Manager</li>
+                                <li>Red Hat certified GPU matrix (NVIDIA, AMD, Intel)</li>
+                                <li>CVE patching within 24-48 hours, FIPS 140-2</li>
+                                <li>Native OpenShift integration, Operator managed</li>
+                                <li>Instructor-led training, Red Hat certification</li>
+                                <li>Professional docs, reference architectures</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SLIDE 5: DEPLOYMENT COMPARISON
+             ============================================================ -->
+        <div class="slide" data-slide="4">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-4"></canvas>
+            </div>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 5 of 8</div>
+                <h2 class="slide-title">Deploying Granite 3.3 8B</h2>
+                <p class="slide-subtitle">Same model, same parameters. The enterprise layer adds security, monitoring, and signed images.</p>
+                <div class="slide-body">
+                    <div class="deploy-layout">
+                        <div class="code-panel stagger-2">
+                            <div class="code-panel-header">
+                                <span class="code-panel-title">llm-d (Upstream)</span>
+                                <span class="code-panel-lang">YAML</span>
+                            </div>
+                            <div class="code-body">
 <span><span class="cp">apiVersion</span>: <span class="cs">llm-d.ai/v1</span></span><br>
 <span><span class="cp">kind</span>: <span class="cs">Model</span></span><br>
 <span><span class="cp">metadata</span>:</span><br>
@@ -1301,15 +1162,15 @@
 <span>  <span class="cp">inference</span>:</span><br>
 <span>    <span class="cp">maxBatchSize</span>: <span class="cn">128</span></span><br>
 <span>    <span class="cp">tensorParallel</span>: <span class="cn">1</span></span>
-                </div>
-            </div>
-            <div>
-                <div class="code-panel">
-                    <div class="code-panel-header">
-                        <span class="code-panel-title">Red Hat AI Inference Server</span>
-                        <span class="code-panel-lang">YAML</span>
-                    </div>
-                    <div class="code-body">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="code-panel stagger-3">
+                                <div class="code-panel-header">
+                                    <span class="code-panel-title">Red Hat AI Inference Server</span>
+                                    <span class="code-panel-lang">YAML</span>
+                                </div>
+                                <div class="code-body">
 <span><span class="cp">apiVersion</span>: <span class="cs">ai.redhat.com/v1</span></span><br>
 <span><span class="cp">kind</span>: <span class="cs">LLMInferenceService</span></span><br>
 <span><span class="cp">metadata</span>:</span><br>
@@ -1332,553 +1193,853 @@
 <span class="ce">  <span class="cp">image</span>:</span><br>
 <span class="ce">    <span class="cp">registry</span>: <span class="cs">registry.redhat.io</span></span><br>
 <span class="ce">    <span class="cp">signed</span>: <span class="ck">true</span></span></span>
+                                </div>
+                            </div>
+                            <button class="code-toggle-btn" id="enterprise-toggle-btn" onclick="toggleEnterprise()">Show Enterprise Features</button>
+                        </div>
+                    </div>
+                    <div class="support-strip">
+                        <div class="support-chip stagger-5" style="border-left:3px solid #ab47bc;">
+                            <h4>llm-d (Upstream)</h4>
+                            <p>GitHub issues, community forums, self-troubleshooting, no SLA</p>
+                        </div>
+                        <div class="support-chip stagger-6" style="border-left:3px solid #d97706;">
+                            <h4>Red Hat AI Standard</h4>
+                            <p>Business hours support, 4hr Sev-1 response, knowledge base, dedicated TAM</p>
+                        </div>
+                        <div class="support-chip stagger-7" style="border-left:3px solid #ee0000;">
+                            <h4>Red Hat AI Premium</h4>
+                            <p>24/7 support, 1hr Sev-1 response, proactive monitoring, architecture reviews</p>
+                        </div>
                     </div>
                 </div>
-                <button class="code-toggle-btn" id="enterprise-toggle-btn" onclick="toggleEnterprise()">Show Enterprise Features</button>
             </div>
         </div>
 
-        <div class="support-strip stagger stagger-5">
-            <div class="support-chip accent-purple">
-                <h4>llm-d (Upstream)</h4>
-                <p>GitHub issues, community forums, self-troubleshooting, no SLA</p>
+        <!-- ============================================================
+             SLIDE 6: CERTIFICATION MATRIX
+             ============================================================ -->
+        <div class="slide" data-slide="5">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-5"></canvas>
             </div>
-            <div class="support-chip accent-amber">
-                <h4>Red Hat AI Standard</h4>
-                <p>Business hours support, 4hr Sev-1 response, knowledge base, dedicated TAM</p>
-            </div>
-            <div class="support-chip accent-red">
-                <h4>Red Hat AI Premium</h4>
-                <p>24/7 support, 1hr Sev-1 response, proactive monitoring, architecture reviews</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 6: CERTIFICATION MATRIX -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">Hardware Validation</div>
-        <h2 class="stagger stagger-2">Certification Matrix</h2>
-        <p class="subtitle stagger stagger-3">Red Hat-certified GPU + Model + Feature combinations -- tested, validated, supported.</p>
-
-        <div class="cert-matrix-wrap stagger stagger-4">
-            <div class="cert-matrix-header">
-                <h4>Red Hat Certified Configuration Matrix</h4>
-                <span class="cert-id">RHAIS-CERT-2026-Q2</span>
-            </div>
-            <div class="cert-table-scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>GPU / Model</th>
-                            <th>Llama 3.1 70B</th>
-                            <th>Llama 3.1 405B</th>
-                            <th>Granite 3.3 8B</th>
-                            <th>Granite 3.3 2B</th>
-                            <th>Mistral 7B</th>
-                            <th>DeepSeek-R1</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cert-tbody"></tbody>
-                </table>
-            </div>
-            <div class="cert-legend-bar">
-                <span><span class="cert-legend-dot" style="background:#66bb6a;"></span> Fully Certified</span>
-                <span><span class="cert-legend-dot" style="background:#ffc107;"></span> Partial (conditions apply)</span>
-                <span><span class="cert-legend-dot" style="background:#ef5350;"></span> Not Supported</span>
-            </div>
-        </div>
-
-        <div class="tier-strip stagger stagger-5">
-            <div class="tier-card-mini tier-free">
-                <h4>Self-Support (Free)</h4>
-                <div class="price">llm-d upstream</div>
-                <ul>
-                    <li>Community forums, GitHub issues</li>
-                    <li>No SLA, self-troubleshooting</li>
-                </ul>
-                <div class="tier-use">Best for: Dev, experimentation, non-production</div>
-            </div>
-            <div class="tier-card-mini tier-standard">
-                <h4>Standard</h4>
-                <div class="price">Contact Sales</div>
-                <ul>
-                    <li>Business hours, 4hr Sev-1 response</li>
-                    <li>Knowledge base, 1 TAM, quarterly reviews</li>
-                </ul>
-                <div class="tier-use">Best for: Production, predictable operations</div>
-            </div>
-            <div class="tier-card-mini tier-premium">
-                <h4>Premium</h4>
-                <div class="price">Contact Sales</div>
-                <ul>
-                    <li>24/7 support, 1hr Sev-1, dedicated TAM</li>
-                    <li>Proactive monitoring, architecture reviews</li>
-                </ul>
-                <div class="tier-use">Best for: Mission-critical, global, compliance</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 7: MIGRATION PATHS -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="slide-label stagger stagger-1">Your Migration</div>
-        <h2 class="stagger stagger-2">Migration Paths by Current Stack</h2>
-        <p class="subtitle stagger stagger-3">Choose your starting point -- each path includes a detailed project plan with timelines, team requirements, and deliverables.</p>
-
-        <div class="migration-grid stagger stagger-4">
-            <div class="migration-card">
-                <h4>From vLLM</h4>
-                <div class="duration">6 weeks</div>
-                <ul class="steps-preview">
-                    <li>Review current vLLM config</li>
-                    <li>Install Red Hat AI Operator</li>
-                    <li>Convert to LLMInferenceService CRs</li>
-                    <li>Deploy and validate</li>
-                    <li>Configure enterprise features</li>
-                </ul>
-                <div class="effort-risk">
-                    <span class="badge badge-low">Low Effort</span>
-                    <span class="badge badge-low">Low Risk</span>
-                </div>
-            </div>
-            <div class="migration-card">
-                <h4>From TensorRT-LLM</h4>
-                <div class="duration">10 weeks</div>
-                <ul class="steps-preview">
-                    <li>Export engine configs</li>
-                    <li>Evaluate feature parity</li>
-                    <li>Rebuild models for Red Hat AI</li>
-                    <li>Performance benchmark</li>
-                    <li>Migrate production traffic</li>
-                </ul>
-                <div class="effort-risk">
-                    <span class="badge badge-medium">Medium Effort</span>
-                    <span class="badge badge-medium">Medium Risk</span>
-                </div>
-            </div>
-            <div class="migration-card">
-                <h4>From Triton</h4>
-                <div class="duration">9 weeks</div>
-                <ul class="steps-preview">
-                    <li>Inventory Triton model repo</li>
-                    <li>Map backends to Red Hat AI</li>
-                    <li>Recreate model configs</li>
-                    <li>Validate dynamic batching</li>
-                    <li>Deploy and monitor</li>
-                </ul>
-                <div class="effort-risk">
-                    <span class="badge badge-medium">Medium Effort</span>
-                    <span class="badge badge-medium">Medium Risk</span>
-                </div>
-            </div>
-            <div class="migration-card">
-                <h4>From Custom Solution</h4>
-                <div class="duration">16 weeks</div>
-                <ul class="steps-preview">
-                    <li>Document current architecture</li>
-                    <li>Identify feature gaps</li>
-                    <li>Proof of concept deployment</li>
-                    <li>Data migration & integration</li>
-                    <li>Gradual cutover</li>
-                    <li>Decommission legacy</li>
-                </ul>
-                <div class="effort-risk">
-                    <span class="badge badge-high">High Effort</span>
-                    <span class="badge badge-high">High Risk</span>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 6 of 8</div>
+                <h2 class="slide-title">Certification Matrix</h2>
+                <p class="slide-subtitle">Red Hat-certified GPU + Model + Feature combinations. Tested, validated, supported.</p>
+                <div class="slide-body">
+                    <div class="cert-matrix-wrap">
+                        <div class="cert-matrix-header">
+                            <h4>Red Hat Certified Configuration Matrix</h4>
+                            <span class="cert-id">RHAIS-CERT-2026-Q2</span>
+                        </div>
+                        <div class="cert-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>GPU / Model</th>
+                                        <th>Llama 3.1 70B</th>
+                                        <th>Llama 3.1 405B</th>
+                                        <th>Granite 3.3 8B</th>
+                                        <th>Granite 3.3 2B</th>
+                                        <th>Mistral 7B</th>
+                                        <th>DeepSeek-R1</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cert-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="cert-legend-bar">
+                            <span><span class="cert-legend-dot" style="background:#66bb6a;"></span> Fully Certified</span>
+                            <span><span class="cert-legend-dot" style="background:#ffc107;"></span> Partial (conditions apply)</span>
+                            <span><span class="cert-legend-dot" style="background:#ef5350;"></span> Not Supported</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="stagger stagger-5" style="margin-top:1.5rem;">
-            <h3 style="font-size:1.1rem; margin-bottom:0.75rem;">Release Timeline</h3>
-            <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-                <div class="card" style="flex:1;min-width:180px;padding:1rem 1.25rem;">
-                    <div style="font-size:0.7rem;color:#ab47bc;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">llm-d 0.1.0</div>
-                    <div style="font-size:0.85rem;font-weight:700;">Red Hat AI 3.0</div>
-                    <div style="font-size:0.75rem;color:#8a847c;">Jan-Feb 2025</div>
-                </div>
-                <div class="card" style="flex:1;min-width:180px;padding:1rem 1.25rem;">
-                    <div style="font-size:0.7rem;color:#ab47bc;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">llm-d 0.2.0</div>
-                    <div style="font-size:0.85rem;font-weight:700;">Red Hat AI 3.3</div>
-                    <div style="font-size:0.75rem;color:#8a847c;">Mar-Apr 2025</div>
-                </div>
-                <div class="card" style="flex:1;min-width:180px;padding:1rem 1.25rem;">
-                    <div style="font-size:0.7rem;color:#ab47bc;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">llm-d 0.3.0</div>
-                    <div style="font-size:0.85rem;font-weight:700;">Red Hat AI 3.4</div>
-                    <div style="font-size:0.75rem;color:#8a847c;">May-Jun 2025</div>
-                </div>
-                <div class="card" style="flex:1;min-width:180px;padding:1rem 1.25rem;border-style:dashed;">
-                    <div style="font-size:0.7rem;color:#ab47bc;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">llm-d 0.4.0</div>
-                    <div style="font-size:0.85rem;font-weight:700;">Red Hat AI 3.5</div>
-                    <div style="font-size:0.75rem;color:#8a847c;">Aug-Oct 2025 (Planned)</div>
-                </div>
-                <div class="card" style="flex:1;min-width:180px;padding:1rem 1.25rem;border-style:dashed;">
-                    <div style="font-size:0.7rem;color:#ab47bc;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">llm-d 0.5.0</div>
-                    <div style="font-size:0.85rem;font-weight:700;">Red Hat AI 4.0</div>
-                    <div style="font-size:0.75rem;color:#8a847c;">Q1-Q2 2026 (Planned)</div>
+        <!-- ============================================================
+             SLIDE 7: MIGRATION PATHS
+             ============================================================ -->
+        <div class="slide" data-slide="6">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-6"></canvas>
+            </div>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 7 of 8</div>
+                <h2 class="slide-title">Migration Paths by Current Stack</h2>
+                <p class="slide-subtitle">Choose your starting point. Each path includes timelines, team requirements, and deliverables.</p>
+                <div class="slide-body">
+                    <div class="migration-grid">
+                        <div class="migration-card stagger-2">
+                            <h4>From vLLM</h4>
+                            <div class="duration">6 weeks</div>
+                            <ul class="steps-preview">
+                                <li>Review current vLLM config</li>
+                                <li>Install Red Hat AI Operator</li>
+                                <li>Convert to LLMInferenceService CRs</li>
+                                <li>Deploy and validate</li>
+                                <li>Configure enterprise features</li>
+                            </ul>
+                            <div class="effort-risk">
+                                <span class="badge badge-low">Low Effort</span>
+                                <span class="badge badge-low">Low Risk</span>
+                            </div>
+                        </div>
+                        <div class="migration-card stagger-3">
+                            <h4>From TensorRT-LLM</h4>
+                            <div class="duration">10 weeks</div>
+                            <ul class="steps-preview">
+                                <li>Export engine configs</li>
+                                <li>Evaluate feature parity</li>
+                                <li>Rebuild models for Red Hat AI</li>
+                                <li>Performance benchmark</li>
+                                <li>Migrate production traffic</li>
+                            </ul>
+                            <div class="effort-risk">
+                                <span class="badge badge-medium">Medium Effort</span>
+                                <span class="badge badge-medium">Medium Risk</span>
+                            </div>
+                        </div>
+                        <div class="migration-card stagger-4">
+                            <h4>From Triton</h4>
+                            <div class="duration">9 weeks</div>
+                            <ul class="steps-preview">
+                                <li>Inventory Triton model repo</li>
+                                <li>Map backends to Red Hat AI</li>
+                                <li>Recreate model configs</li>
+                                <li>Validate dynamic batching</li>
+                                <li>Deploy and monitor</li>
+                            </ul>
+                            <div class="effort-risk">
+                                <span class="badge badge-medium">Medium Effort</span>
+                                <span class="badge badge-medium">Medium Risk</span>
+                            </div>
+                        </div>
+                        <div class="migration-card stagger-5">
+                            <h4>From Custom Solution</h4>
+                            <div class="duration">16 weeks</div>
+                            <ul class="steps-preview">
+                                <li>Document current architecture</li>
+                                <li>Identify feature gaps</li>
+                                <li>Proof of concept deployment</li>
+                                <li>Data migration & integration</li>
+                                <li>Gradual cutover</li>
+                            </ul>
+                            <div class="effort-risk">
+                                <span class="badge badge-high">High Effort</span>
+                                <span class="badge badge-high">High Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="timeline-chip stagger-6">
+                            <div class="ver">llm-d 0.1.0</div>
+                            <div class="product">Red Hat AI 3.0</div>
+                            <div class="date">Jan-Feb 2025</div>
+                        </div>
+                        <div class="timeline-chip stagger-6">
+                            <div class="ver">llm-d 0.2.0</div>
+                            <div class="product">Red Hat AI 3.3</div>
+                            <div class="date">Mar-Apr 2025</div>
+                        </div>
+                        <div class="timeline-chip stagger-7">
+                            <div class="ver">llm-d 0.3.0</div>
+                            <div class="product">Red Hat AI 3.4</div>
+                            <div class="date">May-Jun 2025</div>
+                        </div>
+                        <div class="timeline-chip planned stagger-7">
+                            <div class="ver">llm-d 0.4.0</div>
+                            <div class="product">Red Hat AI 3.5</div>
+                            <div class="date">Aug-Oct 2025 (Planned)</div>
+                        </div>
+                        <div class="timeline-chip planned stagger-8">
+                            <div class="ver">llm-d 0.5.0</div>
+                            <div class="product">Red Hat AI 4.0</div>
+                            <div class="date">Q1-Q2 2026 (Planned)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- SLIDE 8: CTA -->
-<div class="slide" data-active="false">
-    <div class="slide-inner">
-        <div class="cta-layout">
-            <div class="slide-label stagger stagger-1">Get Started</div>
-            <h2 class="stagger stagger-2">Ready to Make the Move?</h2>
-            <p class="subtitle stagger stagger-3">From upstream llm-d to enterprise Red Hat AI Inference Server -- same innovation DNA, with the hardening, certification, and support your production workloads demand.</p>
-
-            <div class="cta-links stagger stagger-4">
-                <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" class="cta-btn primary" target="_blank">Explore Red Hat OpenShift AI</a>
-                <a href="https://llm-d.ai" class="cta-btn secondary" target="_blank">Visit llm-d.ai</a>
-                <a href="https://markellr-redhat.github.io/llm-d-content-hub/" class="cta-btn secondary" target="_blank">llm-d Content Hub</a>
-                <a href="blog/" class="cta-btn secondary">Read the Blog</a>
+        <!-- ============================================================
+             SLIDE 8: CTA
+             ============================================================ -->
+        <div class="slide" data-slide="7">
+            <div class="slide-canvas-wrap">
+                <canvas id="canvas-7"></canvas>
             </div>
-
-            <div class="stagger stagger-5" style="margin-bottom:2rem;">
-                <div class="card" style="max-width:600px;text-align:center;padding:1.5rem 2rem;">
-                    <h4 style="font-size:1.1rem;margin-bottom:0.5rem;">Key Takeaways</h4>
-                    <ul style="text-align:left;font-size:0.88rem;">
-                        <li>llm-d is the upstream -- same code powers Red Hat AI Inference Server</li>
-                        <li>Enterprise adds: certified GPUs, signed images, CVE SLA, FIPS, mTLS</li>
-                        <li>Migration from vLLM takes just 6 weeks with low risk</li>
-                        <li>Support tiers: Self-support (free), Standard, and Premium (24/7)</li>
-                        <li>Red Hat reduces incident resolution time by 70%</li>
-                    </ul>
+            <div class="slide-inner" style="position:relative;z-index:2;">
+                <div class="slide-number">Slide 8 of 8</div>
+                <h2 class="slide-title">Ready to Make the Move?</h2>
+                <p class="slide-subtitle">From upstream llm-d to enterprise Red Hat AI Inference Server. Same innovation DNA, with the hardening, certification, and support your production workloads demand.</p>
+                <div class="slide-body">
+                    <div class="takeaway-card">
+                        <h4>Key Takeaways</h4>
+                        <ul>
+                            <li>llm-d is the upstream. Same code powers Red Hat AI Inference Server</li>
+                            <li>Enterprise adds: certified GPUs, signed images, CVE SLA, FIPS, mTLS</li>
+                            <li>Migration from vLLM takes just 6 weeks with low risk</li>
+                            <li>Support tiers: Self-support (free), Standard, and Premium (24/7)</li>
+                            <li>Red Hat reduces incident resolution time by 70%</li>
+                        </ul>
+                    </div>
+                    <div class="cta-links" style="opacity:0;">
+                        <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" class="cta-btn primary" target="_blank">Explore Red Hat OpenShift AI</a>
+                        <a href="https://llm-d.ai" class="cta-btn secondary" target="_blank">Visit llm-d.ai</a>
+                        <a href="https://markellr-redhat.github.io/llm-d-content-hub/" class="cta-btn secondary" target="_blank">llm-d Content Hub</a>
+                        <a href="blog/" class="cta-btn secondary">Read the Blog</a>
+                    </div>
+                    <div class="slide-footer" style="opacity:0;">
+                        Markell Rawls | AI Evangelist, Red Hat<br>
+                        Content Hub #20 | June 2026
+                    </div>
                 </div>
             </div>
-
-            <div class="footer-info stagger stagger-6">
-                <span>Created by <strong>Markell Rawls</strong></span>
-                <div class="divider"></div>
-                <span>Content Hub #20</span>
-                <div class="divider"></div>
-                <span>June 2026</span>
-            </div>
         </div>
-    </div>
-</div>
 
-</div><!-- /slides-track -->
+    </div><!-- /slides-track -->
 </div><!-- /slides-viewport -->
 
+<!-- NAVIGATION ARROWS + DOTS -->
+<div class="nav-arrows">
+    <button class="nav-btn" id="nav-prev" disabled>
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <div class="nav-dots" id="nav-dots"></div>
+    <button class="nav-btn" id="nav-next">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+</div>
+
+<!-- ====================================================================
+     ALL JAVASCRIPT -- ZERO EXTERNAL DEPENDENCIES
+     ==================================================================== -->
 <script>
-// ============================================
-// SLIDE NAVIGATION
-// ============================================
-(function() {
-    var track = document.getElementById('slides-track');
-    var slides = document.querySelectorAll('.slide');
-    var total = slides.length;
-    var current = 0;
-    var dotsContainer = document.getElementById('nav-dots');
-    var prevBtn = document.getElementById('btn-prev');
-    var nextBtn = document.getElementById('btn-next');
-    var progressBar = document.getElementById('progress-bar');
-    var counterCurrent = document.getElementById('counter-current');
-    var counterTotal = document.getElementById('counter-total');
+(function(){
+"use strict";
 
-    counterTotal.textContent = total;
+/* ============================================================
+   CORE SLIDE NAVIGATION
+   ============================================================ */
+var track = document.getElementById('slides-track');
+var slides = Array.from(document.querySelectorAll('.slide'));
+var totalSlides = slides.length;
+var currentSlide = 0;
 
-    // Build dots
-    for (var i = 0; i < total; i++) {
-        var dot = document.createElement('button');
-        dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
-        dot.dataset.index = i;
-        dot.addEventListener('click', function() {
-            goTo(parseInt(this.dataset.index));
+var prevBtn = document.getElementById('nav-prev');
+var nextBtn = document.getElementById('nav-next');
+var progressBar = document.getElementById('progress-bar');
+var dotsContainer = document.getElementById('nav-dots');
+
+// Build dots
+slides.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', function(){ goToSlide(i); });
+    dotsContainer.appendChild(dot);
+});
+var dots = Array.from(dotsContainer.querySelectorAll('.nav-dot'));
+
+function goToSlide(idx){
+    if(idx < 0 || idx >= totalSlides) return;
+    slides[currentSlide].classList.remove('active');
+    currentSlide = idx;
+    track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    slides[currentSlide].classList.add('active');
+    dots.forEach(function(d, i){ d.classList.toggle('active', i === currentSlide); });
+    progressBar.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === totalSlides - 1;
+    triggerSlideAnimation(currentSlide);
+}
+
+prevBtn.addEventListener('click', function(){ goToSlide(currentSlide - 1); });
+nextBtn.addEventListener('click', function(){ goToSlide(currentSlide + 1); });
+
+document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goToSlide(currentSlide - 1); }
+    if(e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+    if(e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+});
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+var dpr = window.devicePixelRatio || 1;
+function sizeCanvas(canvas, w, h){
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return ctx;
+}
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+var _rafIds = [];
+function safeRAF(fn){
+    var id = requestAnimationFrame(fn);
+    _rafIds.push(id);
+    return id;
+}
+document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ while(_rafIds.length) cancelAnimationFrame(_rafIds.pop()); }
+});
+
+/* ============================================================
+   PARTICLE COLORS
+   ============================================================ */
+var PARTICLE_COLORS = [
+    'rgba(217,119,6,',     // amber
+    'rgba(239,108,99,',    // coral
+    'rgba(66,165,245,',    // blue
+    'rgba(102,187,106,',   // green
+    'rgba(171,71,188,'     // purple
+];
+
+/* ============================================================
+   GLOBAL PARTICLE SYSTEM -- Per-slide background particles
+   Each slide gets its own canvas with floating particles,
+   connection lines, and glow effects.
+   ============================================================ */
+function createSlideParticles(canvasId, particleCount, extraDraw){
+    var canvas = document.getElementById(canvasId);
+    if(!canvas) return;
+    var W, H, ctx;
+    function resize(){
+        W = window.innerWidth;
+        H = window.innerHeight;
+        ctx = sizeCanvas(canvas, W, H);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var particles = [];
+    for(var i = 0; i < particleCount; i++){
+        particles.push({
+            x: Math.random() * 2000,
+            y: Math.random() * 1200,
+            size: 1.5 + Math.random() * 3.5,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.1,
+            color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+            alpha: 0.08 + Math.random() * 0.18,
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.2 + Math.random() * 0.5
         });
-        dotsContainer.appendChild(dot);
     }
 
-    function goTo(index) {
-        if (index < 0 || index >= total) return;
-        current = index;
-        track.style.transform = 'translateX(-' + (current * 100) + 'vw)';
+    function draw(time){
+        ctx.clearRect(0, 0, W, H);
 
-        // Update dots
-        document.querySelectorAll('.nav-dot').forEach(function(d, i) {
-            d.className = 'nav-dot' + (i === current ? ' active' : '');
-        });
+        // Update and draw particles
+        for(var i = 0; i < particles.length; i++){
+            var p = particles[i];
+            p.x += p.speedX;
+            p.y += p.speedY;
+            if(p.x < -20) p.x = W + 20;
+            if(p.x > W + 20) p.x = -20;
+            if(p.y < -20) p.y = H + 20;
+            if(p.y > H + 20) p.y = -20;
 
-        // Update arrows
-        prevBtn.disabled = current === 0;
-        nextBtn.disabled = current === total - 1;
+            var pulse = 0.7 + 0.3 * Math.sin((time || 0) * 0.001 * p.pulseSpeed + p.pulsePhase);
 
-        // Update progress
-        var pct = ((current + 1) / total) * 100;
-        progressBar.style.width = pct + '%';
+            // Outer glow
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + (p.alpha * 0.2 * pulse) + ')';
+            ctx.fill();
 
-        // Update counter
-        counterCurrent.textContent = current + 1;
+            // Middle glow
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + (p.alpha * 0.35 * pulse) + ')';
+            ctx.fill();
 
-        // Mark active slide for animations
-        slides.forEach(function(s, i) {
-            s.dataset.active = (i === current) ? 'true' : 'false';
-        });
+            // Core
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + (p.alpha * pulse) + ')';
+            ctx.fill();
+        }
 
-        // Trigger slide-specific animations
-        onSlideEnter(current);
-    }
-
-    prevBtn.addEventListener('click', function() { goTo(current - 1); });
-    nextBtn.addEventListener('click', function() { goTo(current + 1); });
-
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
-        if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-        if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
-    });
-
-    // Initialize
-    goTo(0);
-
-    // ============================================
-    // SLIDE-SPECIFIC ANIMATIONS
-    // ============================================
-    var animatedSlides = {};
-
-    function onSlideEnter(idx) {
-        if (animatedSlides[idx]) return;
-        animatedSlides[idx] = true;
-
-        if (idx === 0) animateTitleCanvas();
-        if (idx === 1) animateJourneyCanvas();
-        if (idx === 2) animateFeatureProgress();
-    }
-
-    // ============================================
-    // SLIDE 1: TITLE CANVAS -- migration flow diagram
-    // ============================================
-    function animateTitleCanvas() {
-        var canvas = document.getElementById('title-canvas');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        var w = canvas.width;
-        var h = canvas.height;
-        var particles = [];
-        var nodes = [
-            { x: w * 0.5, y: 80, r: 42, label: 'llm-d', color: '#d97706', textColor: '#ffffff' },
-            { x: w * 0.25, y: 200, r: 30, label: 'Test', color: '#ef6c63', textColor: '#ffffff' },
-            { x: w * 0.75, y: 200, r: 30, label: 'Certify', color: '#42a5f5', textColor: '#ffffff' },
-            { x: w * 0.5, y: 320, r: 42, label: 'Red Hat AI', color: '#ee0000', textColor: '#ffffff' }
-        ];
-
-        var connections = [
-            [0, 1], [0, 2], [1, 3], [2, 3]
-        ];
-
-        // Create flow particles
-        for (var c = 0; c < connections.length; c++) {
-            for (var p = 0; p < 3; p++) {
-                particles.push({
-                    conn: c,
-                    t: p * 0.33,
-                    speed: 0.003 + Math.random() * 0.002
-                });
+        // Connection lines between nearby particles
+        for(var i = 0; i < particles.length; i++){
+            for(var j = i + 1; j < particles.length; j++){
+                var dx = particles[i].x - particles[j].x;
+                var dy = particles[i].y - particles[j].y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if(dist < 160){
+                    var lineAlpha = 0.12 * (1 - dist / 160);
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = 'rgba(212,207,201,' + lineAlpha + ')';
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
             }
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, w, h);
+        // Extra per-slide draw function
+        if(extraDraw) extraDraw(ctx, W, H, time || 0);
 
-            // Draw connections
-            connections.forEach(function(conn) {
-                var a = nodes[conn[0]];
-                var b = nodes[conn[1]];
+        if(!document.hidden) safeRAF(draw);
+    }
+    safeRAF(draw);
+}
+
+/* ============================================================
+   SLIDE 1: Title -- Particle network + migration flow nodes
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-0', 55, function(ctx, W, H, time){
+        // Draw migration flow nodes on top of particles
+        var nodes = [
+            { x: W * 0.72, y: H * 0.22, r: 38, label: 'llm-d', color: '#d97706' },
+            { x: W * 0.62, y: H * 0.45, r: 28, label: 'Test', color: '#ef6c63' },
+            { x: W * 0.82, y: H * 0.45, r: 28, label: 'Certify', color: '#42a5f5' },
+            { x: W * 0.72, y: H * 0.68, r: 38, label: 'Red Hat AI', color: '#ee0000' }
+        ];
+        var connections = [[0,1],[0,2],[1,3],[2,3]];
+
+        // Draw connection lines with gradient
+        connections.forEach(function(c){
+            var a = nodes[c[0]], b = nodes[c[1]];
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = 'rgba(212,207,200,0.35)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
+
+        // Draw flow particles along connections
+        for(var ci = 0; ci < connections.length; ci++){
+            var a = nodes[connections[ci][0]], b = nodes[connections[ci][1]];
+            for(var pi = 0; pi < 4; pi++){
+                var t = ((time * 0.0001 + pi * 0.25 + ci * 0.15) % 1);
+                var px = a.x + (b.x - a.x) * t;
+                var py = a.y + (b.y - a.y) * t;
+                var alpha = Math.sin(t * Math.PI);
+
                 ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-                ctx.strokeStyle = 'rgba(212,207,200,0.5)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            });
-
-            // Draw particles
-            particles.forEach(function(p) {
-                var conn = connections[p.conn];
-                var a = nodes[conn[0]];
-                var b = nodes[conn[1]];
-                var x = a.x + (b.x - a.x) * p.t;
-                var y = a.y + (b.y - a.y) * p.t;
-
-                ctx.beginPath();
-                ctx.arc(x, y, 3, 0, Math.PI * 2);
-                ctx.fillStyle = '#d97706';
+                ctx.arc(px, py, 6, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(217,119,6,' + (alpha * 0.15) + ')';
                 ctx.fill();
                 ctx.beginPath();
-                ctx.arc(x, y, 6, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(217,119,6,0.2)';
+                ctx.arc(px, py, 3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(217,119,6,' + (alpha * 0.7) + ')';
                 ctx.fill();
-
-                p.t += p.speed;
-                if (p.t > 1) p.t = 0;
-            });
-
-            // Draw nodes
-            nodes.forEach(function(node) {
-                // Glow
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r + 6, 0, Math.PI * 2);
-                ctx.fillStyle = node.color + '15';
-                ctx.fill();
-
-                // Circle
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-                ctx.fillStyle = node.color;
-                ctx.fill();
-
-                // Label
-                ctx.fillStyle = node.textColor;
-                ctx.font = (node.r > 35 ? '700 13px' : '600 11px') + ' "Red Hat Display", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(node.label, node.x, node.y);
-            });
-
-            requestAnimationFrame(draw);
+            }
         }
 
-        draw();
+        // Draw nodes
+        nodes.forEach(function(node){
+            // Outer glow pulse
+            var pulse = 1 + 0.08 * Math.sin(time * 0.0008);
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, (node.r + 10) * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = node.color + '0a';
+            ctx.fill();
+
+            // Main circle
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+            ctx.fillStyle = node.color;
+            ctx.fill();
+
+            // Label
+            ctx.fillStyle = '#ffffff';
+            ctx.font = (node.r > 30 ? '700 12px' : '500 10px') + ' "Red Hat Display", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(node.label, node.x, node.y);
+        });
+    });
+})();
+
+/* ============================================================
+   SLIDE 2: Journey -- Particles + animated journey flow
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-1', 40, null);
+
+    // Separate journey diagram canvas
+    var canvas = document.getElementById('journey-canvas');
+    if(!canvas) return;
+    var W, H, ctx;
+    function resize(){
+        var rect = canvas.parentElement.getBoundingClientRect();
+        W = rect.width;
+        H = rect.height || 200;
+        ctx = sizeCanvas(canvas, W, H);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var stages = [
+        { x: 0.12, label: 'Open Source', sub: 'llm-d GitHub', color: '#d97706' },
+        { x: 0.37, label: 'Testing', sub: 'Certification', color: '#ef6c63' },
+        { x: 0.62, label: 'Red Hat AI', sub: 'Hardened Release', color: '#42a5f5' },
+        { x: 0.88, label: 'Production', sub: 'Customer Deploy', color: '#66bb6a' }
+    ];
+
+    var flowParticles = [];
+    for(var i = 0; i < 15; i++){
+        flowParticles.push({
+            x: 0,
+            speed: 1 + Math.random() * 2.5,
+            offset: i * (1 / 15),
+            yOff: (Math.random() - 0.5) * 10
+        });
     }
 
-    // ============================================
-    // SLIDE 2: JOURNEY CANVAS -- flow diagram
-    // ============================================
-    function animateJourneyCanvas() {
-        var canvas = document.getElementById('journey-canvas');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        var w = canvas.width;
-        var h = canvas.height;
+    function draw(time){
+        resize();
+        ctx.clearRect(0, 0, W, H);
+        var midY = H / 2;
 
-        var stages = [
-            { x: w * 0.12, y: h / 2, label: 'Open Source', sub: 'llm-d GitHub', color: '#d97706' },
-            { x: w * 0.37, y: h / 2, label: 'Testing', sub: 'Certification', color: '#ef6c63' },
-            { x: w * 0.62, y: h / 2, label: 'Red Hat AI', sub: 'Hardened Release', color: '#42a5f5' },
-            { x: w * 0.88, y: h / 2, label: 'Production', sub: 'Customer Deploy', color: '#66bb6a' }
-        ];
+        // Draw flow line with gradient
+        var grad = ctx.createLinearGradient(W * 0.05, 0, W * 0.95, 0);
+        grad.addColorStop(0, '#d97706');
+        grad.addColorStop(0.33, '#ef6c63');
+        grad.addColorStop(0.66, '#42a5f5');
+        grad.addColorStop(1, '#66bb6a');
+        ctx.beginPath();
+        ctx.moveTo(W * 0.05, midY);
+        ctx.lineTo(W * 0.95, midY);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 3;
+        ctx.stroke();
 
-        var flowParticles = [];
-        for (var i = 0; i < 8; i++) {
-            flowParticles.push({
-                x: w * 0.05,
-                speed: 1.5 + Math.random() * 2,
-                offset: i * (w / 8),
-                y: h / 2 + (Math.random() - 0.5) * 6
-            });
-        }
+        // Draw flow particles with glow
+        flowParticles.forEach(function(p){
+            var t = (((time || 0) * 0.00002 * p.speed + p.offset) % 1);
+            var px = W * 0.05 + t * W * 0.9;
+            var py = midY + p.yOff + Math.sin(t * Math.PI * 4) * 4;
+            var alpha = Math.sin(t * Math.PI);
 
-        function draw() {
-            ctx.clearRect(0, 0, w, h);
-
-            // Flow line
-            var grad = ctx.createLinearGradient(w * 0.05, 0, w * 0.95, 0);
-            grad.addColorStop(0, '#d97706');
-            grad.addColorStop(0.33, '#ef6c63');
-            grad.addColorStop(0.66, '#42a5f5');
-            grad.addColorStop(1, '#66bb6a');
-
+            // Glow
             ctx.beginPath();
-            ctx.moveTo(w * 0.05, h / 2);
-            ctx.lineTo(w * 0.95, h / 2);
-            ctx.strokeStyle = grad;
+            ctx.arc(px, py, 8, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(217,119,6,' + (alpha * 0.12) + ')';
+            ctx.fill();
+
+            // Core
+            ctx.beginPath();
+            ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.9) + ')';
+            ctx.fill();
+        });
+
+        // Stage nodes
+        stages.forEach(function(s){
+            var sx = W * s.x;
+
+            // Outer glow
+            ctx.beginPath();
+            ctx.arc(sx, midY, 36, 0, Math.PI * 2);
+            ctx.fillStyle = s.color + '15';
+            ctx.fill();
+
+            // White circle with colored border
+            ctx.beginPath();
+            ctx.arc(sx, midY, 26, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = s.color;
             ctx.lineWidth = 3;
             ctx.stroke();
 
-            // Flow particles
-            flowParticles.forEach(function(p) {
-                var px = ((p.offset + performance.now() * p.speed * 0.05) % (w * 0.9)) + w * 0.05;
-                ctx.beginPath();
-                ctx.arc(px, p.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(px, p.y, 8, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,0.15)';
-                ctx.fill();
-            });
+            // Inner colored dot
+            ctx.beginPath();
+            ctx.arc(sx, midY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = s.color;
+            ctx.fill();
 
-            // Stage circles
-            stages.forEach(function(s) {
-                // Outer glow
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, 38, 0, Math.PI * 2);
-                ctx.fillStyle = s.color + '20';
-                ctx.fill();
+            // Labels
+            ctx.fillStyle = '#2d2a26';
+            ctx.font = '700 12px "Red Hat Display", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(s.label, sx, midY - 44);
+            ctx.fillStyle = '#8a847c';
+            ctx.font = '400 10px "Red Hat Text", sans-serif';
+            ctx.fillText(s.sub, sx, midY - 30);
+        });
 
-                // Main circle
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, 30, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Inner dot
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
-                ctx.fillStyle = s.color;
-                ctx.fill();
-
-                // Label above
-                ctx.fillStyle = '#2d2a26';
-                ctx.font = '700 13px "Red Hat Display", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(s.label, s.x, s.y - 50);
-
-                ctx.fillStyle = '#8a847c';
-                ctx.font = '500 11px "Red Hat Text", sans-serif';
-                ctx.fillText(s.sub, s.x, s.y - 36);
-            });
-
-            // Arrows between stages
-            for (var i = 0; i < stages.length - 1; i++) {
-                var ax = stages[i].x + 34;
-                var bx = stages[i + 1].x - 34;
-                var my = h / 2;
-
-                ctx.beginPath();
-                ctx.moveTo(bx - 8, my - 6);
-                ctx.lineTo(bx, my);
-                ctx.lineTo(bx - 8, my + 6);
-                ctx.strokeStyle = '#d4cfc8';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-
-            requestAnimationFrame(draw);
+        // Arrows between stages
+        for(var i = 0; i < stages.length - 1; i++){
+            var ax = W * stages[i].x + 30;
+            var bx = W * stages[i + 1].x - 30;
+            var mx = bx - 6;
+            ctx.beginPath();
+            ctx.moveTo(mx, midY - 5);
+            ctx.lineTo(bx, midY);
+            ctx.lineTo(mx, midY + 5);
+            ctx.strokeStyle = '#d4cfc8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
         }
 
-        draw();
+        if(!document.hidden) safeRAF(draw);
     }
-
-    // ============================================
-    // SLIDE 3: FEATURE PROGRESS ANIMATION
-    // ============================================
-    function animateFeatureProgress() {
-        setTimeout(function() {
-            document.querySelectorAll('.cat-progress-fill').forEach(function(bar) {
-                bar.style.width = bar.dataset.target + '%';
-            });
-        }, 400);
-    }
+    safeRAF(draw);
 })();
 
-// ============================================
-// FEATURE PARITY DATA
-// ============================================
-(function() {
+/* ============================================================
+   SLIDE 3: Features -- Floating particles
+   ============================================================ */
+createSlideParticles('canvas-2', 35, null);
+
+/* ============================================================
+   SLIDE 4: Comparison -- Particles with two cluster zones
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-3', 45, function(ctx, W, H, time){
+        // Draw two subtle cluster zones -- upstream (left) and enterprise (right)
+        var pulse = 0.6 + 0.4 * Math.sin(time * 0.0004);
+
+        // Upstream glow (purple, left side)
+        ctx.beginPath();
+        ctx.arc(W * 0.3, H * 0.5, 180, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(171,71,188,' + (0.02 * pulse) + ')';
+        ctx.fill();
+
+        // Enterprise glow (red, right side)
+        ctx.beginPath();
+        ctx.arc(W * 0.7, H * 0.5, 180, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(238,0,0,' + (0.02 * pulse) + ')';
+        ctx.fill();
+
+        // Arrow flow between zones
+        for(var i = 0; i < 6; i++){
+            var t = ((time * 0.00008 + i * 0.16) % 1);
+            var px = lerp(W * 0.35, W * 0.65, t);
+            var py = H * 0.5 + Math.sin(t * Math.PI * 2 + i) * 30;
+            var alpha = Math.sin(t * Math.PI);
+
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(217,119,6,' + (alpha * 0.12) + ')';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(217,119,6,' + (alpha * 0.5) + ')';
+            ctx.fill();
+        }
+    });
+})();
+
+/* ============================================================
+   SLIDE 5: Deployment -- Code flow particles
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-4', 40, function(ctx, W, H, time){
+        // Flowing data streams (left to right, representing deployment flow)
+        for(var i = 0; i < 12; i++){
+            var t = ((time * 0.00006 + i * 0.08) % 1);
+            var lane = i % 4;
+            var px = W * 0.05 + t * W * 0.9;
+            var py = H * 0.3 + lane * (H * 0.12) + Math.sin(t * Math.PI * 3) * 15;
+            var alpha = Math.sin(t * Math.PI);
+            var color = PARTICLE_COLORS[lane % PARTICLE_COLORS.length];
+
+            // Trail
+            for(var tr = 0; tr < 5; tr++){
+                var tt = t - tr * 0.015;
+                if(tt < 0) continue;
+                var tpx = W * 0.05 + tt * W * 0.9;
+                var tpy = H * 0.3 + lane * (H * 0.12) + Math.sin(tt * Math.PI * 3) * 15;
+                var ta = alpha * (1 - tr * 0.2) * 0.15;
+                ctx.beginPath();
+                ctx.arc(tpx, tpy, 2 - tr * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = color + ta + ')';
+                ctx.fill();
+            }
+
+            // Glow
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, Math.PI * 2);
+            ctx.fillStyle = color + (alpha * 0.1) + ')';
+            ctx.fill();
+
+            // Core
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = color + (alpha * 0.5) + ')';
+            ctx.fill();
+        }
+    });
+})();
+
+/* ============================================================
+   SLIDE 6: Certification -- Matrix scan particles
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-5', 35, function(ctx, W, H, time){
+        // Grid scan effect -- horizontal lines sweeping
+        var scanY = (time * 0.015) % H;
+        ctx.beginPath();
+        ctx.moveTo(0, scanY);
+        ctx.lineTo(W, scanY);
+        ctx.strokeStyle = 'rgba(102,187,106,0.06)';
+        ctx.lineWidth = 40;
+        ctx.stroke();
+
+        // Certification checkmark particles appearing in grid pattern
+        var gridCols = 6;
+        var gridRows = 3;
+        for(var r = 0; r < gridRows; r++){
+            for(var c = 0; c < gridCols; c++){
+                var gx = W * 0.2 + c * (W * 0.1);
+                var gy = H * 0.35 + r * (H * 0.12);
+                var phase = (time * 0.0007 + r * 0.5 + c * 0.3) % (Math.PI * 2);
+                var pulse = 0.3 + 0.7 * Math.max(0, Math.sin(phase));
+
+                ctx.beginPath();
+                ctx.arc(gx, gy, 4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(102,187,106,' + (pulse * 0.08) + ')';
+                ctx.fill();
+            }
+        }
+    });
+})();
+
+/* ============================================================
+   SLIDE 7: Migration -- Path flow particles
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-6', 40, function(ctx, W, H, time){
+        // Four migration flow lanes (one per migration path)
+        var colors = ['rgba(217,119,6,', 'rgba(239,108,99,', 'rgba(66,165,245,', 'rgba(171,71,188,'];
+        for(var lane = 0; lane < 4; lane++){
+            var startX = W * 0.1;
+            var endX = W * 0.9;
+            var baseY = H * 0.25 + lane * (H * 0.14);
+
+            for(var pi = 0; pi < 5; pi++){
+                var t = ((time * 0.00008 + pi * 0.2 + lane * 0.1) % 1);
+                var px = lerp(startX, endX, t);
+                var py = baseY + Math.sin(t * Math.PI * 2) * 12;
+                var alpha = Math.sin(t * Math.PI);
+
+                // Trail
+                for(var tr = 0; tr < 4; tr++){
+                    var tt = t - tr * 0.02;
+                    if(tt < 0) continue;
+                    var tpx = lerp(startX, endX, tt);
+                    var tpy = baseY + Math.sin(tt * Math.PI * 2) * 12;
+                    ctx.beginPath();
+                    ctx.arc(tpx, tpy, 1.5, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[lane] + (alpha * 0.08 * (1 - tr * 0.25)) + ')';
+                    ctx.fill();
+                }
+
+                // Glow
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, Math.PI * 2);
+                ctx.fillStyle = colors[lane] + (alpha * 0.1) + ')';
+                ctx.fill();
+
+                // Core
+                ctx.beginPath();
+                ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = colors[lane] + (alpha * 0.5) + ')';
+                ctx.fill();
+            }
+        }
+    });
+})();
+
+/* ============================================================
+   SLIDE 8: CTA -- Converging particle network
+   ============================================================ */
+(function(){
+    createSlideParticles('canvas-7', 60, function(ctx, W, H, time){
+        // Central convergence point with particles streaming inward
+        var cx = W * 0.5;
+        var cy = H * 0.45;
+
+        // Central glow pulse
+        var pulse = 0.5 + 0.5 * Math.sin(time * 0.0007);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 80 + pulse * 20, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(217,119,6,' + (0.03 * pulse) + ')';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 40 + pulse * 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(217,119,6,' + (0.06 * pulse) + ')';
+        ctx.fill();
+
+        // Converging particles from edges
+        for(var i = 0; i < 20; i++){
+            var angle = (i / 20) * Math.PI * 2 + time * 0.0001;
+            var t = ((time * 0.0001 + i * 0.05) % 1);
+            var radius = lerp(300, 20, t);
+            var px = cx + Math.cos(angle) * radius;
+            var py = cy + Math.sin(angle) * radius;
+            var alpha = Math.sin(t * Math.PI);
+            var color = PARTICLE_COLORS[i % PARTICLE_COLORS.length];
+
+            // Trail
+            for(var tr = 0; tr < 3; tr++){
+                var tt = t - tr * 0.03;
+                if(tt < 0) continue;
+                var tRadius = lerp(300, 20, tt);
+                var tpx = cx + Math.cos(angle) * tRadius;
+                var tpy = cy + Math.sin(angle) * tRadius;
+                ctx.beginPath();
+                ctx.arc(tpx, tpy, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = color + (alpha * 0.06 * (1 - tr * 0.3)) + ')';
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fillStyle = color + (alpha * 0.1) + ')';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px, py, 2, 0, Math.PI * 2);
+            ctx.fillStyle = color + (alpha * 0.5) + ')';
+            ctx.fill();
+        }
+    });
+})();
+
+/* ============================================================
+   SLIDE-SPECIFIC TRIGGERS
+   ============================================================ */
+var triggeredSlides = {};
+
+function triggerSlideAnimation(idx){
+    // Slide 3 (features): animate progress bars
+    if(idx === 2 && !triggeredSlides[2]){
+        triggeredSlides[2] = true;
+        setTimeout(function(){
+            document.querySelectorAll('.cat-progress-fill').forEach(function(bar){
+                bar.style.width = bar.dataset.target + '%';
+            });
+        }, 600);
+    }
+    // Slide 8 (CTA): animate links and footer
+    if(idx === 7){
+        var links = slides[7].querySelector('.cta-links');
+        var footer = slides[7].querySelector('.slide-footer');
+        if(links) { links.style.opacity = '0'; links.style.animation = 'fadeSlideUp 0.5s 0.9s ease forwards'; }
+        if(footer) { footer.style.opacity = '0'; footer.style.animation = 'fadeSlideUp 0.5s 1.1s ease forwards'; }
+    }
+}
+
+/* ============================================================
+   FEATURE PARITY DATA
+   ============================================================ */
+(function(){
     var features = [
         { name: 'KV-cache aware routing', category: 'routing', v30: 'c', v33: 'c', v34: 'c' },
         { name: 'PagedAttention', category: 'inference', v30: 'c', v33: 'c', v34: 'c' },
@@ -1905,17 +2066,16 @@
         { name: 'Operator lifecycle', category: 'deployment', v30: 'c', v33: 'c', v34: 'c' }
     ];
 
-    // Category progress
     var cats = {};
     var catColors = { routing: 'amber', inference: 'coral', deployment: 'blue', monitoring: 'green', security: 'purple' };
-    features.forEach(function(f) {
-        if (!cats[f.category]) cats[f.category] = { total: 0, complete: 0 };
+    features.forEach(function(f){
+        if(!cats[f.category]) cats[f.category] = { total: 0, complete: 0 };
         cats[f.category].total++;
-        if (f.v34 === 'c') cats[f.category].complete++;
+        if(f.v34 === 'c') cats[f.category].complete++;
     });
 
     var progressContainer = document.getElementById('cat-progress-container');
-    Object.keys(cats).forEach(function(cat) {
+    Object.keys(cats).forEach(function(cat){
         var pct = Math.round((cats[cat].complete / cats[cat].total) * 100);
         var div = document.createElement('div');
         div.className = 'cat-progress';
@@ -1924,10 +2084,9 @@
         progressContainer.appendChild(div);
     });
 
-    // Feature list (compact)
     var listContainer = document.getElementById('feature-list-container');
     var dotMap = { c: 'dot-complete', p: 'dot-partial', x: 'dot-planned' };
-    features.forEach(function(f) {
+    features.forEach(function(f){
         var item = document.createElement('div');
         item.className = 'feature-item';
         item.innerHTML = '<span class="feature-name">' + f.name + '</span>' +
@@ -1941,10 +2100,10 @@
     });
 })();
 
-// ============================================
-// CERTIFICATION MATRIX
-// ============================================
-(function() {
+/* ============================================================
+   CERTIFICATION MATRIX
+   ============================================================ */
+(function(){
     var gpus = ['NVIDIA A100', 'NVIDIA H100', 'NVIDIA H200', 'AMD MI300X', 'Intel Gaudi 3'];
     var models = ['Llama 3.1 70B', 'Llama 3.1 405B', 'Granite 3.3 8B', 'Granite 3.3 2B', 'Mistral 7B', 'DeepSeek-R1'];
 
@@ -1959,19 +2118,19 @@
 
     var tbody = document.getElementById('cert-tbody');
 
-    gpus.forEach(function(gpu) {
+    gpus.forEach(function(gpu){
         var row = '<tr><td>' + gpu + '</td>';
-        models.forEach(function(model, idx) {
+        models.forEach(function(model, idx){
             var key = gpu + '-' + model;
             var note = partialNotes[key] || '';
             var cls, text;
 
-            if (gpu.indexOf('NVIDIA') !== -1 && model.indexOf('DeepSeek') === -1) {
+            if(gpu.indexOf('NVIDIA') !== -1 && model.indexOf('DeepSeek') === -1){
                 cls = 'cert-yes'; text = 'Yes';
-            } else if (gpu.indexOf('NVIDIA') !== -1 && model.indexOf('DeepSeek') !== -1) {
-                if (gpu.indexOf('H200') !== -1) { cls = 'cert-yes'; text = 'Yes'; }
+            } else if(gpu.indexOf('NVIDIA') !== -1 && model.indexOf('DeepSeek') !== -1){
+                if(gpu.indexOf('H200') !== -1){ cls = 'cert-yes'; text = 'Yes'; }
                 else { cls = 'cert-partial'; text = note || 'Partial'; }
-            } else if (idx < 4) {
+            } else if(idx < 4){
                 cls = 'cert-yes'; text = 'Yes';
             } else {
                 cls = 'cert-partial'; text = note || 'Partial';
@@ -1984,13 +2143,13 @@
     });
 })();
 
-// ============================================
-// ENTERPRISE TOGGLE
-// ============================================
-function toggleEnterprise() {
+/* ============================================================
+   ENTERPRISE TOGGLE
+   ============================================================ */
+window.toggleEnterprise = function(){
     var lines = document.getElementById('ent-lines');
     var btn = document.getElementById('enterprise-toggle-btn');
-    if (lines.classList.contains('show')) {
+    if(lines.classList.contains('show')){
         lines.classList.remove('show');
         btn.classList.remove('active');
         btn.textContent = 'Show Enterprise Features';
@@ -1999,8 +2158,14 @@ function toggleEnterprise() {
         btn.classList.add('active');
         btn.textContent = 'Hide Enterprise Features';
     }
-}
-</script>
+};
 
+/* ============================================================
+   INITIAL TRIGGER FOR SLIDE 1
+   ============================================================ */
+triggerSlideAnimation(0);
+
+})(); // end IIFE
+</script>
 </body>
 </html>
